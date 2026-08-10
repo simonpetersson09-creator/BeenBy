@@ -44,54 +44,61 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
   return (
     <>
       <div className="space-y-1">
-        <h1 className="text-2xl leading-snug">Vem vill ni hålla kontakten med?</h1>
-        <p className="text-sm text-muted-foreground">Välj ett alternativ, eller skriv ett eget namn.</p>
+        <h1 className="text-2xl leading-snug">Kom igång</h1>
+        <p className="text-sm text-muted-foreground">Tre snabba steg – det tar under en minut.</p>
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        {["Mamma", "Pappa"].map((n) => (
+
+      <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
+        <SectionHeader
+          step={1}
+          title="Vem vill ni hålla kontakten med?"
+          hint="Välj ett alternativ, eller skriv ett eget namn."
+        />
+        <div className="grid grid-cols-2 gap-2">
+          {["Mamma", "Pappa"].map((n) => (
+            <Button
+              key={n}
+              variant={personName === n && !customMode ? "default" : "secondary"}
+              className="h-12 rounded-2xl text-sm"
+              onClick={() => {
+                setPersonName(n);
+                setCustomMode(false);
+              }}
+            >
+              {n}
+            </Button>
+          ))}
           <Button
-            key={n}
-            variant={personName === n && !customMode ? "default" : "secondary"}
-            className="h-12 rounded-2xl text-sm"
+            variant={customMode ? "default" : "secondary"}
+            className="col-span-2 h-12 rounded-2xl text-sm"
             onClick={() => {
-              setPersonName(n);
-              setCustomMode(false);
+              setCustomMode(true);
+              setPersonName("");
             }}
           >
-            {n}
+            Valfritt namn
           </Button>
-        ))}
-        <Button
-          variant={customMode ? "default" : "secondary"}
-          className="col-span-2 h-12 rounded-2xl text-sm"
-          onClick={() => {
-            setCustomMode(true);
-            setPersonName("");
-          }}
-        >
-          Valfritt namn
-        </Button>
-      </div>
-      {customMode ? (
-        <div className="space-y-1.5">
-          <Label htmlFor="person" className="text-xs">
-            Namn
-          </Label>
-          <Input
-            id="person"
-            value={personName}
-            autoFocus
-            maxLength={60}
-            onChange={(e) => setPersonName(e.target.value)}
-            placeholder="Karin"
-            className="h-12 rounded-2xl text-base"
-          />
         </div>
-      ) : null}
-      <div className="space-y-1.5">
-        <Label htmlFor="me" className="text-xs">
-          Vad heter du?
-        </Label>
+        {customMode ? (
+          <div className="space-y-1.5">
+            <Label htmlFor="person" className="text-xs">
+              Namn
+            </Label>
+            <Input
+              id="person"
+              value={personName}
+              autoFocus
+              maxLength={60}
+              onChange={(e) => setPersonName(e.target.value)}
+              placeholder="Karin"
+              className="h-12 rounded-2xl text-base"
+            />
+          </div>
+        ) : null}
+      </section>
+
+      <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
+        <SectionHeader step={2} title="Vad heter du?" hint="Namnet syns för resten av familjen." />
         <Input
           id="me"
           value={myName}
@@ -100,32 +107,49 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
           placeholder="Ditt namn"
           className="h-12 rounded-2xl text-base"
         />
-      </div>
-      <Button
-        className="h-12 w-full rounded-2xl text-sm"
-        disabled={personName.trim().length < 1 || myName.trim().length < 1}
-        onClick={() => {
-          patchDraft({ personName: personName.trim(), myName: myName.trim() });
-          void navigate({ to: "/start/adress" });
-        }}
-      >
-        Fortsätt <ArrowRight className="size-4" />
-      </Button>
-      <div className="flex items-center gap-3 pt-1">
-        <span className="h-px flex-1 bg-primary/20" />
-        <span className="text-[0.7rem] tracking-wide text-muted-foreground uppercase">eller</span>
-        <span className="h-px flex-1 bg-primary/20" />
-      </div>
-      <button
-        type="button"
-        onClick={() => void navigate({ to: "/start/kod" })}
-        className="mx-auto flex items-center gap-2 rounded-full border border-primary/40 bg-card/60 py-2.5 pr-4 pl-2.5 text-sm text-foreground transition-colors hover:bg-card"
-      >
-        <span className="flex size-8 items-center justify-center rounded-full bg-primary/10">
-          <KeyRound className="size-4 text-primary" />
-        </span>
-        Har du fått en familjekod?
-      </button>
+        <Button
+          className="h-12 w-full rounded-2xl text-sm"
+          disabled={personName.trim().length < 1 || myName.trim().length < 1}
+          onClick={() => {
+            patchDraft({ personName: personName.trim(), myName: myName.trim() });
+            void navigate({ to: "/start/adress" });
+          }}
+        >
+          Fortsätt <ArrowRight className="size-4" />
+        </Button>
+      </section>
+
+      <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
+        <SectionHeader
+          step={3}
+          title="Har du fått en familjekod?"
+          hint="Gå med i en familj som redan finns."
+        />
+        <button
+          type="button"
+          onClick={() => void navigate({ to: "/start/kod" })}
+          className="mx-auto flex items-center gap-2 rounded-full border border-primary/40 bg-card/60 py-2.5 pr-4 pl-2.5 text-sm text-foreground transition-colors hover:bg-card"
+        >
+          <span className="flex size-8 items-center justify-center rounded-full bg-primary/10">
+            <KeyRound className="size-4 text-primary" />
+          </span>
+          Ange familjekod
+        </button>
+      </section>
     </>
+  );
+}
+
+function SectionHeader({ step, title, hint }: { step: number; title: string; hint: string }) {
+  return (
+    <div className="flex items-start gap-2.5">
+      <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+        {step}
+      </span>
+      <div className="min-w-0 space-y-0.5">
+        <p className="text-sm leading-none font-medium text-foreground">{title}</p>
+        <p className="text-xs text-muted-foreground">{hint}</p>
+      </div>
+    </div>
   );
 }
