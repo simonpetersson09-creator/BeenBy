@@ -82,6 +82,12 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
   function selectHit(hit: GeocodeHit) {
     setCoords({ lat: hit.lat, lng: hit.lng });
     setResolvedAddress(hit.label);
+    patchDraft({
+      address,
+      resolvedAddress: hit.label,
+      lat: hit.lat,
+      lng: hit.lng,
+    });
     setMapOpen(true);
   }
 
@@ -132,7 +138,10 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
               id="address"
               value={address}
               maxLength={200}
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={(e) => {
+                setAddress(e.target.value);
+                patchDraft({ address: e.target.value });
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") void lookupAddress();
               }}
@@ -185,7 +194,14 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
         {coords && resolvedAddress ? (
           mapOpen ? (
             <div className="space-y-2 rounded-2xl border border-primary/40 p-2">
-              <PinMap lat={coords.lat} lng={coords.lng} onChange={(next) => setCoords(next)} />
+               <PinMap
+                 lat={coords.lat}
+                 lng={coords.lng}
+                 onChange={(next) => {
+                   setCoords(next);
+                   patchDraft({ lat: next.lat, lng: next.lng });
+                 }}
+               />
               <p className="px-1 text-xs text-muted-foreground">
                 {t("adress.dragHint")}
               </p>

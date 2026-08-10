@@ -6,6 +6,7 @@ import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useT } from "@/lib/i18n";
+import { getDraft, patchDraft } from "@/lib/onboardingDraft";
 
 export const Route = createFileRoute("/start/kod")({
   ssr: false,
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/start/kod")({
 function CodePage() {
   const navigate = useNavigate();
   const t = useT();
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(() => getDraft().familyCode);
   const [activeCode, setActiveCode] = useState<string | null>(null);
 
   if (activeCode) {
@@ -54,7 +55,11 @@ function CodePage() {
           </p>
           <Input
             value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            onChange={(e) => {
+              const next = e.target.value.toUpperCase();
+              setCode(next);
+              patchDraft({ familyCode: next });
+            }}
             placeholder="ABC123"
             maxLength={10}
             className="h-14 rounded-2xl text-center text-2xl tracking-widest"

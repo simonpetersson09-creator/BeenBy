@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { getDraft, patchDraft } from "@/lib/onboardingDraft";
 import { saveRecovery } from "@/lib/recovery";
 
 type Preview = {
@@ -30,8 +31,8 @@ export function JoinFlow({
 }) {
   const [preview, setPreview] = useState<Preview | null>(null);
   const [loading, setLoading] = useState(true);
-  const [name, setName] = useState("");
-  const [color, setColor] = useState<string | null>(null);
+  const [name, setName] = useState(() => getDraft().myName);
+  const [color, setColor] = useState<string | null>(() => getDraft().color || null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -139,7 +140,10 @@ export function JoinFlow({
           id="join-name"
           value={name}
           maxLength={60}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            patchDraft({ myName: e.target.value });
+          }}
           placeholder="Anna"
           className="h-14 rounded-2xl text-lg"
         />
@@ -147,7 +151,14 @@ export function JoinFlow({
 
       <div className="space-y-3">
         <Label>Välj din färg</Label>
-        <ColorPicker value={color} onChange={setColor} taken={preview.taken_colors ?? []} />
+        <ColorPicker
+          value={color}
+          onChange={(next) => {
+            setColor(next);
+            patchDraft({ color: next });
+          }}
+          taken={preview.taken_colors ?? []}
+        />
       </div>
 
       <Button
