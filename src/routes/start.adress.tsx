@@ -235,6 +235,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           step={2}
           title={t("adress.s2.title")}
           hint={t("adress.s2.hint")}
+          optional={t("common.optional")}
         />
         <Button
           variant="secondary"
