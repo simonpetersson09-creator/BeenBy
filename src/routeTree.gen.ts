@@ -15,6 +15,7 @@ import { Route as JoinTokenRouteImport } from './routes/join.$token'
 import { Route as StartAdressRouteImport } from './routes/start.adress'
 import { Route as StartFargRouteImport } from './routes/start.farg'
 import { Route as StartKodRouteImport } from './routes/start.kod'
+import { Route as StartValkommenRouteImport } from './routes/start.valkommen'
 import { Route as StartVemRouteImport } from './routes/start.vem'
 
 const IndexRoute = IndexRouteImport.update({
@@ -47,6 +48,11 @@ const StartKodRoute = StartKodRouteImport.update({
   path: '/start/kod',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StartValkommenRoute = StartValkommenRouteImport.update({
+  id: '/start/valkommen',
+  path: '/start/valkommen',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StartVemRoute = StartVemRouteImport.update({
   id: '/start/vem',
   path: '/start/vem',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/start/adress': typeof StartAdressRoute
   '/start/farg': typeof StartFargRoute
   '/start/kod': typeof StartKodRoute
+  '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/start/adress': typeof StartAdressRoute
   '/start/farg': typeof StartFargRoute
   '/start/kod': typeof StartKodRoute
+  '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/start/adress': typeof StartAdressRoute
   '/start/farg': typeof StartFargRoute
   '/start/kod': typeof StartKodRoute
+  '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/start/adress'
     | '/start/farg'
     | '/start/kod'
+    | '/start/valkommen'
     | '/start/vem'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/start/adress'
     | '/start/farg'
     | '/start/kod'
+    | '/start/valkommen'
     | '/start/vem'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/start/adress'
     | '/start/farg'
     | '/start/kod'
+    | '/start/valkommen'
     | '/start/vem'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   StartAdressRoute: typeof StartAdressRoute
   StartFargRoute: typeof StartFargRoute
   StartKodRoute: typeof StartKodRoute
+  StartValkommenRoute: typeof StartValkommenRoute
   StartVemRoute: typeof StartVemRoute
 }
 
@@ -165,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StartKodRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/start/valkommen': {
+      id: '/start/valkommen'
+      path: '/start/valkommen'
+      fullPath: '/start/valkommen'
+      preLoaderRoute: typeof StartValkommenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/start/vem': {
       id: '/start/vem'
       path: '/start/vem'
@@ -182,8 +202,19 @@ const rootRouteChildren: RootRouteChildren = {
   StartAdressRoute: StartAdressRoute,
   StartFargRoute: StartFargRoute,
   StartKodRoute: StartKodRoute,
+  StartValkommenRoute: StartValkommenRoute,
   StartVemRoute: StartVemRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
