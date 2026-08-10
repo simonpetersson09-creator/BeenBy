@@ -242,9 +242,6 @@ export function HomeScreen({
           <Button variant="ghost" size="icon" aria-label="Familjen" onClick={() => setFamilyOpen(true)}>
             <Users className="size-5" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Bjud in" onClick={invite}>
-            <Share2 className="size-5" />
-          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -258,11 +255,11 @@ export function HomeScreen({
             <button
               type="button"
               onClick={() => setFamilyOpen(true)}
-              className="absolute left-0 top-full z-20 mt-2 w-56 animate-in fade-in slide-in-from-top-1 rounded-2xl bg-primary px-3 py-2 text-left text-[0.7rem] leading-snug text-primary-foreground shadow-lift"
+              className="absolute right-0 top-full z-20 mt-2 w-56 animate-in fade-in slide-in-from-top-1 rounded-2xl bg-primary px-3 py-2 text-left text-[0.7rem] leading-snug text-primary-foreground shadow-lift"
             >
               <span
                 aria-hidden
-                className="absolute -top-1.5 left-4 size-3 rotate-45 rounded-[2px] bg-primary"
+                className="absolute -top-1.5 left-5 size-3 rotate-45 rounded-[2px] bg-primary"
               />
               Tryck här för att bjuda in dina syskon – så ser ni varandras besök direkt.
             </button>
@@ -296,25 +293,23 @@ export function HomeScreen({
       <section className="rounded-3xl border border-primary/40 bg-transparent px-3 py-4">
         <h2 className="mb-3 text-center text-base leading-tight text-primary">Besöksöversikt</h2>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
-        {showLegend ? (
-          <button
-            type="button"
-            className="mt-3 flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-1.5 border-t border-primary/25 pt-3 text-[0.7rem] text-muted-foreground"
-            onClick={() => {
-              window.localStorage.setItem(LEGEND_KEY, "1");
-              setShowLegend(false);
-            }}
-          >
-            <span className="flex items-center gap-1.5">
-              <span className="size-3 rounded-full bg-foreground/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]" />
-              Fylld = genomfört
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="size-3 rounded-full border-2 border-foreground/50" />
-              Kontur = planerat
-            </span>
-          </button>
-        ) : null}
+        <div className="mt-3 flex w-full flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-primary/25 pt-3 text-[0.68rem] text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <span className="size-3 rounded-full bg-foreground/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]" />
+            Fylld = besökt
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="size-3 rounded-full border-2 border-dashed border-foreground/50" />
+            Streckad = planerat
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="size-3 rounded-full bg-foreground/[0.07]" />
+            Tom = inget besök
+          </span>
+          <span className="w-full text-center text-[0.65rem] text-muted-foreground/80">
+            Färgen visar vem i familjen det är.
+          </span>
+        </div>
       </section>
 
 

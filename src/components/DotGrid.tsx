@@ -112,7 +112,6 @@ export function DotGrid({
                       className={cn(
                         "group flex min-h-8 items-center justify-center rounded-xl transition",
                         "active:scale-90",
-                        isFuture && !isToday && !hasPlanned && "opacity-60",
                       )}
                     >
                       <span className="relative flex size-7 items-center justify-center">
