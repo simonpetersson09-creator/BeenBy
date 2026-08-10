@@ -268,11 +268,11 @@ export function HomeScreen({
             }}
           >
             <span className="flex items-center gap-2">
-              <span className="size-3 rounded-full bg-foreground/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]" />
+              <span className="size-4 rounded-full bg-foreground/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]" />
               Fylld = genomfört
             </span>
             <span className="flex items-center gap-2">
-              <span className="size-3 rounded-full border-2 border-dashed border-foreground/50" />
+              <span className="size-4 rounded-full border-2 border-dashed border-foreground/50" />
               Kontur = planerat
             </span>
           </button>
