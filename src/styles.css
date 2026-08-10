@@ -104,6 +104,10 @@
   --sidebar-accent-foreground: oklch(0.324 0.055 245);
   --sidebar-border: oklch(0.88 0.008 70);
   --sidebar-ring: oklch(0.324 0.055 245);
+  /* Warm terracotta accent – used for the chat action */
+  --brand-accent: oklch(0.605 0.115 52);
+  --brand-accent-foreground: oklch(0.985 0.004 80);
+
 }
 
 
