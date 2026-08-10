@@ -228,12 +228,17 @@ export function HomeScreen({
 
   return (
     <div className="mx-auto w-full max-w-md px-5 pb-40 pt-8">
-      <header className="mb-6 flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm text-muted-foreground">Besöken hos</p>
-          <h1 className="text-3xl">{person?.name ?? circle.name}</h1>
+      <header className="mb-6 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-primary/60">
+            Besöken hos
+          </p>
+          <h1 className="mt-1 truncate text-[2rem] leading-[1.1] text-primary">
+            {person?.name ?? circle.name}
+          </h1>
+          <span className="mt-2 block h-px w-10 bg-primary/30" />
         </div>
-        <div className="flex gap-1">
+        <div className="flex shrink-0 gap-1">
           <Button variant="ghost" size="icon" aria-label="Familjen" onClick={() => setFamilyOpen(true)}>
             <Users className="size-5" />
           </Button>
@@ -250,6 +255,7 @@ export function HomeScreen({
           </Button>
         </div>
       </header>
+
 
       <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
 
