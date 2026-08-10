@@ -92,7 +92,10 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
               value={personName}
               autoFocus
               maxLength={60}
-              onChange={(e) => setPersonName(e.target.value)}
+              onChange={(e) => {
+                setPersonName(e.target.value);
+                patchDraft({ personName: e.target.value });
+              }}
               placeholder={t("vem.namePlaceholder")}
               className="h-12 rounded-2xl text-base"
             />
@@ -106,7 +109,10 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
           id="me"
           value={myName}
           maxLength={60}
-          onChange={(e) => setMyName(e.target.value)}
+          onChange={(e) => {
+            setMyName(e.target.value);
+            patchDraft({ myName: e.target.value });
+          }}
           placeholder={t("vem.mePlaceholder")}
           className="h-12 rounded-2xl text-base"
         />

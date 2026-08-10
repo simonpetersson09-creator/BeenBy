@@ -10,6 +10,7 @@ export type OnboardingDraft = {
   lat: number | null;
   lng: number | null;
   color: string;
+  familyCode: string;
 };
 
 const KEY = "beenby.onboarding.draft";
@@ -22,6 +23,7 @@ export const emptyDraft: OnboardingDraft = {
   lat: null,
   lng: null,
   color: "blue",
+  familyCode: "",
 };
 
 export function getDraft(): OnboardingDraft {
