@@ -14,6 +14,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as JoinTokenRouteImport } from './routes/join.$token'
 import { Route as StartAdressRouteImport } from './routes/start.adress'
 import { Route as StartFargRouteImport } from './routes/start.farg'
+import { Route as StartKodRouteImport } from './routes/start.kod'
 import { Route as StartVemRouteImport } from './routes/start.vem'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const StartFargRoute = StartFargRouteImport.update({
   path: '/start/farg',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StartKodRoute = StartKodRouteImport.update({
+  id: '/start/kod',
+  path: '/start/kod',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StartVemRoute = StartVemRouteImport.update({
   id: '/start/vem',
   path: '/start/vem',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/join/$token': typeof JoinTokenRoute
   '/start/adress': typeof StartAdressRoute
   '/start/farg': typeof StartFargRoute
+  '/start/kod': typeof StartKodRoute
   '/start/vem': typeof StartVemRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/join/$token': typeof JoinTokenRoute
   '/start/adress': typeof StartAdressRoute
   '/start/farg': typeof StartFargRoute
+  '/start/kod': typeof StartKodRoute
   '/start/vem': typeof StartVemRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/join/$token': typeof JoinTokenRoute
   '/start/adress': typeof StartAdressRoute
   '/start/farg': typeof StartFargRoute
+  '/start/kod': typeof StartKodRoute
   '/start/vem': typeof StartVemRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/join/$token'
     | '/start/adress'
     | '/start/farg'
+    | '/start/kod'
     | '/start/vem'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/join/$token'
     | '/start/adress'
     | '/start/farg'
+    | '/start/kod'
     | '/start/vem'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/join/$token'
     | '/start/adress'
     | '/start/farg'
+    | '/start/kod'
     | '/start/vem'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   JoinTokenRoute: typeof JoinTokenRoute
   StartAdressRoute: typeof StartAdressRoute
   StartFargRoute: typeof StartFargRoute
+  StartKodRoute: typeof StartKodRoute
   StartVemRoute: typeof StartVemRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StartFargRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/start/kod': {
+      id: '/start/kod'
+      path: '/start/kod'
+      fullPath: '/start/kod'
+      preLoaderRoute: typeof StartKodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/start/vem': {
       id: '/start/vem'
       path: '/start/vem'
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   JoinTokenRoute: JoinTokenRoute,
   StartAdressRoute: StartAdressRoute,
   StartFargRoute: StartFargRoute,
+  StartKodRoute: StartKodRoute,
   StartVemRoute: StartVemRoute,
 }
 export const routeTree = rootRouteImport
