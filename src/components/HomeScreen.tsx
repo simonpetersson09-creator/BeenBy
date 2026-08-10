@@ -25,8 +25,6 @@ import { dequeue, enqueue, getPending, newClientToken, type PendingVisit } from 
 import { colorById } from "@/lib/palette";
 import { saveRecovery } from "@/lib/recovery";
 
-const LEGEND_KEY = "legend-seen-v1";
-
 export function HomeScreen({
   data,
   userId,
@@ -51,10 +49,8 @@ export function HomeScreen({
 
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState<PendingVisit[]>([]);
-  const [showLegend, setShowLegend] = useState(false);
 
   useEffect(() => {
-    setShowLegend(window.localStorage.getItem(LEGEND_KEY) !== "1");
     const sync = () => setPending(getPending());
     sync();
     window.addEventListener("pending-visits-changed", sync);
