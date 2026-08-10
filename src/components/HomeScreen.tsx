@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CloudOff, Loader2, MessageCircle, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
+import { CloudOff, Loader2, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
 import { toast } from "sonner";
 
 
