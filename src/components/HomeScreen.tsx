@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { CircleData, PlannedVisit } from "@/hooks/useCircleData";
+import { useFamilyNotifications } from "@/hooks/useFamilyNotifications";
 import { useOnlineStatus } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { addDays, relativeLabel, todayKey } from "@/lib/dates";
