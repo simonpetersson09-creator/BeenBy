@@ -53,6 +53,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
     draft.lat != null && draft.lng != null ? { lat: draft.lat, lng: draft.lng } : null,
   );
   const [results, setResults] = useState<GeocodeHit[]>([]);
+  const [mapOpen, setMapOpen] = useState(false);
   const [searching, setSearching] = useState(false);
   const [locating, setLocating] = useState(false);
 
@@ -79,6 +80,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
   function selectHit(hit: GeocodeHit) {
     setCoords({ lat: hit.lat, lng: hit.lng });
     setResolvedAddress(hit.label);
+    setMapOpen(true);
   }
 
   function useCurrentLocation() {
