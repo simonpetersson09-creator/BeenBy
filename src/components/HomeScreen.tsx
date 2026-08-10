@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CloudOff, Loader2, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { CloudOff, Loader2, MessageCircle, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
 import { toast } from "sonner";
+
 
 import { DayDetail } from "@/components/DayDetail";
 import { DotGrid, buildDays } from "@/components/DotGrid";
