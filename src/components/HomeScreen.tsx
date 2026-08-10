@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { DayDetail } from "@/components/DayDetail";
 import { DotGrid, buildDays } from "@/components/DotGrid";
+import { InviteSheet } from "@/components/InviteSheet";
 import { SettingsDialog } from "@/components/SettingsDialog";
 
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,6 @@ import type { CircleData, PlannedVisit } from "@/hooks/useCircleData";
 import { useOnlineStatus } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { addDays, relativeLabel, todayKey } from "@/lib/dates";
-import { shareInvite } from "@/lib/native";
 import { dequeue, enqueue, getPending, newClientToken, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
 import { saveRecovery } from "@/lib/recovery";
@@ -45,6 +45,8 @@ export function HomeScreen({
   const [familyOpen, setFamilyOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmSecond, setConfirmSecond] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
 
 
   const [busy, setBusy] = useState(false);
@@ -207,21 +209,19 @@ export function HomeScreen({
   }
 
   async function invite() {
+    setInviteUrl(null);
+    setInviteOpen(true);
     const { data: inv, error } = await supabase
       .from("invitations")
       .insert({ family_circle_id: circle.id, created_by: userId })
       .select("invite_token")
       .single();
     if (error || !inv) {
+      setInviteOpen(false);
       toast.error("Det gick inte att skapa en inbjudan just nu.");
       return;
     }
-    const url = `${window.location.origin}/join/${inv.invite_token}`;
-    const result = await shareInvite(
-      url,
-      `Följ med och håll koll på besöken hos ${person?.name ?? circle.name}.`,
-    );
-    if (result === "copied") toast.success("Länken är kopierad – klistra in den i ett meddelande.");
+    setInviteUrl(`${window.location.origin}/join/${inv.invite_token}`);
   }
 
   const planDates = Array.from({ length: 14 }, (_, i) => addDays(today, i));
@@ -257,14 +257,14 @@ export function HomeScreen({
           {members.length === 1 ? (
             <button
               type="button"
-              onClick={invite}
-              className="absolute right-16 top-full z-20 mt-2 w-56 animate-in fade-in slide-in-from-top-1 rounded-2xl bg-primary px-3 py-2 text-left text-[0.7rem] leading-snug text-primary-foreground shadow-lift"
+              onClick={() => setFamilyOpen(true)}
+              className="absolute left-0 top-full z-20 mt-2 w-56 animate-in fade-in slide-in-from-top-1 rounded-2xl bg-primary px-3 py-2 text-left text-[0.7rem] leading-snug text-primary-foreground shadow-lift"
             >
               <span
                 aria-hidden
-                className="absolute -top-1.5 right-4 size-3 rotate-45 rounded-[2px] bg-primary"
+                className="absolute -top-1.5 left-4 size-3 rotate-45 rounded-[2px] bg-primary"
               />
-              Bjud in dina syskon här – så ser ni varandras besök direkt.
+              Tryck här för att bjuda in dina syskon – så ser ni varandras besök direkt.
             </button>
           ) : null}
         </div>
@@ -273,6 +273,13 @@ export function HomeScreen({
 
 
       <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
+
+      <InviteSheet
+        open={inviteOpen}
+        onOpenChange={setInviteOpen}
+        url={inviteUrl}
+        message={`Följ med och håll koll på besöken hos ${person?.name ?? circle.name}.`}
+      />
 
 
       {!online || pending.length > 0 ? (
