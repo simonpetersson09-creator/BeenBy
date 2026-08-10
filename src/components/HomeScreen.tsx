@@ -23,6 +23,7 @@ import { addDays, relativeLabel, todayKey } from "@/lib/dates";
 import { shareInvite } from "@/lib/native";
 import { dequeue, enqueue, getPending, newClientToken, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
+import { saveRecovery } from "@/lib/recovery";
 
 const LEGEND_KEY = "legend-seen-v1";
 
@@ -59,6 +60,17 @@ export function HomeScreen({
   }, []);
 
   const me = members.find((m) => m.user_id === userId);
+
+  // Keep a local recovery record so the family can be restored if the
+  // background identity is ever lost.
+  useEffect(() => {
+    if (!me) return;
+    saveRecovery({
+      code: circle.family_code,
+      name: me.name,
+      color: me.personal_color,
+    });
+  }, [circle.family_code, me]);
   const days = useMemo(() => buildDays(tz, visits, planned, members), [tz, visits, planned, members]);
   const today = todayKey(tz);
   const myVisitToday = visits.find((v) => v.user_id === userId && v.local_day === today);
