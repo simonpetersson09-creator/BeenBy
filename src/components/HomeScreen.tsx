@@ -41,6 +41,8 @@ export function HomeScreen({
   const [planOpen, setPlanOpen] = useState(false);
   const [familyOpen, setFamilyOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [confirmSecond, setConfirmSecond] = useState(false);
+
 
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState<PendingVisit[]>([]);
