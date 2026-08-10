@@ -36,15 +36,29 @@ export function weekdayIndex(key: string): number {
 export const WEEKDAY_LABELS = ["M", "T", "O", "T", "F", "L", "S"];
 
 /**
- * 28 days ending today, aligned so every row is a Monday–Sunday week.
- * Returns 28 day keys (4 full weeks) where the last week contains today.
+ * 28 days: the two previous weeks, the current week and the coming week.
+ * Every row is a Monday–Sunday week.
  */
 export function build28DayGrid(timeZone: string): string[] {
   const today = todayKey(timeZone);
-  const endOfWeek = addDays(today, 6 - weekdayIndex(today)); // Sunday of current week
-  const start = addDays(endOfWeek, -27);
+  const mondayThisWeek = addDays(today, -weekdayIndex(today));
+  const start = addDays(mondayThisWeek, -14);
   return Array.from({ length: 28 }, (_, i) => addDays(start, i));
 }
+
+/** ISO-8601 week number (Swedish "veckonummer"). */
+export function weekNumber(key: string): number {
+  const [y, m, d] = key.split("-").map(Number);
+  const dt = new Date(Date.UTC(y!, m! - 1, d!));
+  // Thursday of the current ISO week decides the year/week.
+  dt.setUTCDate(dt.getUTCDate() + 3 - ((dt.getUTCDay() + 6) % 7));
+  const firstThursday = new Date(Date.UTC(dt.getUTCFullYear(), 0, 4));
+  firstThursday.setUTCDate(
+    firstThursday.getUTCDate() + 3 - ((firstThursday.getUTCDay() + 6) % 7),
+  );
+  return 1 + Math.round((dt.getTime() - firstThursday.getTime()) / (7 * 86400000));
+}
+
 
 export function isFuture(key: string, timeZone: string): boolean {
   return key > todayKey(timeZone);
