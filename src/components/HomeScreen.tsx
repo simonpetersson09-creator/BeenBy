@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { CircleData, PlannedVisit } from "@/hooks/useCircleData";
+import { useFamilyNotifications } from "@/hooks/useFamilyNotifications";
 import { useOnlineStatus } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { addDays, relativeLabel, todayKey } from "@/lib/dates";
@@ -41,6 +42,9 @@ export function HomeScreen({
   const { circle, person, members, visits, planned } = data;
   const tz = circle.timezone;
   const online = useOnlineStatus();
+
+  // Toast the siblings when someone writes in the chat or joins the family.
+  useFamilyNotifications({ circleId: circle.id, userId, onEvent: refresh });
 
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [planOpen, setPlanOpen] = useState(false);
