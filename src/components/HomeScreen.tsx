@@ -317,21 +317,20 @@ export function HomeScreen({
 
       <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-6">
         <Button
-          size="lg"
           onClick={handleImHere}
           disabled={busy || !person}
-          className="h-16 w-full rounded-3xl bg-primary text-lg text-primary-foreground shadow-lift hover:bg-primary/90"
+          className="h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
         >
-          {busy ? <Loader2 className="size-5 animate-spin" /> : null}
+          {busy ? <Loader2 className="size-4 animate-spin" /> : null}
           Jag är här
         </Button>
         <Button
-          variant="ghost"
-          className="mt-2 h-12 w-full rounded-2xl"
+          className="mt-2 h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
           onClick={() => setPlanOpen(true)}
         >
           <Plus className="size-4" /> Planera ett besök
         </Button>
+
       </div>
 
       <DayDetail
