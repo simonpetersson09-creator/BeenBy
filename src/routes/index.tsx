@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 
 import { HomeScreen } from "@/components/HomeScreen";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCircleData } from "@/hooks/useCircleData";
 import { useSession } from "@/hooks/useSession";
+import { ensureUser } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -32,39 +33,23 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const navigate = useNavigate();
   const { user, loading } = useSession();
   const { data, isLoading, refetch } = useCircleData(user?.id);
   const [codeMode, setCodeMode] = useState(false);
   const [code, setCode] = useState("");
   const [activeCode, setActiveCode] = useState<string | null>(null);
 
-  if (loading || (user && isLoading)) {
+  // Zero friction: a backend identity is created silently, no signup screen.
+  useEffect(() => {
+    if (loading || user) return;
+    void ensureUser();
+  }, [loading, user]);
+
+  if (loading || !user || isLoading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
         <Loader2 className="size-6 animate-spin text-muted-foreground" />
       </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-6 px-6 py-10">
-        <div className="space-y-3">
-          <h1 className="text-4xl">Nära</h1>
-          <p className="text-lg text-muted-foreground">
-            Ni syskon hjälps åt att hålla koll på besöken hos den ni bryr er om – utan att någon
-            behöver hålla räkningen i huvudet.
-          </p>
-        </div>
-        <Button
-          size="lg"
-          className="h-14 w-full rounded-2xl text-base"
-          onClick={() => navigate({ to: "/auth" })}
-        >
-          Kom igång
-        </Button>
-      </main>
     );
   }
 
