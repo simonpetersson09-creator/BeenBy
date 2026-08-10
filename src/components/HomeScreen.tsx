@@ -271,36 +271,30 @@ export function HomeScreen({
         </div>
       ) : null}
 
-      <section className="rounded-[28px] border border-primary/40 bg-transparent p-6">
-        <div className="mb-7 text-center">
-          <h2 className="text-[1.4rem] leading-tight text-primary">Besöksöversikt</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Två veckor bakåt, denna vecka och nästa
-          </p>
-
-        </div>
+      <section className="rounded-3xl border border-primary/40 bg-transparent px-3 py-4">
+        <h2 className="mb-3 text-center text-base leading-tight text-primary">Besöksöversikt</h2>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
         {showLegend ? (
           <button
             type="button"
-            className="mt-7 flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-3 border-t border-primary/25 pt-5 text-xs text-muted-foreground"
-
+            className="mt-3 flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-1.5 border-t border-primary/25 pt-3 text-[0.7rem] text-muted-foreground"
             onClick={() => {
               window.localStorage.setItem(LEGEND_KEY, "1");
               setShowLegend(false);
             }}
           >
-            <span className="flex items-center gap-2">
-              <span className="size-4 rounded-full bg-foreground/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]" />
+            <span className="flex items-center gap-1.5">
+              <span className="size-3 rounded-full bg-foreground/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]" />
               Fylld = genomfört
             </span>
-            <span className="flex items-center gap-2">
-              <span className="size-4 rounded-full border-2 border-foreground/50" />
+            <span className="flex items-center gap-1.5">
+              <span className="size-3 rounded-full border-2 border-foreground/50" />
               Kontur = planerat
             </span>
           </button>
         ) : null}
       </section>
+
 
 
       <section className="mt-4 rounded-2xl bg-card px-4 py-2.5 shadow-soft">
