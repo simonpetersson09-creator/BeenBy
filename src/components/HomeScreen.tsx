@@ -236,18 +236,26 @@ export function HomeScreen({
           </h1>
           <span className="mt-2 block h-px w-10 bg-primary/30" />
         </div>
-        <div className="relative flex shrink-0 gap-1">
-          <Button variant="ghost" size="icon" aria-label={t("home.family")} onClick={() => setFamilyOpen(true)}>
-            <Users className="size-5" />
+        <div className="relative flex shrink-0 gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={t("home.family")}
+            onClick={() => setFamilyOpen(true)}
+            className="size-12 rounded-2xl border border-primary/20 bg-primary/10 text-primary hover:bg-primary/20"
+          >
+            <Users className="size-6" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             aria-label={t("home.settings")}
             onClick={() => setSettingsOpen(true)}
+            className="size-12 rounded-2xl border border-primary/20 bg-primary/10 text-primary hover:bg-primary/20"
           >
-            <Settings className="size-5" />
+            <Settings className="size-6" />
           </Button>
+
 
           {members.length === 1 ? (
             <button
