@@ -113,35 +113,46 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           Ange adressen som utgångspunkt. Ingen i familjen kan se var du befinner dig.
         </p>
       </div>
-      <div className="space-y-1.5">
-        <Label htmlFor="address" className="text-xs">
-          Adress
-        </Label>
-        <div className="flex gap-2">
-          <Input
-            id="address"
-            value={address}
-            maxLength={200}
-            onChange={(e) => setAddress(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") void lookupAddress();
-            }}
-            placeholder="Storgatan 1, Stockholm"
-            className="h-12 rounded-2xl text-base"
-          />
-          <Button
-            variant="secondary"
-            className="h-12 shrink-0 rounded-2xl px-4"
-            onClick={() => void lookupAddress()}
-            disabled={searching || address.trim().length < 3}
-            aria-label="Sök adress"
-          >
-            {searching ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />}
-          </Button>
+      <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
+        <SectionHeader
+          step={1}
+          title="Hemadress"
+          hint="Sök adressen som blir utgångspunkt för besöken."
+        />
+        <div className="space-y-1.5">
+          <Label htmlFor="address" className="sr-only">
+            Adress
+          </Label>
+          <div className="flex gap-2">
+            <Input
+              id="address"
+              value={address}
+              maxLength={200}
+              onChange={(e) => setAddress(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") void lookupAddress();
+              }}
+              placeholder="Storgatan 1, Stockholm"
+              className="h-12 rounded-2xl text-base"
+            />
+            <Button
+              variant="secondary"
+              className="h-12 shrink-0 rounded-2xl px-4"
+              onClick={() => void lookupAddress()}
+              disabled={searching || address.trim().length < 3}
+              aria-label="Sök adress"
+            >
+              {searching ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Search className="size-4" />
+              )}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Det räcker med gata och ort – appen använder en radie runt hemmet.
+          </p>
         </div>
-        <p className="text-xs text-muted-foreground">
-          Det räcker med gata och ort – appen använder en radie runt hemmet, inte en exakt punkt.
-        </p>
         {results.length > 0 ? (
           <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
             {results.map((hit) => {
@@ -196,8 +207,14 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
             </button>
           )
         ) : null}
-      </div>
-      <div className="space-y-1.5">
+      </section>
+
+      <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
+        <SectionHeader
+          step={2}
+          title="Notis vid besök"
+          hint="Frivilligt. Din plats delas aldrig med familjen."
+        />
         <Button
           variant="secondary"
           className="h-12 w-full rounded-2xl text-sm"
@@ -207,31 +224,32 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />}
           Använd min nuvarande plats
         </Button>
-        <p className="text-xs text-muted-foreground">
-          Används bara för att du ska kunna få en notis när du varit på besök.
-        </p>
-      </div>
-      <Button
-        className="h-12 w-full rounded-2xl text-sm"
-        onClick={() => {
-          patchDraft({
-            address,
-            resolvedAddress,
-            lat: coords?.lat ?? null,
-            lng: coords?.lng ?? null,
-          });
-          void navigate({ to: "/start/farg" });
-        }}
-      >
-        {coords ? "Fortsätt" : "Hoppa över"} <ArrowRight className="size-4" />
-      </Button>
-      <button
-        type="button"
-        className="mx-auto block text-sm text-muted-foreground underline underline-offset-4"
-        onClick={() => void navigate({ to: "/start/vem" })}
-      >
-        Tillbaka
-      </button>
+      </section>
+
+      <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-3">
+        <SectionHeader step={3} title="Nästa steg" hint="Välj färg för din plutt." />
+        <Button
+          className="h-12 w-full rounded-2xl text-sm"
+          onClick={() => {
+            patchDraft({
+              address,
+              resolvedAddress,
+              lat: coords?.lat ?? null,
+              lng: coords?.lng ?? null,
+            });
+            void navigate({ to: "/start/farg" });
+          }}
+        >
+          {coords ? "Fortsätt" : "Hoppa över"} <ArrowRight className="size-4" />
+        </Button>
+        <button
+          type="button"
+          className="mx-auto block text-sm text-muted-foreground underline underline-offset-4"
+          onClick={() => void navigate({ to: "/start/vem" })}
+        >
+          Tillbaka
+        </button>
+      </section>
     </>
   );
 }
