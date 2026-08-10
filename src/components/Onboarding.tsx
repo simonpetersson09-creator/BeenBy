@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, MapPin, Loader2 } from "lucide-react";
+import { ArrowRight, MapPin, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { ColorPicker } from "@/components/ColorPicker";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { geocodeAddress } from "@/lib/geocode.functions";
 import { saveRecovery } from "@/lib/recovery";
 
 type Coords = { lat: number; lng: number } | null;
@@ -16,12 +17,37 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
   const [personName, setPersonName] = useState("");
   const [customMode, setCustomMode] = useState(false);
   const [coords, setCoords] = useState<Coords>(null);
+  const [address, setAddress] = useState("");
+  const [resolvedAddress, setResolvedAddress] = useState<string | null>(null);
+  const [searching, setSearching] = useState(false);
   const [locating, setLocating] = useState(false);
   const [myName, setMyName] = useState("");
   const [color, setColor] = useState<string | null>("blue");
   const [saving, setSaving] = useState(false);
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Stockholm";
+
+  async function lookupAddress() {
+    const query = address.trim();
+    if (query.length < 3) return;
+    setSearching(true);
+    try {
+      const hit = await geocodeAddress({ data: { query } });
+      if (!hit) {
+        setResolvedAddress(null);
+        toast.error("Hittade ingen adress. Prova att skriva gata, nummer och ort.");
+        return;
+      }
+      setCoords({ lat: hit.lat, lng: hit.lng });
+      setResolvedAddress(hit.label);
+      toast.success("Adressen är sparad som utgångspunkt.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Adressökningen misslyckades. Försök igen.");
+    } finally {
+      setSearching(false);
+    }
+  }
 
   async function useCurrentLocation() {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -32,6 +58,7 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setResolvedAddress(null);
         setLocating(false);
         toast.success("Platsen sparad som referenspunkt.");
       },
@@ -44,6 +71,7 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
       { enableHighAccuracy: true, timeout: 10000 },
     );
   }
+
 
   async function create() {
     setSaving(true);
@@ -58,9 +86,11 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
       const { error: pErr } = await supabase.from("persons").insert({
         family_circle_id: circle.id,
         name: personName.trim(),
+        address: resolvedAddress ?? (address.trim() || null),
         location_latitude: coords?.lat ?? null,
         location_longitude: coords?.lng ?? null,
       });
+
       if (pErr) throw pErr;
 
       const { error: mErr } = await supabase.from("family_members").insert({
@@ -167,24 +197,59 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
             <div className="space-y-1">
               <h1 className="text-2xl leading-snug">Var bor {personName.trim()}?</h1>
               <p className="text-sm text-muted-foreground">
-                Platsen används bara som referenspunkt när du är på besök. Ingen i familjen kan se var
-                du befinner dig.
+                Ange adressen som utgångspunkt. Ingen i familjen kan se var du befinner dig.
               </p>
             </div>
-            <Button
-              variant="secondary"
-              className="h-12 w-full rounded-2xl text-sm"
-              onClick={useCurrentLocation}
-              disabled={locating}
-            >
-              {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />}
-              {coords ? "Platsen är sparad" : "Använd min nuvarande plats"}
-            </Button>
+            <div className="space-y-1.5">
+              <Label htmlFor="address" className="text-xs">
+                Adress
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="address"
+                  value={address}
+                  maxLength={200}
+                  onChange={(e) => setAddress(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") void lookupAddress();
+                  }}
+                  placeholder="Storgatan 1, Stockholm"
+                  className="h-12 rounded-2xl text-base"
+                />
+                <Button
+                  variant="secondary"
+                  className="h-12 shrink-0 rounded-2xl px-4"
+                  onClick={() => void lookupAddress()}
+                  disabled={searching || address.trim().length < 3}
+                  aria-label="Sök adress"
+                >
+                  {searching ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />}
+                </Button>
+              </div>
+              {resolvedAddress ? (
+                <p className="text-xs text-muted-foreground">{resolvedAddress}</p>
+              ) : null}
+            </div>
+            <div className="space-y-1.5">
+              <Button
+                variant="secondary"
+                className="h-12 w-full rounded-2xl text-sm"
+                onClick={useCurrentLocation}
+                disabled={locating}
+              >
+                {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />}
+                Använd min nuvarande plats
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                Används bara för att du ska kunna få en notis när du varit på besök.
+              </p>
+            </div>
             <Button className="h-12 w-full rounded-2xl text-sm" onClick={() => setStep(2)}>
               {coords ? "Fortsätt" : "Hoppa över"} <ArrowRight className="size-4" />
             </Button>
           </>
         ) : null}
+
 
         {step === 2 ? (
           <>

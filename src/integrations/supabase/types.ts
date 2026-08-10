@@ -148,6 +148,7 @@ export type Database = {
       }
       persons: {
         Row: {
+          address: string | null
           created_at: string
           family_circle_id: string
           geofence_radius: number
@@ -157,6 +158,7 @@ export type Database = {
           name: string
         }
         Insert: {
+          address?: string | null
           created_at?: string
           family_circle_id: string
           geofence_radius?: number
@@ -166,6 +168,7 @@ export type Database = {
           name: string
         }
         Update: {
+          address?: string | null
           created_at?: string
           family_circle_id?: string
           geofence_radius?: number

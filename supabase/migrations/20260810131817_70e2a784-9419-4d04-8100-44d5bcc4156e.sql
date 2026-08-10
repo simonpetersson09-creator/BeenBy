@@ -1,0 +1,1 @@
+ALTER TABLE public.persons ADD COLUMN IF NOT EXISTS address text;
