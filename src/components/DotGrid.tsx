@@ -53,8 +53,9 @@ export function DotGrid({
 
   return (
     <div>
-      <div className="mb-2 flex items-center gap-1">
-        <div className="w-8 shrink-0" />
+      <div className="mb-1 flex items-center gap-1">
+        <div className="w-6 shrink-0" />
+
         <div className="grid flex-1 grid-cols-7 gap-x-1">
           {WEEKDAY_LABELS.map((label, i) => (
             <div
