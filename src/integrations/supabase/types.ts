@@ -350,6 +350,16 @@ export type Database = {
         }[]
       }
       generate_family_code: { Args: never; Returns: string }
+      get_trial_status: {
+        Args: never
+        Returns: {
+          is_trial_active: boolean
+          server_now: string
+          trial_days_left: number
+          trial_ends_at: string
+          trial_started_at: string
+        }[]
+      }
       is_circle_creator: { Args: { _circle: string }; Returns: boolean }
       is_circle_member: { Args: { _circle: string }; Returns: boolean }
       join_circle: {
