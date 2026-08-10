@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useCircleData, type Member } from "@/hooks/useCircleData";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
+import { localeOf, useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 
 type Message = {
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/chat")({
 });
 
 function timeLabel(iso: string, tz: string) {
-  return new Intl.DateTimeFormat("sv-SE", {
+  return new Intl.DateTimeFormat(localeOf(), {
     hour: "2-digit",
     minute: "2-digit",
     day: "numeric",
@@ -48,6 +49,7 @@ function timeLabel(iso: string, tz: string) {
 }
 
 function ChatPage() {
+  const t = useT();
   const { user, loading } = useSession();
   const { data, isLoading } = useCircleData(user?.id);
   const [messages, setMessages] = useState<Message[]>([]);
