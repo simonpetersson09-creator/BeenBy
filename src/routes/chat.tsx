@@ -113,7 +113,7 @@ function ChatPage() {
       .insert({ family_circle_id: circleId, user_id: user.id, body });
     setSending(false);
     if (error) {
-      toast.error("Meddelandet kunde inte skickas. Försök igen.");
+      toast.error(t("chat.sendError"));
       return;
     }
     setText("");
@@ -130,12 +130,12 @@ function ChatPage() {
   if (!data || !user) {
     return (
       <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-4 px-6 text-center">
-        <h1 className="text-2xl">Ingen familjecirkel än</h1>
+        <h1 className="text-2xl">{t("chat.noCircle")}</h1>
         <p className="text-sm text-muted-foreground">
-          Skapa eller gå med i en familj först, så öppnas chatten här.
+          {t("chat.noCircleDesc")}
         </p>
         <Button asChild className="h-12 rounded-2xl">
-          <Link to="/">Till startsidan</Link>
+          <Link to="/">{t("chat.toStart")}</Link>
         </Button>
       </main>
     );
@@ -148,15 +148,15 @@ function ChatPage() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pt-6">
       <header className="mb-4 flex items-center gap-2">
-        <Button variant="ghost" size="icon" aria-label="Tillbaka" asChild>
+        <Button variant="ghost" size="icon" aria-label={t("common.back")} asChild>
           <Link to="/">
             <ArrowLeft className="size-5" />
           </Link>
         </Button>
         <div>
-          <h1 className="text-xl leading-tight">Syskonchatten</h1>
+          <h1 className="text-xl leading-tight">{t("chat.title")}</h1>
           <p className="text-xs text-muted-foreground">
-            Om besöken hos {data.person?.name ?? data.circle.name}
+            {t("chat.about", { name: data.person?.name ?? data.circle.name })}
           </p>
         </div>
       </header>
@@ -164,7 +164,7 @@ function ChatPage() {
       <div className="flex-1 space-y-3 pb-32">
         {messages.length === 0 ? (
           <p className="mt-10 text-center text-xs text-muted-foreground">
-            Inga meddelanden än. Skriv något kort – t.ex. hur besöket kändes.
+            {t("chat.empty")}
           </p>
         ) : null}
 
@@ -177,7 +177,7 @@ function ChatPage() {
               <div className="max-w-[80%]">
                 <p className="mb-1 flex items-center gap-1.5 px-1 text-[11px] text-muted-foreground">
                   <span className="size-2 rounded-full" style={{ backgroundColor: color }} />
-                  {mine ? "Du" : (member?.name ?? "Någon")} · {timeLabel(m.created_at, tz)}
+                  {mine ? t("chat.you") : (member?.name ?? t("chat.someone"))} · {timeLabel(m.created_at, tz)}
                 </p>
                 <div
                   className={
@@ -206,14 +206,14 @@ function ChatPage() {
           <Input
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Skriv en kommentar…"
+            placeholder={t("chat.placeholder")}
             maxLength={500}
             className="h-12 flex-1 rounded-2xl bg-card text-base"
           />
           <Button
             type="submit"
             size="icon"
-            aria-label="Skicka"
+            aria-label={t("chat.send")}
             disabled={sending || text.trim().length === 0}
             className="size-12 shrink-0 rounded-2xl"
           >

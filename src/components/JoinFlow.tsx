@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { useT } from "@/lib/i18n";
 import { getDraft, patchDraft } from "@/lib/onboardingDraft";
 import { saveRecovery } from "@/lib/recovery";
 
@@ -29,6 +30,7 @@ export function JoinFlow({
   onJoined: () => void;
   onCancel?: () => void;
 }) {
+  const t = useT();
   const [preview, setPreview] = useState<Preview | null>(null);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState(() => getDraft().myName);
@@ -75,8 +77,8 @@ export function JoinFlow({
       console.error(error);
       toast.error(
         error.message.includes("expired")
-          ? "Inbjudan har gått ut. Be om en ny länk."
-          : "Det gick inte att gå med. Försök igen.",
+          ? t("join.errExpired")
+          : t("join.errGeneric"),
       );
       return;
     }
@@ -105,16 +107,16 @@ export function JoinFlow({
     return (
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-4 px-6 text-center">
         <h1 className="text-2xl">
-          {preview?.status === "expired" ? "Inbjudan har gått ut" : "Inbjudan fungerar inte"}
+          {preview?.status === "expired" ? t("join.expiredTitle") : t("join.invalidTitle")}
         </h1>
         <p className="text-muted-foreground">
           {preview?.status === "expired"
-            ? "Länken är för gammal. Be den som bjöd in dig att skicka en ny."
-            : "Länken eller familjekoden stämmer inte. Kontrollera den och försök igen."}
+            ? t("join.expiredDesc")
+            : t("join.invalidDesc")}
         </p>
         {onCancel ? (
           <Button variant="secondary" className="h-12 rounded-2xl" onClick={onCancel}>
-            Tillbaka
+            {t("common.back")}
           </Button>
         ) : null}
       </div>
@@ -125,17 +127,16 @@ export function JoinFlow({
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-6 px-6 py-10">
       <div className="space-y-2">
         <h1 className="text-3xl">
-          Du är inbjuden till {preview.person_name ?? preview.circle_name}s familj ❤️
+          {t("join.title", { name: preview.person_name ?? preview.circle_name ?? "" })}
         </h1>
         <p className="text-muted-foreground">
-          Ni håller tillsammans koll på besöken hos {preview.person_name ?? preview.circle_name}. Du
-          behöver inget konto – skriv bara ditt namn och välj din färg.
+          {t("join.sub", { name: preview.person_name ?? preview.circle_name ?? "" })}
         </p>
       </div>
 
 
       <div className="space-y-2">
-        <Label htmlFor="join-name">Ditt namn</Label>
+        <Label htmlFor="join-name">{t("join.nameLabel")}</Label>
         <Input
           id="join-name"
           value={name}
@@ -144,13 +145,13 @@ export function JoinFlow({
             setName(e.target.value);
             patchDraft({ myName: e.target.value });
           }}
-          placeholder="Anna"
+          placeholder={t("join.namePlaceholder")}
           className="h-14 rounded-2xl text-lg"
         />
       </div>
 
       <div className="space-y-3">
-        <Label>Välj din färg</Label>
+        <Label>{t("join.colorLabel")}</Label>
         <ColorPicker
           value={color}
           onChange={(next) => {
@@ -168,11 +169,11 @@ export function JoinFlow({
         onClick={join}
       >
         {saving ? <Loader2 className="size-4 animate-spin" /> : null}
-        Gå med
+        {t("join.cta")}
       </Button>
       {onCancel ? (
         <Button variant="ghost" onClick={onCancel}>
-          Avbryt
+          {t("join.cancel")}
         </Button>
       ) : null}
     </div>
