@@ -66,33 +66,24 @@ let state: PremiumState = initial;
 
 const listeners = new Set<() => void>();
 
+/**
+ * Trial values are computed by the SERVER (`public.get_trial_status()` uses
+ * now() in the database). The client never compares against the device clock,
+ * so changing the phone's date cannot extend the free period.
+ *
+ * Before the first successful server answer we do not lock anything; after a
+ * failed refresh we simply keep the last server verdict (never extend it).
+ */
 function derive(next: PremiumState): PremiumState {
-  let trialEndsAt: string | undefined;
-  let trialDaysLeft = 0;
-  let isTrialActive = false;
-
-  if (next.trialStartedAt) {
-    const start = new Date(next.trialStartedAt).getTime();
-    if (!Number.isNaN(start)) {
-      const end = start + TRIAL_DAYS * 24 * 60 * 60 * 1000;
-      trialEndsAt = new Date(end).toISOString();
-      const msLeft = end - Date.now();
-      isTrialActive = msLeft > 0;
-      trialDaysLeft = isTrialActive ? Math.ceil(msLeft / (24 * 60 * 60 * 1000)) : 0;
-    }
-  } else if (!next.trialChecked) {
-    // Unknown yet — don't lock anything before we know.
-    isTrialActive = true;
-  }
-
+  const isTrialActive = next.trialChecked ? next.isTrialActive : true;
   return {
     ...next,
-    ...(trialEndsAt ? { trialEndsAt } : {}),
-    trialDaysLeft,
     isTrialActive,
+    trialDaysLeft: isTrialActive ? next.trialDaysLeft : 0,
     hasAccess: next.isPremium || isTrialActive,
   };
 }
+
 
 function setState(patch: Partial<PremiumState>) {
   state = derive({ ...state, ...patch });
