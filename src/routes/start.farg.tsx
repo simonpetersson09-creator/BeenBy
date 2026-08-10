@@ -45,6 +45,11 @@ function ColorStep({ userId, draft }: { userId: string; draft: OnboardingDraft }
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Stockholm";
 
   async function create() {
+    // Never create a nameless circle – that made the app look "reset".
+    if (!draft.personName.trim() || !draft.myName.trim()) {
+      void navigate({ to: "/start/vem" });
+      return;
+    }
     setSaving(true);
     try {
       const { data: circle, error: cErr } = await supabase
