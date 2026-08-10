@@ -40,7 +40,8 @@ export function HomeScreen({
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [planOpen, setPlanOpen] = useState(false);
   const [familyOpen, setFamilyOpen] = useState(false);
-  const [confirmSecond, setConfirmSecond] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState<PendingVisit[]>([]);
   const [showLegend, setShowLegend] = useState(false);
