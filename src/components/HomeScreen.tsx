@@ -255,8 +255,9 @@ export function HomeScreen({
             >
               <span
                 aria-hidden
-                className="absolute -top-1.5 left-5 size-3 rotate-45 rounded-[2px] bg-primary"
+                className="absolute -top-1.5 right-[3.6rem] size-3 rotate-45 rounded-[2px] bg-primary"
               />
+
               Tryck här för att bjuda in dina syskon – så ser ni varandras besök direkt.
             </button>
           ) : null}
