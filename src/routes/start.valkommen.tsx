@@ -79,7 +79,7 @@ function WelcomePage() {
           <button
             type="button"
             onClick={dismissHint}
-            className="animate-rise-in absolute right-0 bottom-full mb-3 flex items-center gap-1.5 rounded-2xl bg-primary px-3 py-2 text-xs text-primary-foreground shadow-lg"
+            className="animate-rise-in absolute right-0 bottom-full z-20 mb-3 flex items-center gap-1.5 rounded-2xl bg-primary px-3 py-2 text-xs text-primary-foreground shadow-lg"
           >
             {t("lang.hint")}
             <span className="absolute top-full right-5 -mt-1 size-2.5 rotate-45 rounded-[2px] bg-primary" />
