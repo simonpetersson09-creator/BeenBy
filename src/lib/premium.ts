@@ -86,3 +86,21 @@ export async function openSubscriptionManagement(): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Localised price string straight from StoreKit (e.g. "19,00 kr").
+ * Never hard-coded: returns undefined when StoreKit isn't available, and the
+ * paywall then simply shows no price.
+ */
+export async function getPremiumPrice(
+  productId: string = PREMIUM_PRODUCT_ID,
+): Promise<string | undefined> {
+  if (!isStoreKitAvailable()) return undefined;
+  try {
+    const info = await BeenbyStoreKit.getProductInfo?.({ productId });
+    return info?.displayPrice;
+  } catch (error) {
+    console.warn("[premium] getProductInfo unavailable", error);
+    return undefined;
+  }
+}
