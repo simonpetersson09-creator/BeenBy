@@ -132,9 +132,22 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
                 />
               </div>
             ) : null}
+            <div className="space-y-1.5">
+              <Label htmlFor="me" className="text-xs">
+                Vad heter du?
+              </Label>
+              <Input
+                id="me"
+                value={myName}
+                maxLength={60}
+                onChange={(e) => setMyName(e.target.value)}
+                placeholder="Ditt namn"
+                className="h-12 rounded-2xl text-base"
+              />
+            </div>
             <Button
               className="h-12 w-full rounded-2xl text-sm"
-              disabled={personName.trim().length < 1}
+              disabled={personName.trim().length < 1 || myName.trim().length < 1}
               onClick={() => setStep(1)}
             >
               Fortsätt <ArrowRight className="size-4" />
@@ -168,38 +181,6 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
         ) : null}
 
         {step === 2 ? (
-          <>
-            <div className="space-y-1">
-              <h1 className="text-2xl leading-snug">Vad heter du?</h1>
-              <p className="text-sm text-muted-foreground">
-                Så att familjen ser vem som varit på besök.
-              </p>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="me" className="text-xs">
-                Ditt namn
-              </Label>
-              <Input
-                id="me"
-                value={myName}
-                autoFocus
-                maxLength={60}
-                onChange={(e) => setMyName(e.target.value)}
-                placeholder="Simon"
-                className="h-12 rounded-2xl text-base"
-              />
-            </div>
-            <Button
-              className="h-12 w-full rounded-2xl text-sm"
-              disabled={myName.trim().length < 1}
-              onClick={() => setStep(3)}
-            >
-              Fortsätt <ArrowRight className="size-4" />
-            </Button>
-          </>
-        ) : null}
-
-        {step === 3 ? (
           <>
             <div className="space-y-1">
               <h1 className="text-2xl leading-snug">Välj din färg</h1>
