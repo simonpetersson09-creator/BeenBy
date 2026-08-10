@@ -33,11 +33,20 @@ export type RestoreResult = {
   message?: string;
 };
 
+export type ProductInfo = {
+  productId: string;
+  /** Localised price from StoreKit, e.g. "19,00 kr". */
+  displayPrice?: string;
+  title?: string;
+};
+
 export interface BeenbyStoreKitPlugin {
   getSubscriptionStatus(): Promise<SubscriptionStatus>;
   purchasePremium(options?: { productId?: string }): Promise<PurchaseResult>;
   restorePurchases(): Promise<RestoreResult>;
   manageSubscription(): Promise<void>;
+  /** Optional: older builds of the native plugin may not implement this. */
+  getProductInfo?(options?: { productId?: string }): Promise<ProductInfo>;
 }
 
 export const BeenbyStoreKit = registerPlugin<BeenbyStoreKitPlugin>(STOREKIT_PLUGIN_NAME);
