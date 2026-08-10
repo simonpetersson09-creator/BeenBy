@@ -117,13 +117,13 @@
   }
 
   html {
-    background-color: var(--color-background);
+    background-color: #afa9a6;
     color-scheme: light;
     min-height: 100%;
   }
 
   body {
-    background-color: var(--color-background);
+    background-color: #afa9a6;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -132,10 +132,21 @@
     min-height: 100dvh;
   }
 
+  /* Täcker hela viewporten så överscroll aldrig visar en mörkare yta */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -100vh 0;
+    background-color: #afa9a6;
+    z-index: -1;
+    pointer-events: none;
+  }
+
   body > div:first-child {
-    background-color: var(--color-background);
+    background-color: transparent;
     min-height: 100dvh;
   }
+
 
 
   h1,

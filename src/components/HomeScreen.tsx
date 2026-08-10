@@ -303,9 +303,6 @@ export function HomeScreen({
             <span className="size-3 rounded-full bg-foreground/[0.07]" />
             Tom = inget besök
           </span>
-          <span className="w-full text-center text-[0.65rem] text-muted-foreground/80">
-            Färgen visar vem i familjen det är.
-          </span>
         </div>
       </section>
 
