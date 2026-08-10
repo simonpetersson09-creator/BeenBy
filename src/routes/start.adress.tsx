@@ -128,6 +128,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           step={1}
           title={t("adress.s1.title")}
           hint={t("adress.s1.hint")}
+          optional={t("common.optional")}
         />
         <div className="space-y-1.5">
           <Label htmlFor="address" className="sr-only">
@@ -234,6 +235,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           step={2}
           title={t("adress.s2.title")}
           hint={t("adress.s2.hint")}
+          optional={t("common.optional")}
         />
         <Button
           variant="secondary"
@@ -260,7 +262,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
             void navigate({ to: "/start/farg" });
           }}
         >
-          {coords ? t("common.continue") : t("common.skip")} <ArrowRight className="size-4" />
+          {t("common.continue")} <ArrowRight className="size-4" />
         </Button>
         <button
           type="button"
@@ -274,14 +276,31 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
   );
 }
 
-function SectionHeader({ step, title, hint }: { step: number; title: string; hint: string }) {
+function SectionHeader({
+  step,
+  title,
+  hint,
+  optional,
+}: {
+  step: number;
+  title: string;
+  hint: string;
+  optional?: string;
+}) {
   return (
     <div className="flex items-start gap-2.5">
       <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
         {step}
       </span>
       <div className="min-w-0 space-y-0.5">
-        <p className="text-sm leading-none font-medium text-foreground">{title}</p>
+        <p className="flex items-center gap-2 text-sm leading-none font-medium text-foreground">
+          {title}
+          {optional ? (
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-normal text-muted-foreground">
+              {optional}
+            </span>
+          ) : null}
+        </p>
         <p className="text-xs text-muted-foreground">{hint}</p>
       </div>
     </div>
