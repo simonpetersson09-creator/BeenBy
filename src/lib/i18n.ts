@@ -56,6 +56,7 @@ type Dict = Record<string, string>;
 
 const sv: Dict = {
   "lang.label": "Språk",
+  "lang.hint": "Byt språk här",
 
   "welcome.title": "Har någon varit hos mamma eller pappa? ❤️",
   "welcome.sub": "BeenBy hjälper familjen att hålla koll på besöken.",
@@ -123,6 +124,7 @@ const sv: Dict = {
 
 const en: Dict = {
   "lang.label": "Language",
+  "lang.hint": "Change language here",
   "welcome.title": "Has anyone visited mum or dad? ❤️",
   "welcome.sub": "BeenBy helps the family keep track of visits.",
   "welcome.p1": "See when someone last visited",
@@ -184,6 +186,7 @@ const en: Dict = {
 
 const de: Dict = {
   "lang.label": "Sprache",
+  "lang.hint": "Sprache hier ändern",
   "welcome.title": "War jemand bei Mama oder Papa? ❤️",
   "welcome.sub": "BeenBy hilft der Familie, Besuche im Blick zu behalten.",
   "welcome.p1": "Sieh, wann zuletzt jemand da war",
@@ -245,6 +248,7 @@ const de: Dict = {
 
 const da: Dict = {
   "lang.label": "Sprog",
+  "lang.hint": "Skift sprog her",
   "welcome.title": "Har nogen været hos mor eller far? ❤️",
   "welcome.sub": "BeenBy hjælper familien med at holde styr på besøgene.",
   "welcome.p1": "Se hvornår nogen sidst var på besøg",
@@ -306,6 +310,7 @@ const da: Dict = {
 
 const fi: Dict = {
   "lang.label": "Kieli",
+  "lang.hint": "Vaihda kieli tästä",
   "welcome.title": "Onko joku käynyt äidin tai isän luona? ❤️",
   "welcome.sub": "BeenBy auttaa perhettä pitämään kirjaa vierailuista.",
   "welcome.p1": "Näe, milloin joku kävi viimeksi",
@@ -367,6 +372,7 @@ const fi: Dict = {
 
 const es: Dict = {
   "lang.label": "Idioma",
+  "lang.hint": "Cambia el idioma aquí",
   "welcome.title": "¿Alguien ha visitado a mamá o papá? ❤️",
   "welcome.sub": "BeenBy ayuda a la familia a llevar la cuenta de las visitas.",
   "welcome.p1": "Ve cuándo fue la última visita",
@@ -428,6 +434,7 @@ const es: Dict = {
 
 const fr: Dict = {
   "lang.label": "Langue",
+  "lang.hint": "Changer de langue ici",
   "welcome.title": "Quelqu'un est-il passé chez maman ou papa ? ❤️",
   "welcome.sub": "BeenBy aide la famille à suivre les visites.",
   "welcome.p1": "Voir la dernière visite",
