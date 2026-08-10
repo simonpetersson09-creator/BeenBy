@@ -26,24 +26,44 @@ export const emptyDraft: OnboardingDraft = {
   familyCode: "",
 };
 
+/**
+ * In-memory mirror so the draft survives even when localStorage is blocked
+ * (private mode, partitioned storage inside the preview iframe, ...).
+ */
+let memoryDraft: OnboardingDraft | null = null;
+
 export function getDraft(): OnboardingDraft {
   if (typeof window === "undefined") return emptyDraft;
   try {
     const raw = window.localStorage.getItem(KEY);
-    if (!raw) return emptyDraft;
-    return { ...emptyDraft, ...(JSON.parse(raw) as Partial<OnboardingDraft>) };
+    if (raw) {
+      const stored = { ...emptyDraft, ...(JSON.parse(raw) as Partial<OnboardingDraft>) };
+      memoryDraft = stored;
+      return stored;
+    }
   } catch {
-    return emptyDraft;
+    // ignore – fall back to the in-memory draft below
   }
+  return memoryDraft ?? emptyDraft;
 }
 
 export function patchDraft(patch: Partial<OnboardingDraft>) {
   if (typeof window === "undefined") return;
   const next = { ...getDraft(), ...patch };
-  window.localStorage.setItem(KEY, JSON.stringify(next));
+  memoryDraft = next;
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(next));
+  } catch {
+    // storage unavailable – the in-memory draft keeps the flow going
+  }
 }
 
 export function clearDraft() {
   if (typeof window === "undefined") return;
-  window.localStorage.removeItem(KEY);
+  memoryDraft = null;
+  try {
+    window.localStorage.removeItem(KEY);
+  } catch {
+    // ignore
+  }
 }
