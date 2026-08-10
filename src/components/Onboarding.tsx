@@ -195,24 +195,59 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
             <div className="space-y-1">
               <h1 className="text-2xl leading-snug">Var bor {personName.trim()}?</h1>
               <p className="text-sm text-muted-foreground">
-                Platsen används bara som referenspunkt när du är på besök. Ingen i familjen kan se var
-                du befinner dig.
+                Ange adressen som utgångspunkt. Ingen i familjen kan se var du befinner dig.
               </p>
             </div>
-            <Button
-              variant="secondary"
-              className="h-12 w-full rounded-2xl text-sm"
-              onClick={useCurrentLocation}
-              disabled={locating}
-            >
-              {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />}
-              {coords ? "Platsen är sparad" : "Använd min nuvarande plats"}
-            </Button>
+            <div className="space-y-1.5">
+              <Label htmlFor="address" className="text-xs">
+                Adress
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="address"
+                  value={address}
+                  maxLength={200}
+                  onChange={(e) => setAddress(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") void lookupAddress();
+                  }}
+                  placeholder="Storgatan 1, Stockholm"
+                  className="h-12 rounded-2xl text-base"
+                />
+                <Button
+                  variant="secondary"
+                  className="h-12 shrink-0 rounded-2xl px-4"
+                  onClick={() => void lookupAddress()}
+                  disabled={searching || address.trim().length < 3}
+                  aria-label="Sök adress"
+                >
+                  {searching ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />}
+                </Button>
+              </div>
+              {resolvedAddress ? (
+                <p className="text-xs text-muted-foreground">{resolvedAddress}</p>
+              ) : null}
+            </div>
+            <div className="space-y-1.5">
+              <Button
+                variant="secondary"
+                className="h-12 w-full rounded-2xl text-sm"
+                onClick={useCurrentLocation}
+                disabled={locating}
+              >
+                {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />}
+                Använd min nuvarande plats
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                Används bara för att du ska kunna få en notis när du varit på besök.
+              </p>
+            </div>
             <Button className="h-12 w-full rounded-2xl text-sm" onClick={() => setStep(2)}>
               {coords ? "Fortsätt" : "Hoppa över"} <ArrowRight className="size-4" />
             </Button>
           </>
         ) : null}
+
 
         {step === 2 ? (
           <>
