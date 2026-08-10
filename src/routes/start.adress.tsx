@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, Loader2, MapPin, Search } from "lucide-react";
+import { ArrowRight, Check, Loader2, MapPin, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { StartShell } from "@/components/onboarding/StartShell";
@@ -9,6 +9,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { geocodeAddress } from "@/lib/geocode.functions";
 import { patchDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
+
+type GeocodeHit = {
+  lat: number;
+  lng: number;
+  label: string;
+  title: string;
+  subtitle: string;
+  precise: boolean;
+};
 
 export const Route = createFileRoute("/start/adress")({
   ssr: false,
@@ -42,6 +51,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     draft.lat != null && draft.lng != null ? { lat: draft.lat, lng: draft.lng } : null,
   );
+  const [results, setResults] = useState<GeocodeHit[]>([]);
   const [searching, setSearching] = useState(false);
   const [locating, setLocating] = useState(false);
 
@@ -50,21 +60,24 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
     if (query.length < 3) return;
     setSearching(true);
     try {
-      const hit = await geocodeAddress({ data: { query } });
-      if (!hit) {
-        setResolvedAddress(null);
-        toast.error("Hittade ingen adress. Prova att skriva gata, nummer och ort.");
+      const hits = await geocodeAddress({ data: { query } });
+      setResults(hits);
+      if (hits.length === 0) {
+        toast.error("Hittade ingen adress. Prova gata, nummer och ort.");
         return;
       }
-      setCoords({ lat: hit.lat, lng: hit.lng });
-      setResolvedAddress(hit.label);
-      toast.success("Adressen är sparad som utgångspunkt.");
+      if (hits.length === 1) selectHit(hits[0]!);
     } catch (error) {
       console.error(error);
       toast.error("Adressökningen misslyckades. Försök igen.");
     } finally {
       setSearching(false);
     }
+  }
+
+  function selectHit(hit: GeocodeHit) {
+    setCoords({ lat: hit.lat, lng: hit.lng });
+    setResolvedAddress(hit.label);
   }
 
   function useCurrentLocation() {
@@ -123,7 +136,47 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
             {searching ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />}
           </Button>
         </div>
-        {resolvedAddress ? <p className="text-xs text-muted-foreground">{resolvedAddress}</p> : null}
+        <p className="text-xs text-muted-foreground">
+          Det räcker med gata och ort – appen använder en radie runt hemmet, inte en exakt punkt.
+        </p>
+        {results.length > 0 ? (
+          <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+            {results.map((hit) => {
+              const selected = resolvedAddress === hit.label;
+              return (
+                <li key={hit.label}>
+                  <button
+                    type="button"
+                    onClick={() => selectHit(hit)}
+                    className="flex w-full items-center gap-3 px-3 py-2.5 text-left"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm">{hit.title}</span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {hit.subtitle || hit.label}
+                        {hit.precise ? "" : " · ungefärlig plats"}
+                      </span>
+                    </span>
+                    {selected ? <Check className="size-4 shrink-0 text-primary" /> : null}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
+        {coords && resolvedAddress ? (
+          <div className="space-y-1.5 rounded-2xl border border-primary/40 p-2">
+            <iframe
+              title="Karta över vald adress"
+              className="h-36 w-full rounded-xl border-0"
+              loading="lazy"
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng - 0.004}%2C${coords.lat - 0.002}%2C${coords.lng + 0.004}%2C${coords.lat + 0.002}&layer=mapnik&marker=${coords.lat}%2C${coords.lng}`}
+            />
+            <p className="px-1 text-xs text-muted-foreground">
+              Stämmer kartan ungefär? Då är det tillräckligt exakt.
+            </p>
+          </div>
+        ) : null}
       </div>
       <div className="space-y-1.5">
         <Button
