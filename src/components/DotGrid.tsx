@@ -51,7 +51,7 @@ export function DotGrid({
 
   return (
     <div>
-      <div className="mb-4 grid grid-cols-7 gap-x-1">
+      <div className="mb-2 grid grid-cols-7 gap-x-1">
         {WEEKDAY_LABELS.map((label, i) => (
           <div
             key={i}
@@ -61,7 +61,7 @@ export function DotGrid({
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-x-1 gap-y-3">
+      <div className="grid grid-cols-7 gap-x-0.5 gap-y-1.5">
         {days.map((d, index) => {
           const isToday = d.day === today;
           const isFuture = d.day > today;
@@ -82,19 +82,19 @@ export function DotGrid({
               aria-label={label}
               aria-current={isToday ? "date" : undefined}
               className={cn(
-                "group flex min-h-11 items-center justify-center rounded-2xl transition",
+                "group flex min-h-9 items-center justify-center rounded-xl transition",
                 "active:scale-90",
                 isFuture && !isToday && !hasPlanned && "opacity-60",
               )}
             >
-              <span className="relative flex size-10 items-center justify-center">
+              <span className="relative flex size-8 items-center justify-center">
                 {isToday ? (
                   <span className="pointer-events-none absolute inset-0 animate-breathe rounded-full border border-primary/50" />
                 ) : null}
 
                 <span
                   className={cn(
-                    "animate-dot-pop block size-8 rounded-full transition",
+                    "animate-dot-pop block size-7 rounded-full transition",
                     "group-hover:scale-105",
                     !hasDone && !hasPlanned && "bg-foreground/[0.07]",
                     hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.18)]",
