@@ -227,8 +227,19 @@ export function HomeScreen({
           <Button variant="ghost" size="icon" aria-label="Bjud in" onClick={invite}>
             <Share2 className="size-5" />
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Inställningar"
+            onClick={() => setSettingsOpen(true)}
+          >
+            <Settings className="size-5" />
+          </Button>
         </div>
       </header>
+
+      <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
+
 
       {!online || pending.length > 0 ? (
         <div className="mb-4 flex items-center gap-2 rounded-2xl bg-secondary px-4 py-3 text-sm">
