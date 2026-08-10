@@ -53,6 +53,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
     draft.lat != null && draft.lng != null ? { lat: draft.lat, lng: draft.lng } : null,
   );
   const [results, setResults] = useState<GeocodeHit[]>([]);
+  const [mapOpen, setMapOpen] = useState(false);
   const [searching, setSearching] = useState(false);
   const [locating, setLocating] = useState(false);
 
@@ -79,6 +80,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
   function selectHit(hit: GeocodeHit) {
     setCoords({ lat: hit.lat, lng: hit.lng });
     setResolvedAddress(hit.label);
+    setMapOpen(true);
   }
 
   function useCurrentLocation() {
@@ -166,16 +168,33 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           </ul>
         ) : null}
         {coords && resolvedAddress ? (
-          <div className="space-y-1.5 rounded-2xl border border-primary/40 p-2">
-            <PinMap
-              lat={coords.lat}
-              lng={coords.lng}
-              onChange={(next) => setCoords(next)}
-            />
-            <p className="px-1 text-xs text-muted-foreground">
-              Dra i pricken eller tryck på kartan för att justera platsen exakt.
-            </p>
-          </div>
+          mapOpen ? (
+            <div className="space-y-2 rounded-2xl border border-primary/40 p-2">
+              <PinMap lat={coords.lat} lng={coords.lng} onChange={(next) => setCoords(next)} />
+              <p className="px-1 text-xs text-muted-foreground">
+                Dra i pricken eller tryck på kartan för att justera platsen exakt.
+              </p>
+              <Button
+                className="h-11 w-full rounded-2xl text-sm"
+                onClick={() => {
+                  setMapOpen(false);
+                  toast.success("Platsen är sparad.");
+                }}
+              >
+                <Check className="size-4" /> Klar
+              </Button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setMapOpen(true)}
+              className="flex w-full items-center gap-2 rounded-2xl border border-primary/40 px-3 py-2.5 text-left text-xs text-muted-foreground"
+            >
+              <MapPin className="size-4 shrink-0 text-primary" />
+              <span className="min-w-0 flex-1 truncate text-foreground">{resolvedAddress}</span>
+              <span className="shrink-0 underline underline-offset-4">Justera</span>
+            </button>
+          )
         ) : null}
       </div>
       <div className="space-y-1.5">
