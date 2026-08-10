@@ -238,7 +238,7 @@ export function HomeScreen({
           </h1>
           <span className="mt-2 block h-px w-10 bg-primary/30" />
         </div>
-        <div className="flex shrink-0 gap-1">
+        <div className="relative flex shrink-0 gap-1">
           <Button variant="ghost" size="icon" aria-label="Familjen" onClick={() => setFamilyOpen(true)}>
             <Users className="size-5" />
           </Button>
@@ -253,7 +253,22 @@ export function HomeScreen({
           >
             <Settings className="size-5" />
           </Button>
+
+          {members.length === 1 ? (
+            <button
+              type="button"
+              onClick={invite}
+              className="absolute right-16 top-full z-20 mt-2 w-56 animate-in fade-in slide-in-from-top-1 rounded-2xl bg-primary px-3 py-2 text-left text-[0.7rem] leading-snug text-primary-foreground shadow-lift"
+            >
+              <span
+                aria-hidden
+                className="absolute -top-1.5 right-4 size-3 rotate-45 rounded-[2px] bg-primary"
+              />
+              Bjud in dina syskon här – så ser ni varandras besök direkt.
+            </button>
+          ) : null}
         </div>
+
       </header>
 
 
@@ -342,17 +357,8 @@ export function HomeScreen({
       </section>
 
 
-      {members.length === 1 ? (
-        <button
-          type="button"
-          onClick={invite}
-          className="mt-5 w-full rounded-3xl border border-dashed p-4 text-left text-xs text-muted-foreground"
-        >
-          Du är ensam här just nu.{" "}
-          <span className="font-medium text-foreground">Bjud in dina syskon</span> så ser ni varandras
-          besök i realtid.
-        </button>
-      ) : null}
+
+
 
       <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-6">
         <Button
