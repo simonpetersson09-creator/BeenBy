@@ -57,7 +57,6 @@ export function HomeScreen({
   }, []);
 
   const me = members.find((m) => m.user_id === userId);
-  const myColor = colorById(me?.personal_color);
   const days = useMemo(() => buildDays(tz, visits, planned, members), [tz, visits, planned, members]);
   const today = todayKey(tz);
   const myVisitToday = visits.find((v) => v.user_id === userId && v.local_day === today);
