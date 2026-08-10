@@ -123,8 +123,8 @@ export function DotGrid({
                             "animate-dot-pop block size-6 rounded-full transition",
 
                             "group-hover:scale-105",
-                            !hasDone && !hasPlanned && "bg-foreground/[0.07]",
-                            hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.18)]",
+                            !hasDone && !hasPlanned && "bg-white/45 ring-1 ring-foreground/[0.06]",
+                            hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.10)]",
                           )}
                           style={{
                             animationDelay: `${index * 12}ms`,
