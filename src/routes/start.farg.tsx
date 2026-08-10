@@ -7,6 +7,7 @@ import { ColorPicker } from "@/components/ColorPicker";
 import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { useT } from "@/lib/i18n";
 import { clearDraft, patchDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
 import { saveRecovery } from "@/lib/recovery";
 
@@ -37,6 +38,7 @@ function ColorPage() {
 
 function ColorStep({ userId, draft }: { userId: string; draft: OnboardingDraft }) {
   const navigate = useNavigate();
+  const t = useT();
   const [color, setColor] = useState<string | null>(draft.color);
   const [saving, setSaving] = useState(false);
 
@@ -79,7 +81,7 @@ function ColorStep({ userId, draft }: { userId: string; draft: OnboardingDraft }
       void navigate({ to: "/" });
     } catch (error) {
       console.error(error);
-      toast.error("Det gick inte att skapa familjecirkeln. Försök igen.");
+      toast.error(t("farg.error"));
     } finally {
       setSaving(false);
     }
@@ -88,8 +90,8 @@ function ColorStep({ userId, draft }: { userId: string; draft: OnboardingDraft }
   return (
     <>
       <div className="space-y-1">
-        <h1 className="text-2xl leading-snug">Välj din färg</h1>
-        <p className="text-sm text-muted-foreground">Din färg visar dina besök i familjens översikt.</p>
+        <h1 className="text-2xl leading-snug">{t("farg.title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("farg.sub")}</p>
       </div>
       <ColorPicker
         value={color}
@@ -104,14 +106,14 @@ function ColorStep({ userId, draft }: { userId: string; draft: OnboardingDraft }
         onClick={() => void create()}
       >
         {saving ? <Loader2 className="size-4 animate-spin" /> : null}
-        Skapa familjecirkel
+        {t("farg.create")}
       </Button>
       <button
         type="button"
         className="mx-auto block text-sm text-muted-foreground underline underline-offset-4"
         onClick={() => void navigate({ to: "/start/adress" })}
       >
-        Tillbaka
+        {t("common.back")}
       </button>
     </>
   );
