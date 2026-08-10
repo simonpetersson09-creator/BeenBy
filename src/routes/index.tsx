@@ -36,7 +36,11 @@ function Index() {
   const navigate = useNavigate();
   const { user, loading } = useSession();
   const { data, isLoading, refetch } = useCircleData(user?.id);
-  const [recovering, setRecovering] = useState(false);
+  // Start in "recovering" mode when a saved family exists, so we never
+  // bounce to onboarding before the silent rejoin has been attempted.
+  const [recovering, setRecovering] = useState(() =>
+    typeof window === "undefined" ? false : Boolean(getRecovery()),
+  );
   const recoveryTried = useRef(false);
 
   // Zero friction: a backend identity is created silently, no signup screen.
@@ -50,7 +54,10 @@ function Index() {
   useEffect(() => {
     if (loading || !user || isLoading || data || recoveryTried.current) return;
     const saved = getRecovery();
-    if (!saved) return;
+    if (!saved) {
+      setRecovering(false);
+      return;
+    }
     recoveryTried.current = true;
     setRecovering(true);
     void (async () => {
@@ -68,8 +75,6 @@ function Index() {
   // No circle yet: the onboarding lives on its own pages.
   useEffect(() => {
     if (loading || !user || isLoading || recovering || data) return;
-    if (recoveryTried.current && recovering) return;
-    if (getRecovery() && !recoveryTried.current) return;
     void navigate({ to: "/start/valkommen", replace: true });
   }, [loading, user, isLoading, recovering, data, navigate]);
 
