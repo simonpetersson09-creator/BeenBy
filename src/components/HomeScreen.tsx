@@ -321,8 +321,7 @@ export function HomeScreen({
           size="lg"
           onClick={handleImHere}
           disabled={busy || !person}
-          className="h-16 w-full rounded-3xl text-lg shadow-lift"
-          style={{ backgroundColor: myColor.hex, color: myColor.on }}
+          className="h-16 w-full rounded-3xl bg-primary text-lg text-primary-foreground shadow-lift hover:bg-primary/90"
         >
           {busy ? <Loader2 className="size-5 animate-spin" /> : null}
           Jag är här
