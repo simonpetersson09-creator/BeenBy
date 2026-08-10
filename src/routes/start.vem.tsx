@@ -66,6 +66,7 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
               onClick={() => {
                 setPersonName(p.value);
                 setCustomMode(false);
+                patchDraft({ personName: p.value });
               }}
             >
               {t(p.key)}
@@ -77,6 +78,7 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
             onClick={() => {
               setCustomMode(true);
               setPersonName("");
+              patchDraft({ personName: "" });
             }}
           >
             {t("vem.custom")}
