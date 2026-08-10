@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CloudOff, Loader2, Plus, RefreshCw, Share2, Users } from "lucide-react";
+import { CloudOff, Loader2, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
 import { toast } from "sonner";
 
 import { DayDetail } from "@/components/DayDetail";
 import { DotGrid, buildDays } from "@/components/DotGrid";
+import { SettingsDialog } from "@/components/SettingsDialog";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,7 +40,10 @@ export function HomeScreen({
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [planOpen, setPlanOpen] = useState(false);
   const [familyOpen, setFamilyOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmSecond, setConfirmSecond] = useState(false);
+
+
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState<PendingVisit[]>([]);
   const [showLegend, setShowLegend] = useState(false);
@@ -222,8 +227,19 @@ export function HomeScreen({
           <Button variant="ghost" size="icon" aria-label="Bjud in" onClick={invite}>
             <Share2 className="size-5" />
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Inställningar"
+            onClick={() => setSettingsOpen(true)}
+          >
+            <Settings className="size-5" />
+          </Button>
         </div>
       </header>
+
+      <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
+
 
       {!online || pending.length > 0 ? (
         <div className="mb-4 flex items-center gap-2 rounded-2xl bg-secondary px-4 py-3 text-sm">
@@ -381,16 +397,8 @@ export function HomeScreen({
           <Button variant="secondary" className="h-12 rounded-2xl" onClick={invite}>
             <Share2 className="size-4" /> Bjud in någon
           </Button>
-          <Button
-            variant="ghost"
-            className="h-12 rounded-2xl"
-            onClick={async () => {
-              await supabase.auth.signOut();
-              window.location.href = "/";
-            }}
-          >
-            Logga ut
-          </Button>
+
+
         </DialogContent>
       </Dialog>
 

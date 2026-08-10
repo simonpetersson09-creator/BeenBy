@@ -112,11 +112,15 @@ export function JoinFlow({
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-6 px-6 py-10">
       <div className="space-y-2">
-        <h1 className="text-3xl">Gå med i {preview.person_name ?? preview.circle_name}s familjecirkel</h1>
+        <h1 className="text-3xl">
+          Du är inbjuden till {preview.person_name ?? preview.circle_name}s familj ❤️
+        </h1>
         <p className="text-muted-foreground">
-          Ni håller tillsammans koll på besöken hos {preview.person_name ?? preview.circle_name}.
+          Ni håller tillsammans koll på besöken hos {preview.person_name ?? preview.circle_name}. Du
+          behöver inget konto – skriv bara ditt namn och välj din färg.
         </p>
       </div>
+
 
       <div className="space-y-2">
         <Label htmlFor="join-name">Ditt namn</Label>

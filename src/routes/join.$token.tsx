@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 
 import { JoinFlow } from "@/components/JoinFlow";
 import { useSession } from "@/hooks/useSession";
+import { ensureUser } from "@/lib/auth";
 
 export const Route = createFileRoute("/join/$token")({
   ssr: false,
@@ -28,18 +29,14 @@ function JoinPage() {
   const { token } = Route.useParams();
   const { user, loading } = useSession();
   const navigate = useNavigate();
-  const [ready, setReady] = useState(false);
 
+  // No signup wall: the invited person gets a backend identity in the background.
   useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      navigate({ to: "/auth", search: { next: `/join/${token}` } as never });
-      return;
-    }
-    setReady(true);
-  }, [loading, user, navigate, token]);
+    if (loading || user) return;
+    void ensureUser();
+  }, [loading, user]);
 
-  if (!ready) {
+  if (loading || !user) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
         <Loader2 className="size-6 animate-spin text-muted-foreground" />
