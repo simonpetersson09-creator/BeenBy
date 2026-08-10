@@ -274,7 +274,10 @@ export function HomeScreen({
       <section className="rounded-[28px] border border-primary/40 bg-transparent p-6">
         <div className="mb-7 text-center">
           <h2 className="text-[1.4rem] leading-tight text-primary">Besöksöversikt</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Senaste 28 dagarna</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Två veckor bakåt, denna vecka och nästa
+          </p>
+
         </div>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
         {showLegend ? (
