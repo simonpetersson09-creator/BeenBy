@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
+import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import { useSession } from "@/hooks/useSession";
 import { ensureUser } from "@/lib/auth";
 import { getDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
