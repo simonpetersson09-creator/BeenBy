@@ -25,7 +25,7 @@ import { addDays, relativeLabel, todayKey } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import { dequeue, enqueue, getPending, newClientToken, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
-import { useAccess } from "@/lib/premiumStore";
+import { refreshTrialStatus, useAccess } from "@/lib/premiumStore";
 import { saveRecovery } from "@/lib/recovery";
 
 export function HomeScreen({
@@ -63,6 +63,12 @@ export function HomeScreen({
     window.addEventListener("pending-visits-changed", sync);
     return () => window.removeEventListener("pending-visits-changed", sync);
   }, []);
+
+  // The trial start is written server-side when the user joins/creates a
+  // circle — re-read it once we know the user is in a circle.
+  useEffect(() => {
+    void refreshTrialStatus();
+  }, [userId]);
 
   const me = members.find((m) => m.user_id === userId);
 
