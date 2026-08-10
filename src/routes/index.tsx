@@ -35,18 +35,21 @@ export const Route = createFileRoute("/")({
 function Index() {
   const navigate = useNavigate();
   const { user, loading } = useSession();
-  const { data, isLoading, refetch } = useCircleData(user?.id);
+  const { data, isLoading, error, refetch } = useCircleData(user?.id);
   // Start in "recovering" mode when a saved family exists, so we never
   // bounce to onboarding before the silent rejoin has been attempted.
   const [recovering, setRecovering] = useState(() =>
     typeof window === "undefined" ? false : Boolean(getRecovery()),
   );
+  const [authFailed, setAuthFailed] = useState(false);
   const recoveryTried = useRef(false);
 
   // Zero friction: a backend identity is created silently, no signup screen.
   useEffect(() => {
     if (loading || user) return;
-    void ensureUser();
+    void ensureUser().then((u) => {
+      if (!u) setAuthFailed(true);
+    });
   }, [loading, user]);
 
   // If the anonymous session was lost, silently rejoin the saved family
@@ -61,22 +64,49 @@ function Index() {
     recoveryTried.current = true;
     setRecovering(true);
     void (async () => {
-      const { error } = await supabase.rpc("join_circle", {
+      const { error: joinError } = await supabase.rpc("join_circle", {
         _name: saved.name,
         _color: saved.color,
         _code: saved.code,
       });
-      if (error) console.error(error);
+      if (joinError) console.error(joinError);
       await refetch();
       setRecovering(false);
     })();
   }, [loading, user, isLoading, data, refetch]);
 
-  // No circle yet: the onboarding lives on its own pages.
+  // No circle yet: the onboarding lives on its own pages. A failed load is
+  // NOT the same as "no circle" – never bounce to onboarding on an error.
   useEffect(() => {
-    if (loading || !user || isLoading || recovering || data) return;
+    if (loading || !user || isLoading || recovering || data || error) return;
     void navigate({ to: "/start/valkommen", replace: true });
-  }, [loading, user, isLoading, recovering, data, navigate]);
+  }, [loading, user, isLoading, recovering, data, error, navigate]);
+
+  if (error || authFailed) {
+    return (
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-8 text-center">
+        <p className="text-sm text-muted-foreground">
+          Kunde inte hämta din familjecirkel just nu. Kontrollera uppkopplingen.
+        </p>
+        <Button
+          onClick={() => {
+            setAuthFailed(false);
+            recoveryTried.current = false;
+            void refetch();
+          }}
+        >
+          Försök igen
+        </Button>
+        <button
+          type="button"
+          className="text-xs underline text-muted-foreground"
+          onClick={() => void navigate({ to: "/start/kod" })}
+        >
+          Ange familjekod
+        </button>
+      </div>
+    );
+  }
 
   if (loading || !user || isLoading || recovering || !data) {
     return (
@@ -88,3 +118,4 @@ function Index() {
 
   return <HomeScreen data={data} userId={user.id} refresh={() => void refetch()} />;
 }
+
