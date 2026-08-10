@@ -37,7 +37,7 @@ export function JoinFlow({
     let active = true;
     setLoading(true);
     supabase
-      .rpc("preview_invite", { _token: token, _code: code })
+      .rpc("preview_invite", { ...(token ? { _token: token } : {}), ...(code ? { _code: code } : {}) })
       .then(({ data, error }) => {
         if (!active) return;
         if (error) {
@@ -65,8 +65,8 @@ export function JoinFlow({
     const { error } = await supabase.rpc("join_circle", {
       _name: name.trim(),
       _color: color,
-      _token: token,
-      _code: code,
+      ...(token ? { _token: token } : {}),
+      ...(code ? { _code: code } : {}),
     });
     setSaving(false);
     if (error) {
