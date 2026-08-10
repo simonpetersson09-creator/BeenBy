@@ -16,6 +16,7 @@ import {
   manageSubscription,
   purchasePremium,
   refreshPremiumStatus,
+  refreshTrialStatus,
   restorePurchases,
   usePremium,
 } from "@/lib/premiumStore";
@@ -28,13 +29,14 @@ export function SettingsDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const t = useT();
-  const { isPremium, loading: isLoadingPremium } = usePremium();
+  const { isPremium, loading: isLoadingPremium, isTrialActive, trialDaysLeft } = usePremium();
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
 
   useEffect(() => {
     if (!open) return;
     void refreshPremiumStatus();
+    void refreshTrialStatus();
   }, [open]);
 
   async function handlePurchase() {
@@ -91,8 +93,15 @@ export function SettingsDialog({
           <p className="text-xs text-muted-foreground">
             {isPremium
               ? t("settings.premiumActive")
-              : t("settings.premiumInactive")}
+              : isTrialActive
+                ? trialDaysLeft === 1
+                  ? t("settings.trialLeftOne")
+                  : t("settings.trialLeft", { n: String(trialDaysLeft) })
+                : t("settings.trialEnded")}
           </p>
+          {isPremium ? null : (
+            <p className="text-xs text-muted-foreground">{t("settings.premiumInactive")}</p>
+          )}
 
           <Button
             className="h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground hover:bg-primary/90"

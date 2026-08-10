@@ -22,7 +22,8 @@ public class BeenbyStoreKitPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "getSubscriptionStatus", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "purchasePremium", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "restorePurchases", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "manageSubscription", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "manageSubscription", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getProductInfo", returnType: CAPPluginReturnPromise)
     ]
 
     private let store = BeenbyStore.shared
@@ -44,6 +45,20 @@ public class BeenbyStoreKitPlugin: CAPPlugin, CAPBridgedPlugin {
         Task {
             let status = await store.currentStatus()
             call.resolve(status.toJS())
+        }
+    }
+
+    // MARK: - getProductInfo
+
+    @objc func getProductInfo(_ call: CAPPluginCall) {
+        guard #available(iOS 15.0, *) else {
+            call.resolve(["productId": call.getString("productId") ?? ""])
+            return
+        }
+        let productId = call.getString("productId")
+        Task {
+            let info = await store.productInfo(productId: productId)
+            call.resolve(info)
         }
     }
 

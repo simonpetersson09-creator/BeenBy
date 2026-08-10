@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CloudOff, Loader2, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
+import { CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
 import { toast } from "sonner";
 
 
 import { DayDetail } from "@/components/DayDetail";
 import { DotGrid, buildDays } from "@/components/DotGrid";
 import { InviteSheet } from "@/components/InviteSheet";
+import { Paywall } from "@/components/Paywall";
 import { SettingsDialog } from "@/components/SettingsDialog";
 
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { addDays, relativeLabel, todayKey } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import { dequeue, enqueue, getPending, newClientToken, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
+import { refreshTrialStatus, useAccess } from "@/lib/premiumStore";
 import { saveRecovery } from "@/lib/recovery";
 
 export function HomeScreen({
@@ -47,6 +49,9 @@ export function HomeScreen({
   const [confirmSecond, setConfirmSecond] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const { hasAccess } = useAccess();
+  const locked = !hasAccess;
 
 
   const [busy, setBusy] = useState(false);
@@ -58,6 +63,12 @@ export function HomeScreen({
     window.addEventListener("pending-visits-changed", sync);
     return () => window.removeEventListener("pending-visits-changed", sync);
   }, []);
+
+  // The trial start is written server-side when the user joins/creates a
+  // circle — re-read it once we know the user is in a circle.
+  useEffect(() => {
+    void refreshTrialStatus();
+  }, [userId]);
 
   const me = members.find((m) => m.user_id === userId);
 
@@ -166,6 +177,10 @@ export function HomeScreen({
   }
 
   function handleImHere() {
+    if (locked) {
+      setPaywallOpen(true);
+      return;
+    }
     if (myVisitToday) {
       setConfirmSecond(true);
       return;
@@ -278,6 +293,8 @@ export function HomeScreen({
 
       <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
 
+      <Paywall open={paywallOpen} onOpenChange={setPaywallOpen} />
+
       <InviteSheet
         open={inviteOpen}
         onOpenChange={setInviteOpen}
@@ -374,6 +391,8 @@ export function HomeScreen({
         >
           {busy ? (
             <Loader2 className="size-4 animate-spin" />
+          ) : locked ? (
+            <Lock className="size-4" />
           ) : (
             <MapPinCheckInside className="size-5" />
           )}
@@ -382,19 +401,31 @@ export function HomeScreen({
         <div className="mt-2 flex gap-2">
           <Button
             className="h-12 flex-1 rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
-            onClick={() => setPlanOpen(true)}
+            onClick={() => (locked ? setPaywallOpen(true) : setPlanOpen(true))}
+            aria-label={locked ? t("access.locked") : undefined}
           >
-            <Plus className="size-4" /> {t("home.plan")}
+            {locked ? <Lock className="size-4" /> : <Plus className="size-4" />} {t("home.plan")}
           </Button>
-          <Button
-            asChild
-            aria-label={t("home.chatAria")}
-            className="size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
-          >
-            <Link to="/chat">
+          {locked ? (
+            <Button
+              aria-label={t("access.locked")}
+              onClick={() => setPaywallOpen(true)}
+              className="relative size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+            >
               <MessageCircle className="size-5" />
-            </Link>
-          </Button>
+              <Lock className="absolute -right-0.5 -top-0.5 size-3.5 rounded-full bg-primary p-0.5 text-primary-foreground" />
+            </Button>
+          ) : (
+            <Button
+              asChild
+              aria-label={t("home.chatAria")}
+              className="size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+            >
+              <Link to="/chat">
+                <MessageCircle className="size-5" />
+              </Link>
+            </Button>
+          )}
 
         </div>
 
