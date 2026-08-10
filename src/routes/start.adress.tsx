@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowRight, Check, Loader2, MapPin, Search } from "lucide-react";
 import { toast } from "sonner";
 
+import { PinMap } from "@/components/onboarding/PinMap";
 import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -166,14 +167,13 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
         ) : null}
         {coords && resolvedAddress ? (
           <div className="space-y-1.5 rounded-2xl border border-primary/40 p-2">
-            <iframe
-              title="Karta över vald adress"
-              className="h-36 w-full rounded-xl border-0"
-              loading="lazy"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng - 0.004}%2C${coords.lat - 0.002}%2C${coords.lng + 0.004}%2C${coords.lat + 0.002}&layer=mapnik&marker=${coords.lat}%2C${coords.lng}`}
+            <PinMap
+              lat={coords.lat}
+              lng={coords.lng}
+              onChange={(next) => setCoords(next)}
             />
             <p className="px-1 text-xs text-muted-foreground">
-              Stämmer kartan ungefär? Då är det tillräckligt exakt.
+              Dra i pricken eller tryck på kartan för att justera platsen exakt.
             </p>
           </div>
         ) : null}
