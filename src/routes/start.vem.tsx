@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, KeyRound } from "lucide-react";
 
 import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
