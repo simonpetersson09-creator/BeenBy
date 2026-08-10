@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useT } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 
 export function SettingsDialog({
@@ -20,6 +21,7 @@ export function SettingsDialog({
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
+  const t = useT();
   const [premium, setPremium] = useState(false);
   const [restoring, setRestoring] = useState(false);
 
@@ -46,8 +48,8 @@ export function SettingsDialog({
         .eq("user_id", data.user.id)
         .maybeSingle();
       setPremium(ent?.is_active === true);
-      if (ent?.is_active) toast.success("Premium återställt.");
-      else toast.message("Inget köp hittades", { description: "Premium är inte aktivt än." });
+      if (ent?.is_active) toast.success(t("settings.restored"));
+      else toast.message(t("settings.noPurchase"), { description: t("settings.noPurchaseDesc") });
     }
     setRestoring(false);
   }
@@ -56,37 +58,37 @@ export function SettingsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="rounded-3xl sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl">Inställningar</DialogTitle>
-          <DialogDescription>Språk och prenumeration.</DialogDescription>
+          <DialogTitle className="text-xl">{t("settings.title")}</DialogTitle>
+          <DialogDescription>{t("settings.sub")}</DialogDescription>
         </DialogHeader>
 
         <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-4">
           <div>
-            <p className="font-medium">Språk</p>
-            <p className="text-xs text-muted-foreground">Gäller hela appen.</p>
+            <p className="font-medium">{t("settings.langTitle")}</p>
+            <p className="text-xs text-muted-foreground">{t("settings.langHint")}</p>
           </div>
           <LanguageSwitcher />
         </section>
 
         <section className="space-y-3 rounded-2xl bg-secondary/60 p-4">
           <p className="flex items-center gap-2 font-medium">
-            <Sparkles className="size-4" /> Premium
+            <Sparkles className="size-4" /> {t("settings.premium")}
           </p>
           <p className="text-xs text-muted-foreground">
             {premium
-              ? "Premium är aktivt för dig."
-              : "Premium är personligt och kommer som en prenumeration i App Store."}
+              ? t("settings.premiumActive")
+              : t("settings.premiumInactive")}
           </p>
 
           <Button
             className="h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground hover:bg-primary/90"
             onClick={() =>
-              toast.message("Premium kommer snart", {
-                description: "Köp aktiveras när prenumerationen är live i App Store.",
+              toast.message(t("settings.soon"), {
+                description: t("settings.soonDesc"),
               })
             }
           >
-            Starta premium
+            {t("settings.start")}
           </Button>
 
           <div className="flex gap-2">
@@ -96,17 +98,17 @@ export function SettingsDialog({
               onClick={restorePurchases}
             >
               {restoring ? <Loader2 className="size-4 animate-spin" /> : null}
-              Återställ köp
+              {t("settings.restore")}
             </Button>
             <Button
               className="h-11 flex-1 rounded-2xl bg-primary text-sm text-primary-foreground hover:bg-primary/90"
               onClick={() =>
-                toast.message("Hantera abonnemang", {
-                  description: "Detta öppnar App Store-prenumerationen i appen.",
+                toast.message(t("settings.manage"), {
+                  description: t("settings.manageDesc"),
                 })
               }
             >
-              Hantera abonnemang
+              {t("settings.manage")}
             </Button>
           </div>
         </section>

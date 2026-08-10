@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 
+import { useT } from "@/lib/i18n";
 import { MEMBER_COLORS } from "@/lib/palette";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ export function ColorPicker({
   onChange: (id: string) => void;
   taken?: string[];
 }) {
+  const t = useT();
   return (
     <div className="grid grid-cols-4 gap-3">
       {MEMBER_COLORS.map((c) => {
@@ -24,7 +26,7 @@ export function ColorPicker({
             disabled={isTaken}
             onClick={() => onChange(c.id)}
             aria-pressed={selected}
-            aria-label={`${c.label}${isTaken ? " (upptagen)" : ""}`}
+            aria-label={`${t(`color.${c.id}`)}${isTaken ? ` (${t("color.taken")})` : ""}`}
             className={cn(
               "flex flex-col items-center gap-1.5 rounded-2xl p-2 transition",
               isTaken ? "cursor-not-allowed opacity-35" : "hover:bg-secondary",
@@ -40,7 +42,7 @@ export function ColorPicker({
             >
               {selected ? <Check className="size-5" style={{ color: c.on }} strokeWidth={3} /> : null}
             </span>
-            <span className="text-xs text-muted-foreground">{isTaken ? "Upptagen" : c.label}</span>
+            <span className="text-xs text-muted-foreground">{isTaken ? t("color.taken") : t(`color.${c.id}`)}</span>
           </button>
         );
       })}

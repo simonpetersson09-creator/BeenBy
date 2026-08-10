@@ -1,4 +1,5 @@
-import { build28DayGrid, WEEKDAY_LABELS, shortLabel, todayKey, weekNumber } from "@/lib/dates";
+import { build28DayGrid, weekdayLabels, shortLabel, todayKey, weekNumber } from "@/lib/dates";
+import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import { cn } from "@/lib/utils";
 import type { Member, PlannedVisit, Visit } from "@/hooks/useCircleData";
@@ -16,7 +17,7 @@ export function buildDays(
   members: Member[],
 ): DayDots[] {
   const colorOf = (userId: string) => colorById(members.find((m) => m.user_id === userId)?.personal_color).hex;
-  const nameOf = (userId: string) => members.find((m) => m.user_id === userId)?.name ?? "Familjemedlem";
+  const nameOf = (userId: string) => members.find((m) => m.user_id === userId)?.name ?? "";
 
   return build28DayGrid(timeZone).map((day) => ({
     day,
@@ -47,6 +48,7 @@ export function DotGrid({
   timeZone: string;
   onSelect: (day: string) => void;
 }) {
+  const t = useT();
   const today = todayKey(timeZone);
   const weeks: DayDots[][] = [];
   for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
@@ -57,7 +59,7 @@ export function DotGrid({
         <div className="w-6 shrink-0" />
 
         <div className="grid flex-1 grid-cols-7 gap-x-1">
-          {WEEKDAY_LABELS.map((label, i) => (
+          {weekdayLabels().map((label, i) => (
             <div
               key={i}
               className="text-center text-[0.65rem] font-bold uppercase tracking-[0.18em] text-muted-foreground/70"
@@ -85,7 +87,8 @@ export function DotGrid({
                   isCurrentWeek ? "text-primary" : "text-muted-foreground/70",
                 )}
               >
-                v.{weekNumber(week[0]!.day)}
+                {t("grid.weekPrefix")}
+                {weekNumber(week[0]!.day)}
               </span>
               <div className="grid flex-1 grid-cols-7 gap-x-0.5">
 
@@ -98,8 +101,12 @@ export function DotGrid({
                   const hasPlanned = plannedColors.length > 0;
                   const label =
                     d.done.length + d.planned.length === 0
-                      ? `${shortLabel(d.day)}, inget besök`
-                      : `${shortLabel(d.day)}, ${d.done.length} genomförda, ${d.planned.length} planerade`;
+                      ? t("grid.ariaNone", { date: shortLabel(d.day) })
+                      : t("grid.ariaSome", {
+                          date: shortLabel(d.day),
+                          done: String(d.done.length),
+                          planned: String(d.planned.length),
+                        });
 
                   return (
                     <button
