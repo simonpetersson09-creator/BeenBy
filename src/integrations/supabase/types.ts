@@ -346,6 +346,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      generate_family_code: { Args: never; Returns: string }
       is_circle_creator: { Args: { _circle: string }; Returns: boolean }
       is_circle_member: { Args: { _circle: string }; Returns: boolean }
       join_circle: {
