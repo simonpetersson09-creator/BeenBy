@@ -71,7 +71,7 @@
 :root {
   --radius: 1.1rem;
   /* Warm greige brand background #AFA9A6 */
-  --background: oklch(0.716 0.006 60);
+  --background: oklch(0.73891 0.008156 48.617);
   /* Marine blue #193B55 */
   --foreground: oklch(0.324 0.055 245);
   --card: oklch(0.985 0.004 80);
@@ -118,6 +118,8 @@
 
   html {
     background-color: var(--color-background);
+    color-scheme: light;
+    min-height: 100%;
   }
 
   body {
@@ -125,6 +127,13 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    margin: 0;
+    min-height: 100%;
+    min-height: 100dvh;
+  }
+
+  body > div:first-child {
+    background-color: var(--color-background);
     min-height: 100dvh;
   }
 
