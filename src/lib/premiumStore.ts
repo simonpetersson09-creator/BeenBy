@@ -128,34 +128,53 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
 
 let trialInFlight: Promise<PremiumState> | null = null;
 
+type TrialRow = {
+  trial_started_at: string | null;
+  trial_ends_at: string | null;
+  trial_days_left: number | null;
+  is_trial_active: boolean | null;
+};
+
 /**
- * Read the server-stored trial start for the signed-in user.
- * Never writes anything — the timestamp is created by a database trigger the
+ * Ask the SERVER whether the free period is still active.
+ *
+ * `public.get_trial_status()` is a SECURITY DEFINER function that resolves the
+ * user from `auth.uid()` (no client-supplied id) and compares
+ * `profiles.trial_started_at + 30 days` against the database's own `now()`.
+ * Nothing is written — the timestamp is created once by a database trigger the
  * first time the user becomes a member of a family circle.
+ *
+ * On any failure (offline, no session, RPC error) we keep the previous verdict
+ * and never grant or extend a trial locally.
  */
 export async function refreshTrialStatus(): Promise<PremiumState> {
   if (trialInFlight) return trialInFlight;
   trialInFlight = (async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const userId = sessionData.session?.user.id;
-    if (!userId) return state;
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session?.user.id) return state;
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("trial_started_at")
-      .eq("id", userId)
-      .maybeSingle();
+      const { data, error } = await supabase.rpc("get_trial_status");
+      if (error) {
+        console.warn("[premium] trial lookup failed", error);
+        return state; // conservative: keep last known server verdict
+      }
 
-    if (error) {
-      console.warn("[premium] trial lookup failed", error);
+      const row = (Array.isArray(data) ? data[0] : data) as TrialRow | undefined;
+      if (!row) return state;
+
+      setState({
+        ...(row.trial_started_at ? { trialStartedAt: row.trial_started_at } : {}),
+        ...(row.trial_ends_at ? { trialEndsAt: row.trial_ends_at } : {}),
+        trialDaysLeft: row.trial_days_left ?? 0,
+        isTrialActive: row.is_trial_active === true,
+        trialChecked: true,
+      });
+      return state;
+    } catch (err) {
+      console.warn("[premium] trial lookup threw", err);
       return state;
     }
-
-    setState({
-      ...(data?.trial_started_at ? { trialStartedAt: data.trial_started_at } : {}),
-      trialChecked: true,
-    });
-    return state;
   })();
   try {
     return await trialInFlight;
@@ -163,6 +182,7 @@ export async function refreshTrialStatus(): Promise<PremiumState> {
     trialInFlight = null;
   }
 }
+
 
 export async function purchasePremium(): Promise<PurchaseResult> {
   const result = await purchasePremiumApi(PREMIUM_PRODUCT_ID);
