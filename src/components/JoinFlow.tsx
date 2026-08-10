@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { saveRecovery } from "@/lib/recovery";
 
 type Preview = {
   circle_id: string | null;
@@ -62,7 +63,7 @@ export function JoinFlow({
   async function join() {
     if (!color) return;
     setSaving(true);
-    const { error } = await supabase.rpc("join_circle", {
+    const { data: joinedId, error } = await supabase.rpc("join_circle", {
       _name: name.trim(),
       _color: color,
       ...(token ? { _token: token } : {}),
@@ -77,6 +78,16 @@ export function JoinFlow({
           : "Det gick inte att gå med. Försök igen.",
       );
       return;
+    }
+    if (joinedId) {
+      const { data: joined } = await supabase
+        .from("family_circles")
+        .select("family_code")
+        .eq("id", joinedId as string)
+        .maybeSingle();
+      if (joined?.family_code) {
+        saveRecovery({ code: joined.family_code, name: name.trim(), color });
+      }
     }
     onJoined();
   }

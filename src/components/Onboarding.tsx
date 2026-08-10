@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { saveRecovery } from "@/lib/recovery";
 
 type Coords = { lat: number; lng: number } | null;
 
@@ -50,7 +51,7 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
       const { data: circle, error: cErr } = await supabase
         .from("family_circles")
         .insert({ name: personName.trim(), timezone, created_by: userId })
-        .select("id")
+        .select("id, family_code")
         .single();
       if (cErr) throw cErr;
 
@@ -71,6 +72,11 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
       if (mErr) throw mErr;
 
       await supabase.from("profiles").upsert({ id: userId, name: myName.trim() });
+      saveRecovery({
+        code: circle.family_code,
+        name: myName.trim(),
+        color: color ?? "blue",
+      });
       onDone();
     } catch (error) {
       console.error(error);

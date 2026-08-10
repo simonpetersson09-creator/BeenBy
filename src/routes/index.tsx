@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 
@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCircleData } from "@/hooks/useCircleData";
 import { useSession } from "@/hooks/useSession";
+import { supabase } from "@/integrations/supabase/client";
 import { ensureUser } from "@/lib/auth";
+import { getRecovery } from "@/lib/recovery";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -38,6 +40,8 @@ function Index() {
   const [codeMode, setCodeMode] = useState(false);
   const [code, setCode] = useState("");
   const [activeCode, setActiveCode] = useState<string | null>(null);
+  const [recovering, setRecovering] = useState(false);
+  const recoveryTried = useRef(false);
 
   // Zero friction: a backend identity is created silently, no signup screen.
   useEffect(() => {
@@ -45,7 +49,27 @@ function Index() {
     void ensureUser();
   }, [loading, user]);
 
-  if (loading || !user || isLoading) {
+  // If the anonymous session was lost, silently rejoin the saved family
+  // circle so the user never has to enter their details again.
+  useEffect(() => {
+    if (loading || !user || isLoading || data || recoveryTried.current) return;
+    const saved = getRecovery();
+    if (!saved) return;
+    recoveryTried.current = true;
+    setRecovering(true);
+    void (async () => {
+      const { error } = await supabase.rpc("join_circle", {
+        _name: saved.name,
+        _color: saved.color,
+        _code: saved.code,
+      });
+      if (error) console.error(error);
+      await refetch();
+      setRecovering(false);
+    })();
+  }, [loading, user, isLoading, data, refetch]);
+
+  if (loading || !user || isLoading || recovering) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
         <Loader2 className="size-6 animate-spin text-muted-foreground" />
