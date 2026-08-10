@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Loader2, Send } from "lucide-react";
+import { ArrowLeft, Loader2, Lock, Send } from "lucide-react";
 import { toast } from "sonner";
 
+import { Paywall } from "@/components/Paywall";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCircleData, type Member } from "@/hooks/useCircleData";
@@ -10,6 +11,7 @@ import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { localeOf, useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
+import { useAccess } from "@/lib/premiumStore";
 
 type Message = {
   id: string;
@@ -56,6 +58,9 @@ function ChatPage() {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const { hasAccess } = useAccess();
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const locked = !hasAccess;
 
   const circleId = data?.circle.id;
 
@@ -107,6 +112,10 @@ function ChatPage() {
   }, [messages.length]);
 
   async function send() {
+    if (locked) {
+      setPaywallOpen(true);
+      return;
+    }
     const body = text.trim();
     if (!body || !circleId || !user) return;
     setSending(true);
@@ -163,6 +172,8 @@ function ChatPage() {
         </div>
       </header>
 
+      <Paywall open={paywallOpen} onOpenChange={setPaywallOpen} />
+
       <div className="flex-1 space-y-3 pb-32">
         {messages.length === 0 ? (
           <p className="mt-10 text-center text-xs text-muted-foreground">
@@ -208,6 +219,7 @@ function ChatPage() {
           <Input
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onFocus={() => (locked ? setPaywallOpen(true) : undefined)}
             placeholder={t("chat.placeholder")}
             maxLength={500}
             className="h-12 flex-1 rounded-2xl bg-card text-base"
@@ -215,11 +227,17 @@ function ChatPage() {
           <Button
             type="submit"
             size="icon"
-            aria-label={t("chat.send")}
-            disabled={sending || text.trim().length === 0}
+            aria-label={locked ? t("access.locked") : t("chat.send")}
+            disabled={sending || (!locked && text.trim().length === 0)}
             className="size-12 shrink-0 rounded-2xl"
           >
-            {sending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
+            {sending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : locked ? (
+              <Lock className="size-4" />
+            ) : (
+              <Send className="size-4" />
+            )}
           </Button>
         </form>
       </div>
