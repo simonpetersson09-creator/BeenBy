@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowRight, Check, Loader2, MapPin, Search } from "lucide-react";
 import { toast } from "sonner";
 
+import { PinMap } from "@/components/onboarding/PinMap";
 import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
