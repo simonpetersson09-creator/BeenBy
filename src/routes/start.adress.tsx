@@ -275,14 +275,31 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
   );
 }
 
-function SectionHeader({ step, title, hint }: { step: number; title: string; hint: string }) {
+function SectionHeader({
+  step,
+  title,
+  hint,
+  optional,
+}: {
+  step: number;
+  title: string;
+  hint: string;
+  optional?: string;
+}) {
   return (
     <div className="flex items-start gap-2.5">
       <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
         {step}
       </span>
       <div className="min-w-0 space-y-0.5">
-        <p className="text-sm leading-none font-medium text-foreground">{title}</p>
+        <p className="flex items-center gap-2 text-sm leading-none font-medium text-foreground">
+          {title}
+          {optional ? (
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-normal text-muted-foreground">
+              {optional}
+            </span>
+          ) : null}
+        </p>
         <p className="text-xs text-muted-foreground">{hint}</p>
       </div>
     </div>
