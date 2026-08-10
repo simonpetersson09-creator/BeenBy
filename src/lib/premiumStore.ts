@@ -63,8 +63,8 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
     const status = await getSubscriptionStatus();
     setState({
       isPremium: status.isPremium,
-      productId: status.productId,
-      expiresAt: status.expiresAt,
+      ...(status.productId ? { productId: status.productId } : {}),
+      ...(status.expiresAt ? { expiresAt: status.expiresAt } : {}),
       source: status.source,
       loading: false,
       checked: true,
