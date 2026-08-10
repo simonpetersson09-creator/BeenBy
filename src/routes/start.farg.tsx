@@ -104,7 +104,7 @@ function ColorStep({ userId, draft }: { userId: string; draft: OnboardingDraft }
         onClick={() => void create()}
       >
         {saving ? <Loader2 className="size-4 animate-spin" /> : null}
-        Skapa {draft.personName.trim() || "familjens"}s familjecirkel
+        Skapa familjecirkel
       </Button>
       <button
         type="button"
