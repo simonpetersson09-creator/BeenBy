@@ -68,26 +68,27 @@ export function DotGrid({
         </div>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         {weeks.map((week, wi) => {
           const isCurrentWeek = week.some((d) => d.day === today);
           return (
             <div
               key={week[0]!.day}
               className={cn(
-                "flex items-center gap-1 rounded-2xl py-0.5 pr-1 transition",
+                "flex items-center gap-1 rounded-xl pr-0.5 transition",
                 isCurrentWeek && "bg-primary/10 ring-1 ring-primary/25",
               )}
             >
               <span
                 className={cn(
-                  "w-8 shrink-0 text-center text-[0.6rem] font-semibold uppercase tracking-[0.08em]",
+                  "w-6 shrink-0 text-center text-[0.55rem] font-semibold uppercase tracking-[0.04em]",
                   isCurrentWeek ? "text-primary" : "text-muted-foreground/70",
                 )}
               >
                 v.{weekNumber(week[0]!.day)}
               </span>
               <div className="grid flex-1 grid-cols-7 gap-x-0.5">
+
                 {week.map((d, di) => {
                   const index = wi * 7 + di;
                   const isToday = d.day === today;
