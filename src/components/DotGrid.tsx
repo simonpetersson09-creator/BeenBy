@@ -92,7 +92,6 @@ export function DotGrid({
                 {week.map((d, di) => {
                   const index = wi * 7 + di;
                   const isToday = d.day === today;
-                  const isFuture = d.day > today;
                   const doneColors = d.done.map((x) => x.color);
                   const plannedColors = d.planned.map((x) => x.color);
                   const hasDone = doneColors.length > 0;
@@ -112,7 +111,6 @@ export function DotGrid({
                       className={cn(
                         "group flex min-h-8 items-center justify-center rounded-xl transition",
                         "active:scale-90",
-                        isFuture && !isToday && !hasPlanned && "opacity-60",
                       )}
                     >
                       <span className="relative flex size-7 items-center justify-center">
