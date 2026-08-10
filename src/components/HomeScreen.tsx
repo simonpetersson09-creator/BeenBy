@@ -271,16 +271,17 @@ export function HomeScreen({
         </div>
       ) : null}
 
-      <section className="rounded-[28px] border border-border/60 bg-card p-6 shadow-soft">
+      <section className="rounded-[28px] border border-primary/40 bg-transparent p-6">
         <div className="mb-7 text-center">
-          <h2 className="text-[1.4rem] leading-tight">Besöksöversikt</h2>
+          <h2 className="text-[1.4rem] leading-tight text-primary">Besöksöversikt</h2>
           <p className="mt-1 text-sm text-muted-foreground">Senaste 28 dagarna</p>
         </div>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
         {showLegend ? (
           <button
             type="button"
-            className="mt-7 flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-3 border-t border-border/60 pt-5 text-xs text-muted-foreground"
+            className="mt-7 flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-3 border-t border-primary/25 pt-5 text-xs text-muted-foreground"
+
             onClick={() => {
               window.localStorage.setItem(LEGEND_KEY, "1");
               setShowLegend(false);
