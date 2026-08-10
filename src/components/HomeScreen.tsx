@@ -252,26 +252,33 @@ export function HomeScreen({
         </div>
       ) : null}
 
-      <section className="rounded-3xl bg-card p-4 shadow-soft">
+      <section className="rounded-[28px] border border-border/60 bg-card p-6 shadow-soft">
+        <div className="mb-7 text-center">
+          <h2 className="text-[1.4rem] leading-tight">Besöksöversikt</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Senaste 28 dagarna</p>
+        </div>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
         {showLegend ? (
           <button
             type="button"
-            className="mt-4 flex w-full items-center justify-center gap-4 text-xs text-muted-foreground"
+            className="mt-7 flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-3 border-t border-border/60 pt-5 text-xs text-muted-foreground"
             onClick={() => {
               window.localStorage.setItem(LEGEND_KEY, "1");
               setShowLegend(false);
             }}
           >
-            <span className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-full bg-foreground/70" /> Fylld = genomfört
+            <span className="flex items-center gap-2">
+              <span className="size-3 rounded-full bg-foreground/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]" />
+              Fylld = genomfört
             </span>
-            <span className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-full border-2 border-foreground/70" /> Kontur = planerat
+            <span className="flex items-center gap-2">
+              <span className="size-3 rounded-full border-2 border-dashed border-foreground/50" />
+              Kontur = planerat
             </span>
           </button>
         ) : null}
       </section>
+
 
       <section className="mt-5 rounded-3xl bg-card p-4 shadow-soft">
         {nextPlanned ? (
