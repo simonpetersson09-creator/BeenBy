@@ -4,9 +4,40 @@ import { LANGUAGES, setLang, useLang, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 /** Compact pill for switching language during onboarding. */
-export function LanguageSwitcher({ className }: { className?: string }) {
+export function LanguageSwitcher({
+  className,
+  round = false,
+}: {
+  className?: string;
+  round?: boolean;
+}) {
   const lang = useLang();
   const current = LANGUAGES.find((l) => l.code === lang) ?? LANGUAGES[0];
+
+  if (round) {
+    return (
+      <div
+        className={cn(
+          "relative flex size-12 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-card/70 text-lg",
+          className,
+        )}
+      >
+        <span className="pointer-events-none leading-none">{current.flag}</span>
+        <select
+          aria-label={current.label}
+          value={lang}
+          onChange={(e) => setLang(e.target.value as Lang)}
+          className="absolute inset-0 cursor-pointer rounded-full opacity-0"
+        >
+          {LANGUAGES.map((l) => (
+            <option key={l.code} value={l.code}>
+              {l.flag} {l.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  }
 
   return (
     <div
