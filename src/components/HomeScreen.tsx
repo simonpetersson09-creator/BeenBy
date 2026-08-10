@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CloudOff, Loader2, MessageCircle, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
+import { CloudOff, Loader2, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
 import { toast } from "sonner";
 
 
@@ -274,7 +274,10 @@ export function HomeScreen({
       <section className="rounded-[28px] border border-primary/40 bg-transparent p-6">
         <div className="mb-7 text-center">
           <h2 className="text-[1.4rem] leading-tight text-primary">Besöksöversikt</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Senaste 28 dagarna</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Två veckor bakåt, denna vecka och nästa
+          </p>
+
         </div>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
         {showLegend ? (
@@ -300,7 +303,7 @@ export function HomeScreen({
       </section>
 
 
-      <section className="mt-5 rounded-3xl bg-card p-4 shadow-soft">
+      <section className="mt-4 rounded-2xl bg-card px-4 py-2.5 shadow-soft">
         {nextPlanned ? (
           <p className="flex items-center gap-2 text-xs">
             <span
@@ -324,6 +327,27 @@ export function HomeScreen({
         )}
       </section>
 
+      <section className="mt-3 rounded-2xl border border-primary/30 px-4 py-3">
+        <p className="mb-2 text-[0.62rem] font-medium uppercase tracking-[0.2em] text-primary/60">
+          Vem är vem
+        </p>
+        <ul className="flex flex-wrap gap-x-4 gap-y-2">
+          {members.map((m) => (
+            <li key={m.id} className="flex items-center gap-2 text-xs">
+              <span
+                className="size-3.5 rounded-full shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+                style={{ backgroundColor: colorById(m.personal_color).hex }}
+              />
+              <span className={m.user_id === userId ? "font-medium" : undefined}>
+                {m.name}
+                {m.user_id === userId ? " (du)" : ""}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+
       {members.length === 1 ? (
         <button
           type="button"
@@ -342,7 +366,11 @@ export function HomeScreen({
           disabled={busy || !person}
           className="h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
         >
-          {busy ? <Loader2 className="size-4 animate-spin" /> : null}
+          {busy ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <MapPinCheckInside className="size-5" />
+          )}
           Jag är här
         </Button>
         <div className="mt-2 flex gap-2">
@@ -355,12 +383,13 @@ export function HomeScreen({
           <Button
             asChild
             aria-label="Skriv en kommentar"
-            className="size-12 shrink-0 rounded-2xl bg-primary text-primary-foreground shadow-lift hover:bg-primary/90"
+            className="size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
           >
             <Link to="/chat">
               <MessageCircle className="size-5" />
             </Link>
           </Button>
+
         </div>
 
 
