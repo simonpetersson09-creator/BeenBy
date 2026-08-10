@@ -300,7 +300,7 @@ export function HomeScreen({
       </section>
 
 
-      <section className="mt-5 rounded-3xl bg-card p-4 shadow-soft">
+      <section className="mt-4 rounded-2xl bg-card px-4 py-2.5 shadow-soft">
         {nextPlanned ? (
           <p className="flex items-center gap-2 text-xs">
             <span
@@ -323,6 +323,27 @@ export function HomeScreen({
           </p>
         )}
       </section>
+
+      <section className="mt-3 rounded-2xl border border-primary/30 px-4 py-3">
+        <p className="mb-2 text-[0.62rem] font-medium uppercase tracking-[0.2em] text-primary/60">
+          Vem är vem
+        </p>
+        <ul className="flex flex-wrap gap-x-4 gap-y-2">
+          {members.map((m) => (
+            <li key={m.id} className="flex items-center gap-2 text-xs">
+              <span
+                className="size-3.5 rounded-full shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+                style={{ backgroundColor: colorById(m.personal_color).hex }}
+              />
+              <span className={m.user_id === userId ? "font-medium" : undefined}>
+                {m.name}
+                {m.user_id === userId ? " (du)" : ""}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
 
       {members.length === 1 ? (
         <button
