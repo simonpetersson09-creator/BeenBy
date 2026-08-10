@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
+import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -56,8 +57,16 @@ export function SettingsDialog({
       <DialogContent className="rounded-3xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl">Inställningar</DialogTitle>
-          <DialogDescription>Din prenumeration.</DialogDescription>
+          <DialogDescription>Språk och prenumeration.</DialogDescription>
         </DialogHeader>
+
+        <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-4">
+          <div>
+            <p className="font-medium">Språk</p>
+            <p className="text-xs text-muted-foreground">Gäller hela appen.</p>
+          </div>
+          <LanguageSwitcher />
+        </section>
 
         <section className="space-y-3 rounded-2xl bg-secondary/60 p-4">
           <p className="flex items-center gap-2 font-medium">

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
-import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import { useSession } from "@/hooks/useSession";
 import { ensureUser } from "@/lib/auth";
 import { getDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
@@ -37,9 +36,6 @@ export function StartShell({
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-8">
-      <div className="mb-3 flex justify-end">
-        <LanguageSwitcher />
-      </div>
       <div className="animate-rise-in space-y-4">{children({ userId: user.id, draft })}</div>
     </main>
   );
