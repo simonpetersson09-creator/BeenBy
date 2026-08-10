@@ -128,6 +128,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           step={1}
           title={t("adress.s1.title")}
           hint={t("adress.s1.hint")}
+          optional={t("common.optional")}
         />
         <div className="space-y-1.5">
           <Label htmlFor="address" className="sr-only">
