@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, MapPin, Loader2 } from "lucide-react";
+import { ArrowRight, MapPin, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { ColorPicker } from "@/components/ColorPicker";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { geocodeAddress } from "@/lib/geocode.functions";
 import { saveRecovery } from "@/lib/recovery";
 
 type Coords = { lat: number; lng: number } | null;
@@ -16,12 +17,37 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
   const [personName, setPersonName] = useState("");
   const [customMode, setCustomMode] = useState(false);
   const [coords, setCoords] = useState<Coords>(null);
+  const [address, setAddress] = useState("");
+  const [resolvedAddress, setResolvedAddress] = useState<string | null>(null);
+  const [searching, setSearching] = useState(false);
   const [locating, setLocating] = useState(false);
   const [myName, setMyName] = useState("");
   const [color, setColor] = useState<string | null>("blue");
   const [saving, setSaving] = useState(false);
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Stockholm";
+
+  async function lookupAddress() {
+    const query = address.trim();
+    if (query.length < 3) return;
+    setSearching(true);
+    try {
+      const hit = await geocodeAddress({ data: { query } });
+      if (!hit) {
+        setResolvedAddress(null);
+        toast.error("Hittade ingen adress. Prova att skriva gata, nummer och ort.");
+        return;
+      }
+      setCoords({ lat: hit.lat, lng: hit.lng });
+      setResolvedAddress(hit.label);
+      toast.success("Adressen är sparad som utgångspunkt.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Adressökningen misslyckades. Försök igen.");
+    } finally {
+      setSearching(false);
+    }
+  }
 
   async function useCurrentLocation() {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -32,6 +58,7 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setResolvedAddress(null);
         setLocating(false);
         toast.success("Platsen sparad som referenspunkt.");
       },
@@ -44,6 +71,7 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
       { enableHighAccuracy: true, timeout: 10000 },
     );
   }
+
 
   async function create() {
     setSaving(true);
