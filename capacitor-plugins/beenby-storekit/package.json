@@ -1,0 +1,21 @@
+{
+  "name": "beenby-storekit",
+  "version": "1.0.0",
+  "description": "Beenby StoreKit 2 Capacitor plugin (iOS only)",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "ios/Sources",
+    "BeenbyStorekit.podspec",
+    "Package.swift",
+    "src"
+  ],
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    }
+  },
+  "author": "Beenby",
+  "license": "UNLICENSED"
+}
