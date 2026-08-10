@@ -262,7 +262,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
             void navigate({ to: "/start/farg" });
           }}
         >
-          {coords ? t("common.continue") : t("common.skip")} <ArrowRight className="size-4" />
+          {t("common.continue")} <ArrowRight className="size-4" />
         </Button>
         <button
           type="button"
