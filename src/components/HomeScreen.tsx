@@ -397,16 +397,8 @@ export function HomeScreen({
           <Button variant="secondary" className="h-12 rounded-2xl" onClick={invite}>
             <Share2 className="size-4" /> Bjud in någon
           </Button>
-          <Button
-            variant="ghost"
-            className="h-12 rounded-2xl"
-            onClick={async () => {
-              await supabase.auth.signOut();
-              window.location.href = "/";
-            }}
-          >
-            Logga ut
-          </Button>
+
+
         </DialogContent>
       </Dialog>
 
