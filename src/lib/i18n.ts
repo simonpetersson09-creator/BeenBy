@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from "react";
 
+import { appDicts } from "./i18nApp";
+
 export const LANGUAGES = [
   { code: "sv", label: "Svenska", flag: "🇸🇪" },
   { code: "en", label: "English", flag: "🇬🇧" },
