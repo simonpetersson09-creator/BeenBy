@@ -70,7 +70,7 @@ function Index() {
     if (loading || !user || isLoading || recovering || data) return;
     if (recoveryTried.current && recovering) return;
     if (getRecovery() && !recoveryTried.current) return;
-    void navigate({ to: "/start/vem", replace: true });
+    void navigate({ to: "/start/valkommen", replace: true });
   }, [loading, user, isLoading, recovering, data, navigate]);
 
   if (loading || !user || isLoading || recovering || !data) {
