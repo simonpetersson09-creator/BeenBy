@@ -78,6 +78,25 @@ final class BeenbyStore {
         return Status(isPremium: false, productId: nil, expiresAt: nil)
     }
 
+    // MARK: - Product info (localised price straight from StoreKit)
+
+    func productInfo(productId: String?) async -> [String: Any] {
+        let targetID = (productId?.isEmpty == false ? productId! : premiumProductID)
+        do {
+            let products = try await Product.products(for: [targetID])
+            guard let product = products.first else {
+                return ["productId": targetID]
+            }
+            return [
+                "productId": product.id,
+                "displayPrice": product.displayPrice,
+                "title": product.displayName
+            ]
+        } catch {
+            return ["productId": targetID]
+        }
+    }
+
     // MARK: - Purchase
 
     func purchase(productId: String?) async -> [String: Any] {
