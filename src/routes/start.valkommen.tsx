@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ArrowRight, BellRing, CalendarHeart, Hand, History } from "lucide-react";
 
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
@@ -34,9 +35,23 @@ const points = [
   { icon: BellRing, key: "welcome.p4" },
 ];
 
+const HINT_KEY = "beenby.langHintSeen";
+
 function WelcomePage() {
   const navigate = useNavigate();
   const t = useT();
+  const [showHint, setShowHint] = useState(false);
+
+  useEffect(() => {
+    if (window.localStorage.getItem(HINT_KEY)) return;
+    const timer = window.setTimeout(() => setShowHint(true), 600);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  function dismissHint() {
+    window.localStorage.setItem(HINT_KEY, "1");
+    setShowHint(false);
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-6 px-6 py-10">
@@ -59,14 +74,26 @@ function WelcomePage() {
         ))}
       </ul>
 
-      <div className="flex items-center gap-2">
+      <div className="relative flex items-center gap-2">
+        {showHint ? (
+          <button
+            type="button"
+            onClick={dismissHint}
+            className="animate-rise-in absolute right-0 bottom-full z-20 mb-3 flex items-center gap-1.5 rounded-2xl bg-primary px-3 py-2 text-xs text-primary-foreground shadow-lg"
+          >
+            {t("lang.hint")}
+            <span className="absolute top-full right-5 -mt-1 size-2.5 rotate-45 rounded-[2px] bg-primary" />
+          </button>
+        ) : null}
         <Button
           className="h-12 flex-1 rounded-2xl text-sm"
           onClick={() => void navigate({ to: "/start/vem" })}
         >
           {t("welcome.cta")} <ArrowRight className="size-4" />
         </Button>
-        <LanguageSwitcher round />
+        <span onClick={dismissHint}>
+          <LanguageSwitcher round />
+        </span>
       </div>
     </main>
   );
