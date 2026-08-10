@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
@@ -13,11 +13,12 @@ import {
 } from "@/components/ui/dialog";
 import { useT } from "@/lib/i18n";
 import {
-  getSubscriptionStatus,
-  openSubscriptionManagement,
+  manageSubscription,
   purchasePremium,
+  refreshPremiumStatus,
   restorePurchases,
-} from "@/lib/premium";
+  usePremium,
+} from "@/lib/premiumStore";
 
 export function SettingsDialog({
   open,
@@ -27,30 +28,20 @@ export function SettingsDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const t = useT();
-  const [isPremium, setIsPremium] = useState(false);
-  const [isLoadingPremium, setIsLoadingPremium] = useState(false);
+  const { isPremium, loading: isLoadingPremium } = usePremium();
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
 
-  const refreshStatus = useCallback(async () => {
-    setIsLoadingPremium(true);
-    const status = await getSubscriptionStatus();
-    setIsPremium(status.isPremium);
-    setIsLoadingPremium(false);
-    return status;
-  }, []);
-
   useEffect(() => {
     if (!open) return;
-    void refreshStatus();
-  }, [open, refreshStatus]);
+    void refreshPremiumStatus();
+  }, [open]);
 
   async function handlePurchase() {
     if (purchasing) return; // prevent double-tap
     setPurchasing(true);
     const result = await purchasePremium();
     if (result.outcome === "success") {
-      await refreshStatus();
       toast.success(t("settings.restored"));
     } else if (result.outcome === "cancelled") {
       toast.message(t("settings.noPurchase"));
@@ -65,14 +56,13 @@ export function SettingsDialog({
     if (restoring) return;
     setRestoring(true);
     const result = await restorePurchases();
-    const status = await refreshStatus();
-    if (result.restored || status.isPremium) toast.success(t("settings.restored"));
+    if (result.restored) toast.success(t("settings.restored"));
     else toast.message(t("settings.noPurchase"), { description: t("settings.noPurchaseDesc") });
     setRestoring(false);
   }
 
   async function handleManage() {
-    const opened = await openSubscriptionManagement();
+    const opened = await manageSubscription();
     if (!opened) {
       toast.message(t("settings.manage"), { description: t("settings.manageDesc") });
     }
