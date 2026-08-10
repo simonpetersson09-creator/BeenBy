@@ -86,9 +86,11 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
       const { error: pErr } = await supabase.from("persons").insert({
         family_circle_id: circle.id,
         name: personName.trim(),
+        address: resolvedAddress ?? (address.trim() || null),
         location_latitude: coords?.lat ?? null,
         location_longitude: coords?.lng ?? null,
       });
+
       if (pErr) throw pErr;
 
       const { error: mErr } = await supabase.from("family_members").insert({
