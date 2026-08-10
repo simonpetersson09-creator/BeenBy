@@ -96,7 +96,7 @@ export function DotGrid({
                   className={cn(
                     "animate-dot-pop block size-8 rounded-full transition",
                     "group-hover:scale-105",
-                    !hasDone && !hasPlanned && "bg-border/60",
+                    !hasDone && !hasPlanned && "bg-foreground/[0.07]",
                     hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.18)]",
                   )}
                   style={{

@@ -272,7 +272,7 @@ export function HomeScreen({
               Fylld = genomfört
             </span>
             <span className="flex items-center gap-2">
-              <span className="size-4 rounded-full border-2 border-dashed border-foreground/50" />
+              <span className="size-4 rounded-full border-2 border-foreground/50" />
               Kontur = planerat
             </span>
           </button>
