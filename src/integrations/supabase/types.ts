@@ -197,6 +197,39 @@ export type Database = {
           },
         ]
       }
+      premium_entitlements: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          is_active: boolean
+          original_transaction_id: string | null
+          platform: string | null
+          product_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          is_active?: boolean
+          original_transaction_id?: string | null
+          platform?: string | null
+          product_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          is_active?: boolean
+          original_transaction_id?: string | null
+          platform?: string | null
+          product_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
