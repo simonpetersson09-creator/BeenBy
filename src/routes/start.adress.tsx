@@ -8,6 +8,7 @@ import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useT } from "@/lib/i18n";
 import { geocodeAddress } from "@/lib/geocode.functions";
 import { patchDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
 
@@ -47,6 +48,7 @@ function AddressPage() {
 
 function AddressStep({ draft }: { draft: OnboardingDraft }) {
   const navigate = useNavigate();
+  const t = useT();
   const [address, setAddress] = useState(draft.address);
   const [resolvedAddress, setResolvedAddress] = useState<string | null>(draft.resolvedAddress);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
@@ -65,13 +67,13 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
       const hits = await geocodeAddress({ data: { query } });
       setResults(hits);
       if (hits.length === 0) {
-        toast.error("Hittade ingen adress. Prova gata, nummer och ort.");
+        toast.error(t("adress.noHits"));
         return;
       }
       if (hits.length === 1) selectHit(hits[0]!);
     } catch (error) {
       console.error(error);
-      toast.error("Adressökningen misslyckades. Försök igen.");
+      toast.error(t("adress.searchFailed"));
     } finally {
       setSearching(false);
     }
@@ -85,7 +87,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
 
   function useCurrentLocation() {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
-      toast.error("Platstjänster stöds inte här. Du kan hoppa över det här steget.");
+      toast.error(t("adress.geoUnsupported"));
       return;
     }
     setLocating(true);
@@ -93,12 +95,12 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
       (pos) => {
         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         setLocating(false);
-        toast.success("Platsen sparad som referenspunkt.");
+        toast.success(t("adress.saved"));
       },
       () => {
         setLocating(false);
-        toast.message("Ingen plats sparad", {
-          description: "Appen fungerar precis lika bra utan plats.",
+        toast.message(t("adress.noLocation"), {
+          description: t("adress.noLocationDesc"),
         });
       },
       { enableHighAccuracy: true, timeout: 10000 },
@@ -108,20 +110,22 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
   return (
     <>
       <div className="space-y-1">
-        <h1 className="text-2xl leading-snug">Var bor {draft.personName || "personen"}?</h1>
+        <h1 className="text-2xl leading-snug">
+          {t("adress.title", { name: draft.personName || t("adress.person") })}
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Ange adressen som utgångspunkt. Ingen i familjen kan se var du befinner dig.
+          {t("adress.sub")}
         </p>
       </div>
       <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
         <SectionHeader
           step={1}
-          title="Hemadress"
-          hint="Sök adressen som blir utgångspunkt för besöken."
+          title={t("adress.s1.title")}
+          hint={t("adress.s1.hint")}
         />
         <div className="space-y-1.5">
           <Label htmlFor="address" className="sr-only">
-            Adress
+            {t("adress.label")}
           </Label>
           <div className="flex gap-2">
             <Input
@@ -132,7 +136,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
               onKeyDown={(e) => {
                 if (e.key === "Enter") void lookupAddress();
               }}
-              placeholder="Storgatan 1, Stockholm"
+              placeholder={t("adress.placeholder")}
               className="h-12 rounded-2xl text-base"
             />
             <Button
@@ -140,7 +144,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
               className="h-12 shrink-0 rounded-2xl px-4"
               onClick={() => void lookupAddress()}
               disabled={searching || address.trim().length < 3}
-              aria-label="Sök adress"
+              aria-label={t("adress.search")}
             >
               {searching ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -150,7 +154,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Det räcker med gata och ort – appen använder en radie runt hemmet.
+            {t("adress.radiusHint")}
           </p>
         </div>
         {results.length > 0 ? (
@@ -168,7 +172,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
                       <span className="block truncate text-sm">{hit.title}</span>
                       <span className="block truncate text-xs text-muted-foreground">
                         {hit.subtitle || hit.label}
-                        {hit.precise ? "" : " · ungefärlig plats"}
+                        {hit.precise ? "" : t("adress.approx")}
                       </span>
                     </span>
                     {selected ? <Check className="size-4 shrink-0 text-primary" /> : null}
@@ -183,16 +187,16 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
             <div className="space-y-2 rounded-2xl border border-primary/40 p-2">
               <PinMap lat={coords.lat} lng={coords.lng} onChange={(next) => setCoords(next)} />
               <p className="px-1 text-xs text-muted-foreground">
-                Dra i pricken eller tryck på kartan för att justera platsen exakt.
+                {t("adress.dragHint")}
               </p>
               <Button
                 className="h-11 w-full rounded-2xl text-sm"
                 onClick={() => {
                   setMapOpen(false);
-                  toast.success("Platsen är sparad.");
+                  toast.success(t("adress.pinSaved"));
                 }}
               >
-                <Check className="size-4" /> Klar
+                <Check className="size-4" /> {t("adress.done")}
               </Button>
             </div>
           ) : (
@@ -203,7 +207,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
             >
               <MapPin className="size-4 shrink-0 text-primary" />
               <span className="min-w-0 flex-1 truncate text-foreground">{resolvedAddress}</span>
-              <span className="shrink-0 underline underline-offset-4">Justera</span>
+              <span className="shrink-0 underline underline-offset-4">{t("adress.adjust")}</span>
             </button>
           )
         ) : null}
@@ -212,8 +216,8 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
       <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
         <SectionHeader
           step={2}
-          title="Notis vid besök"
-          hint="Frivilligt. Din plats delas aldrig med familjen."
+          title={t("adress.s2.title")}
+          hint={t("adress.s2.hint")}
         />
         <Button
           variant="secondary"
@@ -222,12 +226,12 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           disabled={locating}
         >
           {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />}
-          Använd min nuvarande plats
+          {t("adress.useLocation")}
         </Button>
       </section>
 
       <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-3">
-        <SectionHeader step={3} title="Nästa steg" hint="Välj färg för din plutt." />
+        <SectionHeader step={3} title={t("adress.s3.title")} hint={t("adress.s3.hint")} />
         <Button
           className="h-12 w-full rounded-2xl text-sm"
           onClick={() => {
@@ -240,14 +244,14 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
             void navigate({ to: "/start/farg" });
           }}
         >
-          {coords ? "Fortsätt" : "Hoppa över"} <ArrowRight className="size-4" />
+          {coords ? t("common.continue") : t("common.skip")} <ArrowRight className="size-4" />
         </Button>
         <button
           type="button"
           className="mx-auto block text-sm text-muted-foreground underline underline-offset-4"
           onClick={() => void navigate({ to: "/start/vem" })}
         >
-          Tillbaka
+          {t("common.back")}
         </button>
       </section>
     </>

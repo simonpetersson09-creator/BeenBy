@@ -5,6 +5,7 @@ import { JoinFlow } from "@/components/JoinFlow";
 import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/start/kod")({
   ssr: false,
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/start/kod")({
 
 function CodePage() {
   const navigate = useNavigate();
+  const t = useT();
   const [code, setCode] = useState("");
   const [activeCode, setActiveCode] = useState<string | null>(null);
 
@@ -46,9 +48,9 @@ function CodePage() {
     <StartShell>
       {() => (
         <>
-          <h1 className="text-2xl leading-snug">Ange familjekod</h1>
+          <h1 className="text-2xl leading-snug">{t("kod.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Koden får du av den som redan använder appen.
+            {t("kod.sub")}
           </p>
           <Input
             value={code}
@@ -62,14 +64,14 @@ function CodePage() {
             disabled={code.trim().length < 4}
             onClick={() => setActiveCode(code.trim())}
           >
-            Gå med
+            {t("kod.join")}
           </Button>
           <button
             type="button"
             className="mx-auto block text-sm text-muted-foreground underline underline-offset-4"
             onClick={() => void navigate({ to: "/start/vem" })}
           >
-            Tillbaka
+            {t("common.back")}
           </button>
         </>
       )}
