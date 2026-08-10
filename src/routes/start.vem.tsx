@@ -6,6 +6,7 @@ import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useT } from "@/lib/i18n";
 import { patchDraft } from "@/lib/onboardingDraft";
 
 export const Route = createFileRoute("/start/vem")({
@@ -35,37 +36,39 @@ function WhoPage() {
 
 function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialMe: string }) {
   const navigate = useNavigate();
+  const t = useT();
   const [personName, setPersonName] = useState(initialPerson);
   const [myName, setMyName] = useState(initialMe);
   const [customMode, setCustomMode] = useState(
     Boolean(initialPerson) && !["Mamma", "Pappa"].includes(initialPerson),
   );
 
+  const presets = [
+    { key: "vem.mamma", value: "Mamma" },
+    { key: "vem.pappa", value: "Pappa" },
+  ];
+
   return (
     <>
       <div className="space-y-1">
-        <h1 className="text-2xl leading-snug">Kom igång</h1>
-        <p className="text-sm text-muted-foreground">Tre snabba steg – det tar under en minut.</p>
+        <h1 className="text-2xl leading-snug">{t("vem.title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("vem.sub")}</p>
       </div>
 
       <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
-        <SectionHeader
-          step={1}
-          title="Vem vill ni hålla kontakten med?"
-          hint="Välj ett alternativ, eller skriv ett eget namn."
-        />
+        <SectionHeader step={1} title={t("vem.s1.title")} hint={t("vem.s1.hint")} />
         <div className="grid grid-cols-2 gap-2">
-          {["Mamma", "Pappa"].map((n) => (
+          {presets.map((p) => (
             <Button
-              key={n}
-              variant={personName === n && !customMode ? "default" : "secondary"}
+              key={p.value}
+              variant={personName === p.value && !customMode ? "default" : "secondary"}
               className="h-12 rounded-2xl text-sm"
               onClick={() => {
-                setPersonName(n);
+                setPersonName(p.value);
                 setCustomMode(false);
               }}
             >
-              {n}
+              {t(p.key)}
             </Button>
           ))}
           <Button
@@ -76,13 +79,13 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
               setPersonName("");
             }}
           >
-            Valfritt namn
+            {t("vem.custom")}
           </Button>
         </div>
         {customMode ? (
           <div className="space-y-1.5">
             <Label htmlFor="person" className="text-xs">
-              Namn
+              {t("vem.nameLabel")}
             </Label>
             <Input
               id="person"
@@ -90,7 +93,7 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
               autoFocus
               maxLength={60}
               onChange={(e) => setPersonName(e.target.value)}
-              placeholder="Karin"
+              placeholder={t("vem.namePlaceholder")}
               className="h-12 rounded-2xl text-base"
             />
           </div>
@@ -98,13 +101,13 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
       </section>
 
       <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
-        <SectionHeader step={2} title="Vad heter du?" hint="Namnet syns för resten av familjen." />
+        <SectionHeader step={2} title={t("vem.s2.title")} hint={t("vem.s2.hint")} />
         <Input
           id="me"
           value={myName}
           maxLength={60}
           onChange={(e) => setMyName(e.target.value)}
-          placeholder="Ditt namn"
+          placeholder={t("vem.mePlaceholder")}
           className="h-12 rounded-2xl text-base"
         />
         <Button
@@ -115,16 +118,12 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
             void navigate({ to: "/start/adress" });
           }}
         >
-          Fortsätt <ArrowRight className="size-4" />
+          {t("common.continue")} <ArrowRight className="size-4" />
         </Button>
       </section>
 
       <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
-        <SectionHeader
-          step={3}
-          title="Har du fått en familjekod?"
-          hint="Gå med i en familj som redan finns."
-        />
+        <SectionHeader step={3} title={t("vem.s3.title")} hint={t("vem.s3.hint")} />
         <button
           type="button"
           onClick={() => void navigate({ to: "/start/kod" })}
@@ -133,7 +132,7 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
           <span className="flex size-8 items-center justify-center rounded-full bg-primary/10">
             <KeyRound className="size-4 text-primary" />
           </span>
-          Ange familjekod
+          {t("vem.codeBtn")}
         </button>
       </section>
     </>
