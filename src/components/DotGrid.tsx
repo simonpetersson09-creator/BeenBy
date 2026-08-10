@@ -29,17 +29,13 @@ export function buildDays(
   }));
 }
 
-function Dot({ color, filled }: { color: string; filled: boolean }) {
-  return (
-    <span
-      className="block size-2.5 rounded-full"
-      style={
-        filled
-          ? { backgroundColor: color }
-          : { border: `2px solid ${color}`, backgroundColor: "transparent" }
-      }
-    />
-  );
+function fillStyle(colors: string[]) {
+  if (colors.length === 1) return { backgroundColor: colors[0] };
+  const step = 100 / colors.length;
+  const stops = colors
+    .map((c, i) => `${c} ${(i * step).toFixed(2)}% ${((i + 1) * step).toFixed(2)}%`)
+    .join(", ");
+  return { backgroundImage: `conic-gradient(from -90deg, ${stops})` };
 }
 
 export function DotGrid({
@@ -55,51 +51,80 @@ export function DotGrid({
 
   return (
     <div>
-      <div className="mb-1 grid grid-cols-7 gap-1">
+      <div className="mb-4 grid grid-cols-7 gap-x-1">
         {WEEKDAY_LABELS.map((label, i) => (
-          <div key={i} className="text-center text-[0.7rem] font-medium text-muted-foreground">
+          <div
+            key={i}
+            className="text-center text-[0.65rem] font-bold uppercase tracking-[0.18em] text-muted-foreground/70"
+          >
             {label}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1">
-        {days.map((d) => {
+      <div className="grid grid-cols-7 gap-x-1 gap-y-3">
+        {days.map((d, index) => {
           const isToday = d.day === today;
           const isFuture = d.day > today;
-          const dots = [
-            ...d.done.map((x) => ({ ...x, filled: true })),
-            ...d.planned.map((x) => ({ ...x, filled: false })),
-          ];
+          const doneColors = d.done.map((x) => x.color);
+          const plannedColors = d.planned.map((x) => x.color);
+          const hasDone = doneColors.length > 0;
+          const hasPlanned = plannedColors.length > 0;
           const label =
-            dots.length === 0
+            d.done.length + d.planned.length === 0
               ? `${shortLabel(d.day)}, inget besök`
               : `${shortLabel(d.day)}, ${d.done.length} genomförda, ${d.planned.length} planerade`;
+
           return (
             <button
               key={d.day}
               type="button"
               onClick={() => onSelect(d.day)}
               aria-label={label}
+              aria-current={isToday ? "date" : undefined}
               className={cn(
-                // hit area is deliberately larger than the visual dots
-                "flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl transition",
-                "hover:bg-secondary active:scale-95",
-                isToday && "bg-secondary ring-2 ring-primary/60",
-                isFuture && !isToday && "opacity-70",
+                "group flex min-h-11 items-center justify-center rounded-2xl transition",
+                "active:scale-90",
+                isFuture && !isToday && !hasPlanned && "opacity-60",
               )}
             >
-              {dots.length === 0 ? (
-                <span className="block size-2.5 rounded-full bg-border" />
-              ) : (
-                <span className="flex flex-wrap items-center justify-center gap-0.5">
-                  {dots.slice(0, 4).map((dot) => (
-                    <Dot key={dot.id} color={dot.color} filled={dot.filled} />
-                  ))}
-                </span>
-              )}
-              {dots.length > 4 ? (
-                <span className="text-[0.6rem] leading-none text-muted-foreground">+{dots.length - 4}</span>
-              ) : null}
+              <span className="relative flex size-10 items-center justify-center">
+                {isToday ? (
+                  <span className="pointer-events-none absolute inset-0 animate-breathe rounded-full border border-primary/50" />
+                ) : null}
+
+                <span
+                  className={cn(
+                    "animate-dot-pop block size-8 rounded-full transition",
+                    "group-hover:scale-105",
+                    !hasDone && !hasPlanned && "bg-border/40",
+                    hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.18)]",
+                  )}
+                  style={{
+                    animationDelay: `${index * 12}ms`,
+                    ...(hasDone
+                      ? fillStyle(doneColors)
+                      : hasPlanned
+                        ? {
+                            border: `2px dashed ${plannedColors[0]}`,
+                            backgroundColor: "transparent",
+                          }
+                        : {}),
+                  }}
+                />
+
+                {hasDone && hasPlanned ? (
+                  <span
+                    className="pointer-events-none absolute inset-0 rounded-full border-2 border-dashed"
+                    style={{ borderColor: plannedColors[0] }}
+                  />
+                ) : null}
+
+                {d.done.length + d.planned.length > 3 ? (
+                  <span className="absolute -right-0.5 -top-0.5 rounded-full bg-card px-1 text-[0.55rem] font-semibold leading-[0.9rem] text-muted-foreground shadow-soft">
+                    {d.done.length + d.planned.length}
+                  </span>
+                ) : null}
+              </span>
             </button>
           );
         })}
@@ -107,3 +132,4 @@ export function DotGrid({
     </div>
   );
 }
+
