@@ -13,6 +13,7 @@ type Coords = { lat: number; lng: number } | null;
 export function Onboarding({ userId, onDone }: { userId: string; onDone: () => void }) {
   const [step, setStep] = useState(0);
   const [personName, setPersonName] = useState("");
+  const [customMode, setCustomMode] = useState(false);
   const [coords, setCoords] = useState<Coords>(null);
   const [locating, setLocating] = useState(false);
   const [myName, setMyName] = useState("");
@@ -87,23 +88,50 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
             <div className="space-y-1">
               <h1 className="text-2xl leading-snug">Vem vill ni hålla kontakten med?</h1>
               <p className="text-sm text-muted-foreground">
-                Skriv namnet på personen ni besöker, till exempel din mamma.
+                Välj ett alternativ, eller skriv ett eget namn.
               </p>
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="person" className="text-xs">
-                Namn
-              </Label>
-              <Input
-                id="person"
-                value={personName}
-                autoFocus
-                maxLength={60}
-                onChange={(e) => setPersonName(e.target.value)}
-                placeholder="Karin"
-                className="h-12 rounded-2xl text-base"
-              />
+            <div className="grid grid-cols-2 gap-2">
+              {["Mamma", "Pappa"].map((n) => (
+                <Button
+                  key={n}
+                  variant={personName === n ? "default" : "secondary"}
+                  className="h-12 rounded-2xl text-sm"
+                  onClick={() => {
+                    setPersonName(n);
+                    setCustomMode(false);
+                  }}
+                >
+                  {n}
+                </Button>
+              ))}
+              <Button
+                variant={customMode ? "default" : "secondary"}
+                className="col-span-2 h-12 rounded-2xl text-sm"
+                onClick={() => {
+                  setCustomMode(true);
+                  setPersonName("");
+                }}
+              >
+                Valfritt namn
+              </Button>
             </div>
+            {customMode ? (
+              <div className="space-y-1.5">
+                <Label htmlFor="person" className="text-xs">
+                  Namn
+                </Label>
+                <Input
+                  id="person"
+                  value={personName}
+                  autoFocus
+                  maxLength={60}
+                  onChange={(e) => setPersonName(e.target.value)}
+                  placeholder="Karin"
+                  className="h-12 rounded-2xl text-base"
+                />
+              </div>
+            ) : null}
             <Button
               className="h-12 w-full rounded-2xl text-sm"
               disabled={personName.trim().length < 1}
@@ -113,6 +141,7 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
             </Button>
           </>
         ) : null}
+
 
         {step === 1 ? (
           <>
