@@ -110,19 +110,20 @@ export function DotGrid({
                       aria-label={label}
                       aria-current={isToday ? "date" : undefined}
                       className={cn(
-                        "group flex min-h-9 items-center justify-center rounded-xl transition",
+                        "group flex min-h-8 items-center justify-center rounded-xl transition",
                         "active:scale-90",
                         isFuture && !isToday && !hasPlanned && "opacity-60",
                       )}
                     >
-                      <span className="relative flex size-8 items-center justify-center">
+                      <span className="relative flex size-7 items-center justify-center">
                         {isToday ? (
                           <span className="pointer-events-none absolute inset-0 animate-breathe rounded-full border border-primary/50" />
                         ) : null}
 
                         <span
                           className={cn(
-                            "animate-dot-pop block size-7 rounded-full transition",
+                            "animate-dot-pop block size-6 rounded-full transition",
+
                             "group-hover:scale-105",
                             !hasDone && !hasPlanned && "bg-foreground/[0.07]",
                             hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.18)]",
