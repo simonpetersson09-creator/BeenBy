@@ -1,6 +1,7 @@
 import { Copy, Mail, MessageCircle, MessageSquare, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useT } from "@/lib/i18n";
 import { shareInvite } from "@/lib/native";
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 
 /** Bottom sheet with the messaging apps people actually use to send an invite. */
 export function InviteSheet({ open, onOpenChange, url, message }: Props) {
+  const t = useT();
   const text = url ? `${message} ${url}` : message;
 
   function openApp(href: string) {
@@ -48,12 +50,12 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
     },
     {
       key: "mail",
-      label: "E-post",
+      label: t("invite.mail"),
       icon: Mail,
       tint: "bg-secondary text-primary",
       onClick: () =>
         openApp(
-          `mailto:?subject=${encodeURIComponent("Inbjudan till BeenBy")}&body=${encodeURIComponent(text)}`,
+          `mailto:?subject=${encodeURIComponent(t("invite.subject"))}&body=${encodeURIComponent(text)}`,
         ),
     },
   ];
@@ -62,8 +64,8 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="rounded-t-3xl border-primary/20 pb-8">
         <SheetHeader className="text-left">
-          <SheetTitle className="text-xl text-primary">Skicka inbjudan</SheetTitle>
-          <SheetDescription>Välj hur du vill skicka länken.</SheetDescription>
+          <SheetTitle className="text-xl text-primary">{t("invite.title")}</SheetTitle>
+          <SheetDescription>{t("invite.sub")}</SheetDescription>
         </SheetHeader>
 
         <div className="mt-4 grid grid-cols-4 gap-3">
@@ -90,12 +92,12 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
             onClick={async () => {
               if (!url) return;
               await navigator.clipboard.writeText(url);
-              toast.success("Länken är kopierad");
+              toast.success(t("invite.copied"));
               onOpenChange(false);
             }}
             className="flex h-12 items-center justify-center gap-2 rounded-2xl bg-secondary text-sm text-primary disabled:opacity-50"
           >
-            <Copy className="size-4" /> Kopiera länk
+            <Copy className="size-4" /> {t("invite.copy")}
           </button>
           <button
             type="button"
@@ -103,12 +105,12 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
             onClick={async () => {
               if (!url) return;
               const result = await shareInvite(url, message);
-              if (result === "copied") toast.success("Länken är kopierad");
+              if (result === "copied") toast.success(t("invite.copied"));
               onOpenChange(false);
             }}
             className="flex h-12 items-center justify-center gap-2 rounded-2xl bg-primary text-sm text-primary-foreground disabled:opacity-50"
           >
-            <Share2 className="size-4" /> Fler appar
+            <Share2 className="size-4" /> {t("invite.more")}
           </button>
         </div>
       </SheetContent>

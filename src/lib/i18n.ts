@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from "react";
 
+import { appDicts } from "./i18nApp";
+
 export const LANGUAGES = [
   { code: "sv", label: "Svenska", flag: "🇸🇪" },
   { code: "en", label: "English", flag: "🇬🇧" },
@@ -494,7 +496,26 @@ const fr: Dict = {
   "common.back": "Retour",
 };
 
-const dicts: Record<Lang, Dict> = { sv, en, de, da, fi, es, fr };
+const base: Record<Lang, Dict> = { sv, en, de, da, fi, es, fr };
+
+const dicts: Record<Lang, Dict> = Object.fromEntries(
+  (Object.keys(base) as Lang[]).map((code) => [code, { ...base[code], ...appDicts[code] }]),
+) as Record<Lang, Dict>;
+
+/** Intl locale used for dates and numbers per app language. */
+export const LOCALES: Record<Lang, string> = {
+  sv: "sv-SE",
+  en: "en-GB",
+  de: "de-DE",
+  da: "da-DK",
+  fi: "fi-FI",
+  es: "es-ES",
+  fr: "fr-FR",
+};
+
+export function localeOf(lang: Lang = getLang()): string {
+  return LOCALES[lang] ?? "sv-SE";
+}
 
 export function translate(lang: Lang, key: string, vars?: Record<string, string>): string {
   const raw = dicts[lang]?.[key] ?? sv[key] ?? key;

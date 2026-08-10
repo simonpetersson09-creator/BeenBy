@@ -3,6 +3,7 @@
  * and one at 00:05 land on the correct respective days, regardless of the
  * phone's own settings, DST or year boundaries.
  */
+import { getLang, localeOf, translate } from "@/lib/i18n";
 
 export function localDay(date: Date, timeZone: string): string {
   // sv-SE formats as YYYY-MM-DD
@@ -33,7 +34,14 @@ export function weekdayIndex(key: string): number {
   return (js + 6) % 7;
 }
 
-export const WEEKDAY_LABELS = ["M", "T", "O", "T", "F", "L", "S"];
+/** Narrow weekday initials (Monday first) in the current app language. */
+export function weekdayLabels(): string[] {
+  const fmt = new Intl.DateTimeFormat(localeOf(), { timeZone: "UTC", weekday: "narrow" });
+  // 2024-01-01 is a Monday.
+  return Array.from({ length: 7 }, (_, i) =>
+    fmt.format(new Date(Date.UTC(2024, 0, 1 + i))).toUpperCase(),
+  );
+}
 
 /**
  * 28 days: the two previous weeks, the current week and the coming week.
@@ -66,12 +74,13 @@ export function isFuture(key: string, timeZone: string): boolean {
 
 export function relativeLabel(key: string, timeZone: string): string {
   const today = todayKey(timeZone);
-  if (key === today) return "Idag";
-  if (key === addDays(today, -1)) return "Igår";
-  if (key === addDays(today, 1)) return "Imorgon";
+  const lang = getLang();
+  if (key === today) return translate(lang, "date.today");
+  if (key === addDays(today, -1)) return translate(lang, "date.yesterday");
+  if (key === addDays(today, 1)) return translate(lang, "date.tomorrow");
   const [y, m, d] = key.split("-").map(Number);
   const dt = new Date(Date.UTC(y!, m! - 1, d!));
-  return new Intl.DateTimeFormat("sv-SE", {
+  return new Intl.DateTimeFormat(localeOf(lang), {
     timeZone: "UTC",
     weekday: "long",
     day: "numeric",
@@ -82,7 +91,7 @@ export function relativeLabel(key: string, timeZone: string): string {
 export function shortLabel(key: string): string {
   const [y, m, d] = key.split("-").map(Number);
   const dt = new Date(Date.UTC(y!, m! - 1, d!));
-  return new Intl.DateTimeFormat("sv-SE", {
+  return new Intl.DateTimeFormat(localeOf(), {
     timeZone: "UTC",
     day: "numeric",
     month: "short",
