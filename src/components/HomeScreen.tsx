@@ -281,7 +281,7 @@ export function HomeScreen({
 
       <section className="mt-5 rounded-3xl bg-card p-4 shadow-soft">
         {nextPlanned ? (
-          <p className="flex items-center gap-2 text-sm">
+          <p className="flex items-center gap-2 text-xs">
             <span
               className="size-3 rounded-full"
               style={{
@@ -297,7 +297,7 @@ export function HomeScreen({
             </span>
           </p>
         ) : (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Inget besök är planerat än. Planera gärna ett – det syns direkt för de andra.
           </p>
         )}
@@ -307,7 +307,7 @@ export function HomeScreen({
         <button
           type="button"
           onClick={invite}
-          className="mt-5 w-full rounded-3xl border border-dashed p-4 text-left text-sm text-muted-foreground"
+          className="mt-5 w-full rounded-3xl border border-dashed p-4 text-left text-xs text-muted-foreground"
         >
           Du är ensam här just nu.{" "}
           <span className="font-medium text-foreground">Bjud in dina syskon</span> så ser ni varandras
