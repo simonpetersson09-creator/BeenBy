@@ -80,18 +80,20 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-10">
-      <div key={step} className="animate-rise-in space-y-6">
+    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-8">
+      <div key={step} className="animate-rise-in space-y-4">
         {step === 0 ? (
           <>
-            <div className="space-y-2">
-              <h1 className="text-3xl">Vem vill ni hålla kontakten med?</h1>
-              <p className="text-muted-foreground">
+            <div className="space-y-1">
+              <h1 className="text-2xl leading-snug">Vem vill ni hålla kontakten med?</h1>
+              <p className="text-sm text-muted-foreground">
                 Skriv namnet på personen ni besöker, till exempel din mamma.
               </p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="person">Namn</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="person" className="text-xs">
+                Namn
+              </Label>
               <Input
                 id="person"
                 value={personName}
@@ -99,12 +101,11 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
                 maxLength={60}
                 onChange={(e) => setPersonName(e.target.value)}
                 placeholder="Karin"
-                className="h-14 rounded-2xl text-lg"
+                className="h-12 rounded-2xl text-base"
               />
             </div>
             <Button
-              size="lg"
-              className="h-14 w-full rounded-2xl text-base"
+              className="h-12 w-full rounded-2xl text-sm"
               disabled={personName.trim().length < 1}
               onClick={() => setStep(1)}
             >
@@ -115,24 +116,23 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
 
         {step === 1 ? (
           <>
-            <div className="space-y-2">
-              <h1 className="text-3xl">Var bor {personName.trim()}?</h1>
-              <p className="text-muted-foreground">
+            <div className="space-y-1">
+              <h1 className="text-2xl leading-snug">Var bor {personName.trim()}?</h1>
+              <p className="text-sm text-muted-foreground">
                 Platsen används bara som referenspunkt när du är på besök. Ingen i familjen kan se var
                 du befinner dig.
               </p>
             </div>
             <Button
               variant="secondary"
-              size="lg"
-              className="h-14 w-full rounded-2xl text-base"
+              className="h-12 w-full rounded-2xl text-sm"
               onClick={useCurrentLocation}
               disabled={locating}
             >
               {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />}
               {coords ? "Platsen är sparad" : "Använd min nuvarande plats"}
             </Button>
-            <Button size="lg" className="h-14 w-full rounded-2xl text-base" onClick={() => setStep(2)}>
+            <Button className="h-12 w-full rounded-2xl text-sm" onClick={() => setStep(2)}>
               {coords ? "Fortsätt" : "Hoppa över"} <ArrowRight className="size-4" />
             </Button>
           </>
@@ -140,12 +140,16 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
 
         {step === 2 ? (
           <>
-            <div className="space-y-2">
-              <h1 className="text-3xl">Vad heter du?</h1>
-              <p className="text-muted-foreground">Så att familjen ser vem som varit på besök.</p>
+            <div className="space-y-1">
+              <h1 className="text-2xl leading-snug">Vad heter du?</h1>
+              <p className="text-sm text-muted-foreground">
+                Så att familjen ser vem som varit på besök.
+              </p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="me">Ditt namn</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="me" className="text-xs">
+                Ditt namn
+              </Label>
               <Input
                 id="me"
                 value={myName}
@@ -153,12 +157,11 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
                 maxLength={60}
                 onChange={(e) => setMyName(e.target.value)}
                 placeholder="Simon"
-                className="h-14 rounded-2xl text-lg"
+                className="h-12 rounded-2xl text-base"
               />
             </div>
             <Button
-              size="lg"
-              className="h-14 w-full rounded-2xl text-base"
+              className="h-12 w-full rounded-2xl text-sm"
               disabled={myName.trim().length < 1}
               onClick={() => setStep(3)}
             >
@@ -169,14 +172,15 @@ export function Onboarding({ userId, onDone }: { userId: string; onDone: () => v
 
         {step === 3 ? (
           <>
-            <div className="space-y-2">
-              <h1 className="text-3xl">Välj din färg</h1>
-              <p className="text-muted-foreground">Din färg visar dina besök i familjens översikt.</p>
+            <div className="space-y-1">
+              <h1 className="text-2xl leading-snug">Välj din färg</h1>
+              <p className="text-sm text-muted-foreground">
+                Din färg visar dina besök i familjens översikt.
+              </p>
             </div>
             <ColorPicker value={color} onChange={setColor} />
             <Button
-              size="lg"
-              className="h-14 w-full rounded-2xl text-base"
+              className="h-12 w-full rounded-2xl text-sm"
               disabled={!color || saving}
               onClick={create}
             >
