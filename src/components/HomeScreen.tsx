@@ -228,12 +228,17 @@ export function HomeScreen({
 
   return (
     <div className="mx-auto w-full max-w-md px-5 pb-40 pt-8">
-      <header className="mb-6 flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm text-muted-foreground">Besöken hos</p>
-          <h1 className="text-3xl">{person?.name ?? circle.name}</h1>
+      <header className="mb-6 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-primary/60">
+            Besöken hos
+          </p>
+          <h1 className="mt-1 truncate text-[2rem] leading-[1.1] text-primary">
+            {person?.name ?? circle.name}
+          </h1>
+          <span className="mt-2 block h-px w-10 bg-primary/30" />
         </div>
-        <div className="flex gap-1">
+        <div className="flex shrink-0 gap-1">
           <Button variant="ghost" size="icon" aria-label="Familjen" onClick={() => setFamilyOpen(true)}>
             <Users className="size-5" />
           </Button>
@@ -251,6 +256,7 @@ export function HomeScreen({
         </div>
       </header>
 
+
       <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
 
 
@@ -265,16 +271,17 @@ export function HomeScreen({
         </div>
       ) : null}
 
-      <section className="rounded-[28px] border border-border/60 bg-card p-6 shadow-soft">
+      <section className="rounded-[28px] border border-primary/40 bg-transparent p-6">
         <div className="mb-7 text-center">
-          <h2 className="text-[1.4rem] leading-tight">Besöksöversikt</h2>
+          <h2 className="text-[1.4rem] leading-tight text-primary">Besöksöversikt</h2>
           <p className="mt-1 text-sm text-muted-foreground">Senaste 28 dagarna</p>
         </div>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
         {showLegend ? (
           <button
             type="button"
-            className="mt-7 flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-3 border-t border-border/60 pt-5 text-xs text-muted-foreground"
+            className="mt-7 flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-3 border-t border-primary/25 pt-5 text-xs text-muted-foreground"
+
             onClick={() => {
               window.localStorage.setItem(LEGEND_KEY, "1");
               setShowLegend(false);
