@@ -36,7 +36,7 @@ export async function getSubscriptionStatus(): Promise<SubscriptionStatus> {
   }
   try {
     const status = await BeenbyStoreKit.getSubscriptionStatus();
-    return { source: "storekit", ...status };
+    return { ...status, source: "storekit" };
   } catch (error) {
     console.error("[premium] getSubscriptionStatus failed", error);
     return FALLBACK_STATUS;
