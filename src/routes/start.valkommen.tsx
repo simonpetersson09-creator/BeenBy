@@ -60,16 +60,11 @@ function WelcomePage() {
         <p className="text-base text-muted-foreground">{t("welcome.sub")}</p>
       </div>
 
-      <ul className="animate-rise-in space-y-2.5">
+      <ul className="animate-rise-in divide-y divide-primary/10">
         {points.map(({ icon: Icon, key }) => (
-          <li
-            key={key}
-            className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-card/60 px-3.5 py-3"
-          >
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
-              <Icon className="size-4.5 text-primary" strokeWidth={1.75} />
-            </span>
-            <span className="text-sm text-foreground">{t(key)}</span>
+          <li key={key} className="flex items-start gap-3 py-3">
+            <Icon className="mt-0.5 size-4.5 shrink-0 text-primary/70" strokeWidth={1.5} />
+            <span className="text-sm leading-relaxed text-foreground/90">{t(key)}</span>
           </li>
         ))}
       </ul>
