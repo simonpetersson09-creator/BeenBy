@@ -53,8 +53,9 @@ export function DotGrid({
 
   return (
     <div>
-      <div className="mb-2 flex items-center gap-1">
-        <div className="w-8 shrink-0" />
+      <div className="mb-1 flex items-center gap-1">
+        <div className="w-6 shrink-0" />
+
         <div className="grid flex-1 grid-cols-7 gap-x-1">
           {WEEKDAY_LABELS.map((label, i) => (
             <div
@@ -67,26 +68,27 @@ export function DotGrid({
         </div>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         {weeks.map((week, wi) => {
           const isCurrentWeek = week.some((d) => d.day === today);
           return (
             <div
               key={week[0]!.day}
               className={cn(
-                "flex items-center gap-1 rounded-2xl py-0.5 pr-1 transition",
+                "flex items-center gap-1 rounded-xl pr-0.5 transition",
                 isCurrentWeek && "bg-primary/10 ring-1 ring-primary/25",
               )}
             >
               <span
                 className={cn(
-                  "w-8 shrink-0 text-center text-[0.6rem] font-semibold uppercase tracking-[0.08em]",
+                  "w-6 shrink-0 text-center text-[0.55rem] font-semibold uppercase tracking-[0.04em]",
                   isCurrentWeek ? "text-primary" : "text-muted-foreground/70",
                 )}
               >
                 v.{weekNumber(week[0]!.day)}
               </span>
               <div className="grid flex-1 grid-cols-7 gap-x-0.5">
+
                 {week.map((d, di) => {
                   const index = wi * 7 + di;
                   const isToday = d.day === today;
@@ -108,19 +110,20 @@ export function DotGrid({
                       aria-label={label}
                       aria-current={isToday ? "date" : undefined}
                       className={cn(
-                        "group flex min-h-9 items-center justify-center rounded-xl transition",
+                        "group flex min-h-8 items-center justify-center rounded-xl transition",
                         "active:scale-90",
                         isFuture && !isToday && !hasPlanned && "opacity-60",
                       )}
                     >
-                      <span className="relative flex size-8 items-center justify-center">
+                      <span className="relative flex size-7 items-center justify-center">
                         {isToday ? (
                           <span className="pointer-events-none absolute inset-0 animate-breathe rounded-full border border-primary/50" />
                         ) : null}
 
                         <span
                           className={cn(
-                            "animate-dot-pop block size-7 rounded-full transition",
+                            "animate-dot-pop block size-6 rounded-full transition",
+
                             "group-hover:scale-105",
                             !hasDone && !hasPlanned && "bg-foreground/[0.07]",
                             hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.18)]",
