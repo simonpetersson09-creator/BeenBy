@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CloudOff, Loader2, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { CloudOff, Loader2, MessageCircle, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
 import { toast } from "sonner";
+
 
 import { DayDetail } from "@/components/DayDetail";
 import { DotGrid, buildDays } from "@/components/DotGrid";
@@ -324,12 +326,24 @@ export function HomeScreen({
           {busy ? <Loader2 className="size-4 animate-spin" /> : null}
           Jag är här
         </Button>
-        <Button
-          className="mt-2 h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
-          onClick={() => setPlanOpen(true)}
-        >
-          <Plus className="size-4" /> Planera ett besök
-        </Button>
+        <div className="mt-2 flex gap-2">
+          <Button
+            className="h-12 flex-1 rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
+            onClick={() => setPlanOpen(true)}
+          >
+            <Plus className="size-4" /> Planera ett besök
+          </Button>
+          <Button
+            asChild
+            aria-label="Skriv en kommentar"
+            className="size-12 shrink-0 rounded-2xl bg-primary text-primary-foreground shadow-lift hover:bg-primary/90"
+          >
+            <Link to="/chat">
+              <MessageCircle className="size-5" />
+            </Link>
+          </Button>
+        </div>
+
 
       </div>
 

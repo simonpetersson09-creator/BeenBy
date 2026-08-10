@@ -114,6 +114,38 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          body: string
+          created_at: string
+          family_circle_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          family_circle_id: string
+          id?: string
+          user_id?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          family_circle_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_family_circle_id_fkey"
+            columns: ["family_circle_id"]
+            isOneToOne: false
+            referencedRelation: "family_circles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       persons: {
         Row: {
           created_at: string
