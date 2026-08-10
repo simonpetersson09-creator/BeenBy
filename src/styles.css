@@ -228,7 +228,6 @@
 
   html,
   body {
-    scrollbar-gutter: stable both-edges;
     overscroll-behavior-y: contain;
   }
 }
