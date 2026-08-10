@@ -56,7 +56,13 @@ function Index() {
   // If the anonymous session was lost, silently rejoin the saved family
   // circle so the user never has to enter their details again.
   useEffect(() => {
-    if (loading || !user || isLoading || data || recoveryTried.current) return;
+    // Data is there (or just got created) – nothing to recover.
+    if (data) {
+      setRecovering(false);
+      return;
+    }
+    if (loading || !user || isLoading || recoveryTried.current) return;
+
     const saved = getRecovery();
     if (!saved) {
       setRecovering(false);
