@@ -14,13 +14,286 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      family_circles: {
+        Row: {
+          created_at: string
+          created_by: string
+          family_code: string
+          id: string
+          name: string
+          timezone: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          family_code?: string
+          id?: string
+          name: string
+          timezone?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          family_code?: string
+          id?: string
+          name?: string
+          timezone?: string
+        }
+        Relationships: []
+      }
+      family_members: {
+        Row: {
+          family_circle_id: string
+          id: string
+          joined_at: string
+          personal_color: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          family_circle_id: string
+          id?: string
+          joined_at?: string
+          personal_color: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          family_circle_id?: string
+          id?: string
+          joined_at?: string
+          personal_color?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_family_circle_id_fkey"
+            columns: ["family_circle_id"]
+            isOneToOne: false
+            referencedRelation: "family_circles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invitations: {
+        Row: {
+          created_at: string
+          created_by: string
+          expires_at: string
+          family_circle_id: string
+          id: string
+          invite_token: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          family_circle_id: string
+          id?: string
+          invite_token?: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          family_circle_id?: string
+          id?: string
+          invite_token?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_family_circle_id_fkey"
+            columns: ["family_circle_id"]
+            isOneToOne: false
+            referencedRelation: "family_circles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      persons: {
+        Row: {
+          created_at: string
+          family_circle_id: string
+          geofence_radius: number
+          id: string
+          location_latitude: number | null
+          location_longitude: number | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          family_circle_id: string
+          geofence_radius?: number
+          id?: string
+          location_latitude?: number | null
+          location_longitude?: number | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          family_circle_id?: string
+          geofence_radius?: number
+          id?: string
+          location_latitude?: number | null
+          location_longitude?: number | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "persons_family_circle_id_fkey"
+            columns: ["family_circle_id"]
+            isOneToOne: false
+            referencedRelation: "family_circles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      planned_visits: {
+        Row: {
+          created_at: string
+          family_circle_id: string
+          id: string
+          person_id: string
+          planned_date: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          family_circle_id: string
+          id?: string
+          person_id: string
+          planned_date: string
+          status?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          family_circle_id?: string
+          id?: string
+          person_id?: string
+          planned_date?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "planned_visits_family_circle_id_fkey"
+            columns: ["family_circle_id"]
+            isOneToOne: false
+            referencedRelation: "family_circles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "planned_visits_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "persons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          name?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      visits: {
+        Row: {
+          client_token: string | null
+          created_at: string
+          family_circle_id: string
+          id: string
+          local_day: string
+          person_id: string
+          source: string
+          user_id: string
+          visited_at: string
+        }
+        Insert: {
+          client_token?: string | null
+          created_at?: string
+          family_circle_id: string
+          id?: string
+          local_day: string
+          person_id: string
+          source?: string
+          user_id?: string
+          visited_at?: string
+        }
+        Update: {
+          client_token?: string | null
+          created_at?: string
+          family_circle_id?: string
+          id?: string
+          local_day?: string
+          person_id?: string
+          source?: string
+          user_id?: string
+          visited_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visits_family_circle_id_fkey"
+            columns: ["family_circle_id"]
+            isOneToOne: false
+            referencedRelation: "family_circles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visits_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "persons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      circle_member_names: {
+        Args: { _circle: string }
+        Returns: {
+          name: string
+          user_id: string
+        }[]
+      }
+      is_circle_creator: { Args: { _circle: string }; Returns: boolean }
+      is_circle_member: { Args: { _circle: string }; Returns: boolean }
+      join_circle: {
+        Args: { _code?: string; _color: string; _name: string; _token?: string }
+        Returns: string
+      }
+      preview_invite: {
+        Args: { _code?: string; _token?: string }
+        Returns: {
+          circle_id: string
+          circle_name: string
+          person_name: string
+          status: string
+          taken_colors: string[]
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
