@@ -363,7 +363,11 @@ export function HomeScreen({
           disabled={busy || !person}
           className="h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
         >
-          {busy ? <Loader2 className="size-4 animate-spin" /> : null}
+          {busy ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <MapPinCheckInside className="size-5" />
+          )}
           Jag är här
         </Button>
         <div className="mt-2 flex gap-2">
@@ -376,12 +380,13 @@ export function HomeScreen({
           <Button
             asChild
             aria-label="Skriv en kommentar"
-            className="size-12 shrink-0 rounded-2xl bg-primary text-primary-foreground shadow-lift hover:bg-primary/90"
+            className="size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
           >
             <Link to="/chat">
               <MessageCircle className="size-5" />
             </Link>
           </Button>
+
         </div>
 
 
