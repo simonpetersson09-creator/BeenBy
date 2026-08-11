@@ -105,7 +105,7 @@ export function AddressEditor({
         <DialogHeader>
           <DialogTitle className="text-xl">{t("address.title")}</DialogTitle>
           <DialogDescription>
-            {t("address.sub", { name: person.name })}
+            {t("address.sub", { name: pl(person.name) })}
           </DialogDescription>
         </DialogHeader>
 

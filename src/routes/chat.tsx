@@ -167,7 +167,7 @@ function ChatPage() {
         <div>
           <h1 className="text-xl leading-tight">{t("chat.title")}</h1>
           <p className="text-xs text-muted-foreground">
-            {t("chat.about", { name: data.person?.name ?? data.circle.name })}
+            {t("chat.about", { name: pl(data.person?.name) || data.circle.name })}
           </p>
         </div>
       </header>

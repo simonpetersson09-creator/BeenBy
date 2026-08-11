@@ -272,7 +272,7 @@ export function HomeScreen({
             {t("home.eyebrow")}
           </p>
           <h1 className="mt-1 truncate text-[2rem] leading-[1.1] text-primary">
-            {person?.name ?? circle.name}
+            {pl(person?.name) || circle.name}
           </h1>
           <span className="mt-2 block h-px w-10 bg-primary/30" />
         </div>
@@ -343,7 +343,7 @@ export function HomeScreen({
           <DialogHeader>
             <DialogTitle>{t("geofence.askTitle")}</DialogTitle>
             <DialogDescription>
-              {t("geofence.askBody", { name: person?.name ?? circle.name })}
+              {t("geofence.askBody", { name: pl(person?.name) || circle.name })}
             </DialogDescription>
           </DialogHeader>
           <div className="mt-2 space-y-2">
@@ -595,7 +595,7 @@ export function HomeScreen({
           <DialogHeader>
             <DialogTitle className="text-xl">{t("home.dupTitle")}</DialogTitle>
             <DialogDescription>
-              {t("home.dupDesc", { name: person?.name ?? circle.name })}
+              {t("home.dupDesc", { name: pl(person?.name) || circle.name })}
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2">

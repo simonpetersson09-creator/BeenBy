@@ -122,7 +122,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
     <>
       <div className="space-y-1">
         <h1 className="text-2xl leading-snug">
-          {t("adress.title", { name: draft.personName || t("adress.person") })}
+          {t("adress.title", { name: pl(draft.personName) || t("adress.person") })}
         </h1>
         <p className="text-sm text-muted-foreground">
           {t("adress.sub")}
