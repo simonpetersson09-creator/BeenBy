@@ -76,42 +76,51 @@ export async function copyText(text: string): Promise<void> {
 
 /**
  * Opens an external URL (https, sms:, mailto:, fb-messenger:).
- * Returns false when the target could not be opened, so the caller can
- * fall back instead of leaving a silent dead end.
+ *
+ * On native iOS we navigate the webview: Capacitor's navigation delegate
+ * intercepts non-app schemes and hands them to UIApplication.open, which is
+ * what actually launches Messages, Mail, WhatsApp or Messenger.
  */
-export async function openExternalUrl(url: string): Promise<boolean> {
-  if (isNativePlatform()) {
-    try {
-      const { App } = await import("@capacitor/app");
-      const result = await App.openUrl({ url });
-      return result?.completed !== false;
-    } catch {
-      return false;
-    }
-  }
-
-  if (typeof window === "undefined") return false;
+export function openExternalUrl(url: string): void {
+  if (typeof window === "undefined") return;
   const isHttp = /^https?:/i.test(url);
-  if (isHttp) {
+  if (isHttp && !isNativePlatform()) {
     window.open(url, "_blank", "noopener,noreferrer");
-  } else {
-    window.location.href = url;
+    return;
   }
-  return true;
+  window.location.href = url;
 }
 
 /**
- * Tries to open a target app, and falls back to the share sheet when the app
- * is not installed or the URL cannot be handled.
+ * Tries to open a target app and falls back to the share sheet when nothing
+ * happened (app not installed / scheme not handled), so a button never turns
+ * into a silent dead end.
  */
 export async function openAppOrShare(
   url: string,
   share: { title: string; text: string; url: string },
+  fallbackMs = 1400,
 ): Promise<"opened" | "shared" | "copied"> {
-  const opened = await openExternalUrl(url);
-  if (opened) return "opened";
+  let leftApp = false;
+  const onHide = () => {
+    if (document.visibilityState === "hidden") leftApp = true;
+  };
+  document.addEventListener("visibilitychange", onHide);
+  window.addEventListener("pagehide", onHide);
+
+  openExternalUrl(url);
+
+  const result = await new Promise<"opened" | null>((resolve) => {
+    window.setTimeout(() => resolve(leftApp ? "opened" : null), fallbackMs);
+  });
+
+  document.removeEventListener("visibilitychange", onHide);
+  window.removeEventListener("pagehide", onHide);
+
+  if (result === "opened") return "opened";
   return await shareLink(share);
 }
+
 
 export function smsUrl(body: string): string {
   // iOS accepts sms:&body=... ; the "&" separator is required after "sms:".
