@@ -265,7 +265,12 @@ export function HomeScreen({
       </header>
 
 
-      <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <SettingsDialog
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        person={person}
+        onPersonUpdated={refresh}
+      />
 
       <Paywall open={paywallOpen} onOpenChange={setPaywallOpen} />
 
