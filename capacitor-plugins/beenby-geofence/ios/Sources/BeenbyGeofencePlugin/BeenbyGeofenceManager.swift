@@ -153,19 +153,75 @@ final class BeenbyGeofenceManager: NSObject, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        var payload: [String: Any] = ["identifier": region.identifier]
-        if let circular = region as? CLCircularRegion {
-            payload["latitude"] = circular.center.latitude
-            payload["longitude"] = circular.center.longitude
-            payload["radius"] = circular.radius
-        }
-        // Show the local arrival notification natively — this must work even
-        // when the app is not running, so it cannot depend on JS.
-        BeenbyArrivalNotifications.shared.presentArrivalNotification(identifier: region.identifier)
+        guard let circular = region as? CLCircularRegion else { return }
 
-        // Also forward the event to JS when the app happens to be running.
-        onEnter?(payload)
+        // Do NOT notify yet. iOS region monitoring is coarse in the background
+        // (cell/Wi-Fi based) and regularly fires several hundred metres away.
+        // Verify with a fresh one-shot fix first; cooldown is only consumed if
+        // the entry passes verification and a notification is actually shown.
+        pendingVerifications[circular.identifier] = PendingEntry(region: circular, requestedAt: Date())
+        manager.requestLocation()
     }
+
+    /// A didEnterRegion event awaiting verification by a fresh location fix.
+    private struct PendingEntry {
+        let region: CLCircularRegion
+        let requestedAt: Date
+    }
+
+    private var pendingVerifications: [String: PendingEntry] = [:]
+
+    /// Reject fixes older than this — never verify with a stale cached position.
+    private static let maxLocationAge: TimeInterval = 60
+    /// Reject fixes whose horizontal accuracy is invalid or worse than this.
+    private static let maxHorizontalAccuracy: CLLocationDistance = 300
+    /// Stop waiting for a fix after this long.
+    private static let verificationTimeout: TimeInterval = 120
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        prunePendingVerifications()
+        guard !pendingVerifications.isEmpty, let location = locations.last else { return }
+
+        // Freshness: ignore cached/stale fixes and keep waiting.
+        let age = Date().timeIntervalSince(location.timestamp)
+        if age > Self.maxLocationAge { return }
+
+        // Accuracy: invalid (<0) or very poor (>300 m) fixes are not trustworthy.
+        let accuracy = location.horizontalAccuracy
+        if accuracy < 0 || accuracy > Self.maxHorizontalAccuracy {
+            pendingVerifications.removeAll()
+            return
+        }
+
+        let pending = pendingVerifications
+        pendingVerifications.removeAll()
+
+        for (identifier, entry) in pending {
+            let center = CLLocation(latitude: entry.region.center.latitude,
+                                    longitude: entry.region.center.longitude)
+            let distance = location.distance(from: center)
+            let allowedDistance = entry.region.radius + max(accuracy, 0)
+            guard distance <= allowedDistance else { continue }
+
+            // Verified arrival: notify (this is also where cooldown starts) and
+            // forward to JS when the app happens to be running.
+            BeenbyArrivalNotifications.shared.presentArrivalNotification(identifier: identifier)
+            onEnter?([
+                "identifier": identifier,
+                "latitude": entry.region.center.latitude,
+                "longitude": entry.region.center.longitude,
+                "radius": entry.region.radius
+            ])
+        }
+    }
+
+    private func prunePendingVerifications() {
+        let now = Date()
+        pendingVerifications = pendingVerifications.filter {
+            now.timeIntervalSince($0.value.requestedAt) <= Self.verificationTimeout
+        }
+    }
+
 
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
         var payload: [String: Any] = ["message": error.localizedDescription]
