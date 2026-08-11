@@ -38,6 +38,26 @@ export type StartRegionOptions = {
   longitude: number;
   /** Metres. Native clamps to maximumRegionMonitoringDistance. Default 150. */
   radius?: number;
+  /** Persisted natively so the arrival notification can say "Är du hos X?". */
+  personName?: string;
+  familyCircleId?: string;
+  personId?: string;
+};
+
+export type NotificationPermissionStatus =
+  | "notDetermined"
+  | "denied"
+  | "authorized"
+  | "provisional"
+  | "ephemeral";
+
+export type PendingGeofenceConfirmation = {
+  id: string;
+  geofenceIdentifier: string;
+  familyCircleId: string;
+  personId: string;
+  personName?: string;
+  respondedAt: string;
 };
 
 export type StartRegionResult = {
@@ -67,6 +87,10 @@ export interface BeenbyGeofencePlugin {
   startMonitoringRegion(options: StartRegionOptions): Promise<StartRegionResult>;
   stopMonitoringRegion(options: { identifier: string }): Promise<{ stopped: boolean; identifier: string }>;
   getMonitoredRegions(): Promise<{ regions: MonitoredRegion[] }>;
+  getNotificationPermissionStatus(): Promise<{ status: NotificationPermissionStatus }>;
+  requestNotificationPermission(): Promise<{ status: NotificationPermissionStatus; granted: boolean }>;
+  getPendingConfirmations(): Promise<{ confirmations: PendingGeofenceConfirmation[] }>;
+  clearPendingConfirmation(options: { id: string }): Promise<{ cleared: boolean }>;
   addListener(
     eventName: "geofenceEnter",
     listener: (event: GeofenceEnterEvent) => void,
@@ -74,6 +98,10 @@ export interface BeenbyGeofencePlugin {
   addListener(
     eventName: "geofenceError",
     listener: (event: GeofenceErrorEvent) => void,
+  ): Promise<PluginListenerHandle>;
+  addListener(
+    eventName: "geofenceConfirmed",
+    listener: (event: PendingGeofenceConfirmation) => void,
   ): Promise<PluginListenerHandle>;
   addListener(
     eventName: "geofencePermissionChange",
@@ -159,6 +187,7 @@ export async function startGeofence(options: StartRegionOptions): Promise<StartR
   try {
     return await BeenbyGeofence.startMonitoringRegion({
       radius: DEFAULT_GEOFENCE_RADIUS,
+      ...parseGeofenceIdentifier(options.identifier),
       ...options,
     });
   } catch (error) {
@@ -207,6 +236,62 @@ export async function addGeofenceErrorListener(
   if (!isNativeGeofenceAvailable()) return noopHandle;
   try {
     return await BeenbyGeofence.addListener("geofenceError", listener);
+  } catch {
+    return noopHandle;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Local arrival notifications (step 4)
+ * ------------------------------------------------------------------ */
+
+export async function getGeofenceNotificationPermissionStatus(): Promise<NotificationPermissionStatus> {
+  if (!isNativeGeofenceAvailable()) return "denied";
+  try {
+    const result = await BeenbyGeofence.getNotificationPermissionStatus();
+    return result.status ?? "denied";
+  } catch {
+    return "denied";
+  }
+}
+
+export async function requestGeofenceNotificationPermission(): Promise<NotificationPermissionStatus> {
+  if (!isNativeGeofenceAvailable()) return "denied";
+  try {
+    const result = await BeenbyGeofence.requestNotificationPermission();
+    return result.status ?? "denied";
+  } catch {
+    return "denied";
+  }
+}
+
+/** Answers to "Ja" that native persisted while the app was closed. */
+export async function getPendingGeofenceConfirmations(): Promise<PendingGeofenceConfirmation[]> {
+  if (!isNativeGeofenceAvailable()) return [];
+  try {
+    const result = await BeenbyGeofence.getPendingConfirmations();
+    return result.confirmations ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function clearPendingGeofenceConfirmation(id: string): Promise<boolean> {
+  if (!isNativeGeofenceAvailable()) return false;
+  try {
+    const result = await BeenbyGeofence.clearPendingConfirmation({ id });
+    return result.cleared;
+  } catch {
+    return false;
+  }
+}
+
+export async function addGeofenceConfirmedListener(
+  listener: (event: PendingGeofenceConfirmation) => void,
+): Promise<PluginListenerHandle> {
+  if (!isNativeGeofenceAvailable()) return noopHandle;
+  try {
+    return await BeenbyGeofence.addListener("geofenceConfirmed", listener);
   } catch {
     return noopHandle;
   }
