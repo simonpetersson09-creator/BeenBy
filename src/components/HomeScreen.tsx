@@ -54,6 +54,11 @@ export function HomeScreen({
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [planOpen, setPlanOpen] = useState(false);
   const [familyOpen, setFamilyOpen] = useState(false);
+  // Only show a back arrow when there is somewhere to go back to.
+  const [canGoBack, setCanGoBack] = useState(false);
+  useEffect(() => {
+    setCanGoBack(typeof window !== "undefined" && window.history.length > 1);
+  }, []);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmSecond, setConfirmSecond] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
