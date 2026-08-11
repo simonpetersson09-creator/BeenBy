@@ -122,7 +122,7 @@ export function SettingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-3xl sm:max-w-md">
+      <DialogContent className="max-h-[85dvh] overflow-y-auto rounded-3xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl">{t("settings.title")}</DialogTitle>
           <DialogDescription>{t("settings.sub")}</DialogDescription>
