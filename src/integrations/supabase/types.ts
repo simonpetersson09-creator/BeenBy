@@ -44,6 +44,7 @@ export type Database = {
       family_members: {
         Row: {
           family_circle_id: string
+          geofence_enabled: boolean
           id: string
           joined_at: string
           personal_color: string
@@ -52,6 +53,7 @@ export type Database = {
         }
         Insert: {
           family_circle_id: string
+          geofence_enabled?: boolean
           id?: string
           joined_at?: string
           personal_color: string
@@ -60,6 +62,7 @@ export type Database = {
         }
         Update: {
           family_circle_id?: string
+          geofence_enabled?: boolean
           id?: string
           joined_at?: string
           personal_color?: string

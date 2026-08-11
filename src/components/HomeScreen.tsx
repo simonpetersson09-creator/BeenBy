@@ -21,6 +21,7 @@ import {
 import type { CircleData, PlannedVisit } from "@/hooks/useCircleData";
 import { useFamilyNotifications } from "@/hooks/useFamilyNotifications";
 import { useGeofenceVisits } from "@/hooks/useGeofenceVisits";
+import { useGeofenceSync } from "@/hooks/useGeofenceSync";
 import { useOnlineStatus } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { addDays, relativeLabel, todayKey } from "@/lib/dates";
@@ -60,6 +61,34 @@ export function HomeScreen({
   const [paywallOpen, setPaywallOpen] = useState(false);
   const { hasAccess } = useAccess();
   const locked = !hasAccess;
+
+  // Arrival reminder (geofence): keeps the native region in sync with the
+  // saved preference, access and the person's coordinates.
+  const geofence = useGeofenceSync({ circleId: circle.id, userId, person, hasAccess });
+  const handleGeofenceToggle = useCallback(
+    (next: boolean) => {
+      void (async () => {
+        const result = await geofence.toggle(next);
+        if (result.ok) {
+          toast.success(next ? t("geofence.on") : t("geofence.off"));
+          return;
+        }
+        if (result.reason === "no-access") {
+          setPaywallOpen(true);
+          return;
+        }
+        if (result.reason === "no-address") toast.message(t("geofence.needsAddress"));
+        else if (result.reason === "location-denied") toast.message(t("geofence.locationDenied"));
+        else if (result.reason === "location-missing") toast.message(t("geofence.locationAlways"));
+        else if (result.reason === "notifications-denied")
+          toast.message(t("geofence.notificationsDenied"));
+        else toast.message(t("geofence.iosOnly"));
+      })();
+    },
+    [geofence, t],
+  );
+
+
 
 
   const [busy, setBusy] = useState(false);
@@ -273,6 +302,13 @@ export function HomeScreen({
         onOpenChange={setSettingsOpen}
         person={person}
         onPersonUpdated={refresh}
+        geofence={{
+          enabled: geofence.enabled,
+          ...(geofence.reason ? { reason: geofence.reason } : {}),
+          busy: geofence.busy,
+          toggle: handleGeofenceToggle,
+        }}
+        onOpenPaywall={() => setPaywallOpen(true)}
       />
 
       <Paywall open={paywallOpen} onOpenChange={setPaywallOpen} />
