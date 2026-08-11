@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, MapPin, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
+import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,14 +25,19 @@ import {
 export function SettingsDialog({
   open,
   onOpenChange,
+  person,
+  onPersonUpdated,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
+  person?: EditablePerson | null;
+  onPersonUpdated?: () => void;
 }) {
   const t = useT();
   const { isPremium, loading: isLoadingPremium, isTrialActive, trialDaysLeft } = usePremium();
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  const [addressOpen, setAddressOpen] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -85,6 +91,33 @@ export function SettingsDialog({
           </div>
           <LanguageSwitcher />
         </section>
+
+        {person ? (
+          <section className="space-y-3 rounded-2xl bg-secondary/60 p-4">
+            <p className="flex items-center gap-2 font-medium">
+              <MapPin className="size-4" /> {t("address.section")}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {person.address ? person.address : t("address.missing")}
+            </p>
+            <Button
+              variant="secondary"
+              className="h-11 w-full rounded-2xl text-sm"
+              onClick={() => setAddressOpen(true)}
+            >
+              {person.address ? t("address.change") : t("address.add")}
+            </Button>
+          </section>
+        ) : null}
+
+        {person ? (
+          <AddressEditor
+            person={person}
+            open={addressOpen}
+            onOpenChange={setAddressOpen}
+            onSaved={onPersonUpdated}
+          />
+        ) : null}
 
         <section className="space-y-3 rounded-2xl bg-secondary/60 p-4">
           <p className="flex items-center gap-2 font-medium">
