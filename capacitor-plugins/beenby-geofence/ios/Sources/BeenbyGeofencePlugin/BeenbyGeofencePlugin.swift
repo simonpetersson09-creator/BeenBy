@@ -97,7 +97,7 @@ public class BeenbyGeofencePlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("latitude and longitude are required")
             return
         }
-        let radius = call.getDouble("radius") ?? 150
+        let radius = call.getDouble("radius") ?? 200
 
         // Persist non-secret region metadata so a background/terminated launch
         // can build the notification text without running any JS.
