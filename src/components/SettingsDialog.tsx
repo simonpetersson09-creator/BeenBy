@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Loader2, MapPin, Sparkles, User } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { KeyRound, Loader2, MapPin, Sparkles, User, Users } from "lucide-react";
 import { toast } from "sonner";
 
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
@@ -52,6 +53,7 @@ export function SettingsDialog({
   onOpenPaywall?: () => void;
 }) {
   const t = useT();
+  const navigate = useNavigate();
   const {
     isPremium,
     loading: isLoadingPremium,
