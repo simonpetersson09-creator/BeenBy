@@ -36,7 +36,7 @@ export type StartRegionOptions = {
   identifier: string;
   latitude: number;
   longitude: number;
-  /** Metres. Native clamps to maximumRegionMonitoringDistance. Default 150. */
+  /** Metres. Native clamps to maximumRegionMonitoringDistance. Default 200. */
   radius?: number;
   /** Persisted natively so the arrival notification can say "Är du hos X?". */
   personName?: string;
@@ -112,7 +112,7 @@ export interface BeenbyGeofencePlugin {
 export const BeenbyGeofence = registerPlugin<BeenbyGeofencePlugin>(GEOFENCE_PLUGIN_NAME);
 
 /** Default BeenBy geofence radius in metres. */
-export const DEFAULT_GEOFENCE_RADIUS = 150;
+export const DEFAULT_GEOFENCE_RADIUS = 200;
 
 /** True when running inside the native iOS shell (Capacitor). */
 export function isNativeGeofenceAvailable(): boolean {
