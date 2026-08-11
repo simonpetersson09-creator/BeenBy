@@ -6,6 +6,16 @@ import { toast } from "sonner";
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
 import { GeofenceSetting } from "@/components/GeofenceSetting";
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
