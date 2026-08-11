@@ -29,6 +29,8 @@ import { supabase } from "@/integrations/supabase/client";
 import type { GeofenceBlockReason } from "@/lib/geofenceSync";
 import { useT } from "@/lib/i18n";
 import { PRIVACY_POLICY_URL, TERMS_URL, openExternal } from "@/lib/legal";
+import { clearDraft } from "@/lib/onboardingDraft";
+import { clearRecovery } from "@/lib/recovery";
 import {
   manageSubscription,
   purchasePremium,
