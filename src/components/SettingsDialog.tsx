@@ -3,6 +3,7 @@ import { Loader2, MapPin, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
+import { GeofenceSetting } from "@/components/GeofenceSetting";
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import type { GeofenceBlockReason } from "@/lib/geofenceSync";
 import { useT } from "@/lib/i18n";
 import {
   manageSubscription,
@@ -27,14 +29,29 @@ export function SettingsDialog({
   onOpenChange,
   person,
   onPersonUpdated,
+  geofence,
+  onOpenPaywall,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   person?: EditablePerson | null;
   onPersonUpdated?: () => void;
+  geofence?: {
+    enabled: boolean;
+    reason?: GeofenceBlockReason;
+    busy: boolean;
+    toggle: (next: boolean) => void;
+  };
+  onOpenPaywall?: () => void;
 }) {
   const t = useT();
-  const { isPremium, loading: isLoadingPremium, isTrialActive, trialDaysLeft } = usePremium();
+  const {
+    isPremium,
+    loading: isLoadingPremium,
+    isTrialActive,
+    trialDaysLeft,
+    hasAccess,
+  } = usePremium();
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
@@ -108,6 +125,22 @@ export function SettingsDialog({
               {person.address ? t("address.change") : t("address.add")}
             </Button>
           </section>
+        ) : null}
+
+        {person && geofence ? (
+          <GeofenceSetting
+            personName={person.name}
+            hasAccess={hasAccess}
+            enabled={geofence.enabled}
+            {...(geofence.reason ? { reason: geofence.reason } : {})}
+            busy={geofence.busy}
+            onToggle={geofence.toggle}
+            onLocked={() => {
+              onOpenChange(false);
+              onOpenPaywall?.();
+            }}
+            onNeedsAddress={() => setAddressOpen(true)}
+          />
         ) : null}
 
         {person ? (
