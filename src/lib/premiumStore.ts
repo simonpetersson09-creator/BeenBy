@@ -109,7 +109,7 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
     const status = await getSubscriptionStatus();
     const priceLabel = await getPremiumPrice();
     setState({
-      isPremium: status.isPremium,
+      isPremium: true,
       ...(status.productId ? { productId: status.productId } : {}),
       ...(status.expiresAt ? { expiresAt: status.expiresAt } : {}),
       ...(priceLabel ? { priceLabel } : {}),
