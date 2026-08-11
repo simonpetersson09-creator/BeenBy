@@ -382,8 +382,7 @@ export function HomeScreen({
       <InviteSheet
         open={inviteOpen}
         onOpenChange={setInviteOpen}
-        url={inviteUrl}
-        message={t("home.inviteMsg", { name: person?.name ?? circle.name })}
+        code={circle.family_code}
       />
 
 

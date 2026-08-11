@@ -22,28 +22,28 @@ export function isNativePlatform(): boolean {
 export async function shareLink(options: {
   title: string;
   text: string;
-  url: string;
+  url?: string;
 }): Promise<"shared" | "copied"> {
   const { title, text, url } = options;
 
   if (isNativePlatform()) {
     try {
       const { Share } = await import("@capacitor/share");
-      await Share.share({ title, text, url, dialogTitle: title });
+      await Share.share({ title, text, ...(url ? { url } : {}), dialogTitle: title });
       return "shared";
     } catch {
       /* cancelled or unavailable — fall through */
     }
   } else if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
     try {
-      await navigator.share({ title, text, url });
+      await navigator.share({ title, text, ...(url ? { url } : {}) });
       return "shared";
     } catch {
       /* cancelled — fall through */
     }
   }
 
-  await copyText(url);
+  await copyText(url ?? text);
   return "copied";
 }
 
@@ -98,7 +98,7 @@ export function openExternalUrl(url: string): void {
  */
 export async function openAppOrShare(
   url: string,
-  share: { title: string; text: string; url: string },
+  share: { title: string; text: string; url?: string },
   fallbackMs = 1400,
 ): Promise<"opened" | "shared" | "copied"> {
   let leftApp = false;
