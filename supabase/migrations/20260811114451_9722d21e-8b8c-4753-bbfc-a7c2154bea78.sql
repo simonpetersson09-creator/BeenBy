@@ -1,0 +1,1 @@
+ALTER TABLE public.persons ALTER COLUMN geofence_radius SET DEFAULT 200;
