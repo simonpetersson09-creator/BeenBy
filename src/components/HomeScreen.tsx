@@ -4,6 +4,7 @@ import { CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, Refres
 import { toast } from "sonner";
 
 
+import { BackButton } from "@/components/BackButton";
 import { DayDetail } from "@/components/DayDetail";
 import { DotGrid, buildDays } from "@/components/DotGrid";
 import { InviteSheet } from "@/components/InviteSheet";
@@ -54,6 +55,11 @@ export function HomeScreen({
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [planOpen, setPlanOpen] = useState(false);
   const [familyOpen, setFamilyOpen] = useState(false);
+  // Only show a back arrow when there is somewhere to go back to.
+  const [canGoBack, setCanGoBack] = useState(false);
+  useEffect(() => {
+    setCanGoBack(typeof window !== "undefined" && window.history.length > 1);
+  }, []);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmSecond, setConfirmSecond] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -265,6 +271,11 @@ export function HomeScreen({
 
   return (
     <div className="mx-auto w-full max-w-md px-5 pb-40 pt-8">
+      {canGoBack ? (
+        <div className="mb-3">
+          <BackButton onClick={() => window.history.back()} inline />
+        </div>
+      ) : null}
       <header className="mb-6 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-primary/60">
