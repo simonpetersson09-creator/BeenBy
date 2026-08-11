@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
+import { BackButton } from "@/components/BackButton";
 import { useSession } from "@/hooks/useSession";
 import { ensureUser } from "@/lib/auth";
 import { getDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
@@ -11,8 +12,11 @@ import { getDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
  */
 export function StartShell({
   children,
+  onBack,
 }: {
   children: (ctx: { userId: string; draft: OnboardingDraft }) => React.ReactNode;
+  /** When set, a round back button is shown in the top-left corner. */
+  onBack?: () => void;
 }) {
   const { user, loading } = useSession();
   const [draft, setDraft] = useState<OnboardingDraft | null>(null);
@@ -36,6 +40,7 @@ export function StartShell({
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-8">
+      {onBack ? <BackButton onClick={onBack} /> : null}
       <div className="animate-rise-in space-y-4">{children({ userId: user.id, draft })}</div>
     </main>
   );

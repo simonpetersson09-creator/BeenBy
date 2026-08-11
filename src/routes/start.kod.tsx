@@ -53,7 +53,7 @@ function CodePage() {
   }
 
   return (
-    <StartShell>
+    <StartShell onBack={() => void navigate({ to: backTo })}>
       {() => (
         <>
           <h1 className="text-2xl leading-snug">{t("kod.title")}</h1>
