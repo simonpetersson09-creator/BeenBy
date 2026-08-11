@@ -8,6 +8,7 @@ import { useCircleData } from "@/hooks/useCircleData";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { ensureUser } from "@/lib/auth";
+import { useT } from "@/lib/i18n";
 import { getRecovery } from "@/lib/recovery";
 
 export const Route = createFileRoute("/")({
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const t = useT();
   const navigate = useNavigate();
   const { user, loading } = useSession();
   const { data, isLoading, error, refetch } = useCircleData(user?.id);
