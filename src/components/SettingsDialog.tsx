@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader2, MapPin, ShieldCheck, Sparkles, User } from "lucide-react";
+import { Loader2, MapPin, Sparkles, User } from "lucide-react";
 import { toast } from "sonner";
 
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
@@ -258,9 +258,7 @@ export function SettingsDialog({
         ) : null}
 
         <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
-          <p className="flex items-center gap-2 text-sm font-medium">
-            <ShieldCheck className="size-4" /> {t("legal.section")}
-          </p>
+
           <div className="grid grid-cols-2 gap-2">
             <Button
               variant="secondary"
