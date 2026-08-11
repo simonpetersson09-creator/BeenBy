@@ -6,6 +6,15 @@
 export type AppDict = Record<string, string>;
 
 const sv: AppDict = {
+  "address.section": "Besöksadress",
+  "address.missing": "Adress saknas",
+  "address.add": "Lägg till adress",
+  "address.change": "Ändra adress",
+  "address.title": "Besöksadress",
+  "address.sub": "Adressen används som utgångspunkt för besöken hos {name}.",
+  "address.save": "Spara adress",
+  "address.saved": "Adressen är sparad",
+  "address.saveFailed": "Det gick inte att spara adressen.",
   "home.eyebrow": "Besöken hos",
   "home.family": "Familjen",
   "home.settings": "Inställningar",
@@ -130,6 +139,15 @@ const sv: AppDict = {
 };
 
 const en: AppDict = {
+  "address.section": "Visiting address",
+  "address.missing": "No address saved",
+  "address.add": "Add address",
+  "address.change": "Change address",
+  "address.title": "Visiting address",
+  "address.sub": "The address is the starting point for visits to {name}.",
+  "address.save": "Save address",
+  "address.saved": "Address saved",
+  "address.saveFailed": "Could not save the address.",
   "home.eyebrow": "Visits to",
   "home.family": "The family",
   "home.settings": "Settings",
@@ -254,6 +272,15 @@ const en: AppDict = {
 };
 
 const de: AppDict = {
+  "address.section": "Besuchsadresse",
+  "address.missing": "Keine Adresse gespeichert",
+  "address.add": "Adresse hinzufügen",
+  "address.change": "Adresse ändern",
+  "address.title": "Besuchsadresse",
+  "address.sub": "Die Adresse ist der Ausgangspunkt für Besuche bei {name}.",
+  "address.save": "Adresse speichern",
+  "address.saved": "Adresse gespeichert",
+  "address.saveFailed": "Die Adresse konnte nicht gespeichert werden.",
   "home.eyebrow": "Besuche bei",
   "home.family": "Die Familie",
   "home.settings": "Einstellungen",
@@ -378,6 +405,15 @@ const de: AppDict = {
 };
 
 const da: AppDict = {
+  "address.section": "Besøgsadresse",
+  "address.missing": "Ingen adresse gemt",
+  "address.add": "Tilføj adresse",
+  "address.change": "Ændr adresse",
+  "address.title": "Besøgsadresse",
+  "address.sub": "Adressen er udgangspunkt for besøg hos {name}.",
+  "address.save": "Gem adresse",
+  "address.saved": "Adressen er gemt",
+  "address.saveFailed": "Adressen kunne ikke gemmes.",
   "home.eyebrow": "Besøgene hos",
   "home.family": "Familien",
   "home.settings": "Indstillinger",
@@ -502,6 +538,15 @@ const da: AppDict = {
 };
 
 const fi: AppDict = {
+  "address.section": "Vierailuosoite",
+  "address.missing": "Osoitetta ei ole tallennettu",
+  "address.add": "Lisää osoite",
+  "address.change": "Muuta osoitetta",
+  "address.title": "Vierailuosoite",
+  "address.sub": "Osoite on lähtökohta vierailuille henkilön {name} luo.",
+  "address.save": "Tallenna osoite",
+  "address.saved": "Osoite tallennettu",
+  "address.saveFailed": "Osoitetta ei voitu tallentaa.",
   "home.eyebrow": "Vierailut kohteessa",
   "home.family": "Perhe",
   "home.settings": "Asetukset",
@@ -626,6 +671,15 @@ const fi: AppDict = {
 };
 
 const es: AppDict = {
+  "address.section": "Dirección de visita",
+  "address.missing": "No hay dirección guardada",
+  "address.add": "Añadir dirección",
+  "address.change": "Cambiar dirección",
+  "address.title": "Dirección de visita",
+  "address.sub": "La dirección es el punto de partida para las visitas a {name}.",
+  "address.save": "Guardar dirección",
+  "address.saved": "Dirección guardada",
+  "address.saveFailed": "No se pudo guardar la dirección.",
   "home.eyebrow": "Visitas a",
   "home.family": "La familia",
   "home.settings": "Ajustes",
@@ -750,6 +804,15 @@ const es: AppDict = {
 };
 
 const fr: AppDict = {
+  "address.section": "Adresse de visite",
+  "address.missing": "Aucune adresse enregistrée",
+  "address.add": "Ajouter une adresse",
+  "address.change": "Modifier l'adresse",
+  "address.title": "Adresse de visite",
+  "address.sub": "L'adresse sert de point de départ pour les visites chez {name}.",
+  "address.save": "Enregistrer l'adresse",
+  "address.saved": "Adresse enregistrée",
+  "address.saveFailed": "Impossible d'enregistrer l'adresse.",
   "home.eyebrow": "Les visites chez",
   "home.family": "La famille",
   "home.settings": "Réglages",
