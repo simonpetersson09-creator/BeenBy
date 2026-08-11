@@ -197,7 +197,7 @@ export function SettingsDialog({
             className="h-11 w-full justify-center gap-2 rounded-2xl border-primary/30 text-sm font-medium"
             onClick={() => {
               onOpenChange(false);
-              void navigate({ to: "/start/kod" });
+              void navigate({ to: "/start/kod", search: { from: "app" } });
             }}
           >
             <KeyRound className="size-4" />

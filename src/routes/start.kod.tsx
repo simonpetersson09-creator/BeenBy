@@ -10,6 +10,11 @@ import { getDraft, patchDraft } from "@/lib/onboardingDraft";
 
 export const Route = createFileRoute("/start/kod")({
   ssr: false,
+  // "from=app" means the user came from Settings inside the app, so cancelling
+  // should return to the app — not back into onboarding.
+  validateSearch: (search: Record<string, unknown>) => ({
+    from: search["from"] === "app" ? ("app" as const) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Ange familjekod – Nära" },
@@ -31,6 +36,8 @@ export const Route = createFileRoute("/start/kod")({
 
 function CodePage() {
   const navigate = useNavigate();
+  const { from } = Route.useSearch();
+  const backTo = from === "app" ? "/" : "/start/vem";
   const t = useT();
   const [code, setCode] = useState(() => getDraft().familyCode);
   const [activeCode, setActiveCode] = useState<string | null>(null);
@@ -74,7 +81,7 @@ function CodePage() {
           <button
             type="button"
             className="mx-auto block text-sm text-muted-foreground underline underline-offset-4"
-            onClick={() => void navigate({ to: "/start/vem" })}
+            onClick={() => void navigate({ to: backTo })}
           >
             {t("common.back")}
           </button>
