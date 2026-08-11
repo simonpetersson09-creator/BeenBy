@@ -120,6 +120,7 @@
     background-color: var(--background);
     color-scheme: light;
     min-height: 100%;
+    overscroll-behavior: none;
   }
 
   body {
@@ -130,13 +131,15 @@
     margin: 0;
     min-height: 100%;
     min-height: 100dvh;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* Täcker hela viewporten så överscroll aldrig visar en mörkare yta */
-  body::before {
+  /* Täcker hela viewporten (inkl. safe areas och överscroll) med appens färg */
+  html::before {
     content: "";
     position: fixed;
-    inset: -100vh 0;
+    inset: -50vh 0;
     background-color: var(--background);
     z-index: -1;
     pointer-events: none;
@@ -146,6 +149,7 @@
     background-color: transparent;
     min-height: 100dvh;
   }
+
 
 
 
