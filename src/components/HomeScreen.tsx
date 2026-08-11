@@ -57,7 +57,6 @@ export function HomeScreen({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmSecond, setConfirmSecond] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const { hasAccess, isPremium, isTrialActive, trialDaysLeft } = useAccess();
@@ -257,20 +256,9 @@ export function HomeScreen({
     toast.success(t("toast.visitSaved"));
   }
 
-  async function invite() {
-    setInviteUrl(null);
+  /** Sharing uses the family code only — no link is generated or shared. */
+  function invite() {
     setInviteOpen(true);
-    const { data: inv, error } = await supabase
-      .from("invitations")
-      .insert({ family_circle_id: circle.id, created_by: userId })
-      .select("invite_token")
-      .single();
-    if (error || !inv) {
-      setInviteOpen(false);
-      toast.error(t("toast.inviteError"));
-      return;
-    }
-    setInviteUrl(`${window.location.origin}/join/${inv.invite_token}`);
   }
 
   const planDates = Array.from({ length: 14 }, (_, i) => addDays(today, i));
@@ -382,8 +370,7 @@ export function HomeScreen({
       <InviteSheet
         open={inviteOpen}
         onOpenChange={setInviteOpen}
-        url={inviteUrl}
-        message={t("home.inviteMsg", { name: person?.name ?? circle.name })}
+        code={circle.family_code}
       />
 
 
