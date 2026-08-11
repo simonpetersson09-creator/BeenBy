@@ -399,8 +399,12 @@ export function HomeScreen({
       ) : null}
 
       <section className="relative rounded-3xl border border-primary/40 bg-transparent px-3 py-4">
-        {!isPremium && isTrialActive ? (
+        {isPremium ? (
           <span className="absolute -top-2.5 left-3 rounded-full bg-primary px-2.5 py-1 text-[0.62rem] leading-none font-medium text-primary-foreground shadow-soft">
+            {t("home.premiumBadge")}
+          </span>
+        ) : isTrialActive ? (
+          <span className="absolute -top-2.5 left-3 rounded-full border border-primary/30 bg-card px-2.5 py-1 text-[0.62rem] leading-none font-medium text-primary shadow-soft">
             {trialDaysLeft === 1
               ? t("home.trialLeftOne")
               : t("home.trialLeft", { n: String(trialDaysLeft) })}
