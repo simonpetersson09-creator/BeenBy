@@ -39,7 +39,14 @@ export function StartShell({
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-8">
+    <main
+      className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 pb-8"
+      style={{
+        paddingTop: onBack
+          ? "calc(env(safe-area-inset-top, 0px) + 5rem)"
+          : "2rem",
+      }}
+    >
       {onBack ? <BackButton onClick={onBack} /> : null}
       <div className="animate-rise-in space-y-4">{children({ userId: user.id, draft })}</div>
     </main>
