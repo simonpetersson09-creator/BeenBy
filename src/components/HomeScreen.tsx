@@ -286,7 +286,7 @@ export function HomeScreen({
             >
               <span
                 aria-hidden
-                className="absolute -top-1.5 right-[3.6rem] size-3 rotate-45 rounded-[2px] bg-primary"
+                className="absolute -top-1.5 right-[4.625rem] size-3 rotate-45 rounded-[2px] bg-primary"
               />
 
               {t("home.tooltip")}
