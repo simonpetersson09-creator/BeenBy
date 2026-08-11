@@ -122,47 +122,92 @@ export function SettingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} className="max-h-[85dvh] overflow-y-auto rounded-3xl sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-xl">{t("settings.title")}</DialogTitle>
-          <DialogDescription>{t("settings.sub")}</DialogDescription>
+      <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        className="max-h-[88dvh] gap-2.5 overflow-y-auto rounded-3xl p-5 sm:max-w-md"
+      >
+        <DialogHeader className="space-y-0.5">
+          <DialogTitle className="text-lg">{t("settings.title")}</DialogTitle>
+          <DialogDescription className="text-xs">{t("settings.sub")}</DialogDescription>
         </DialogHeader>
 
-        <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-4">
+        <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
+          <p className="flex items-center gap-2 text-sm font-medium">
+            <Sparkles className="size-4" /> {t("settings.premium")}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {isPremium
+              ? t("settings.premiumActive")
+              : isTrialActive
+                ? trialDaysLeft === 1
+                  ? t("settings.trialLeftOne")
+                  : t("settings.trialLeft", { n: String(trialDaysLeft) })
+                : t("settings.trialEnded")}
+          </p>
+
+          <Button
+            className="h-11 w-full rounded-2xl bg-primary text-sm text-primary-foreground hover:bg-primary/90"
+            disabled={purchasing || isLoadingPremium}
+            onClick={handlePurchase}
+          >
+            {purchasing ? <Loader2 className="size-4 animate-spin" /> : null}
+            {t("settings.start")}
+          </Button>
+
+          <div className="flex gap-2">
+            <Button
+              className="h-10 flex-1 rounded-2xl bg-primary text-xs text-primary-foreground hover:bg-primary/90"
+              disabled={restoring}
+              onClick={handleRestore}
+            >
+              {restoring ? <Loader2 className="size-4 animate-spin" /> : null}
+              {t("settings.restore")}
+            </Button>
+            <Button
+              className="h-10 flex-1 rounded-2xl bg-primary text-xs text-primary-foreground hover:bg-primary/90"
+              onClick={handleManage}
+            >
+              {t("settings.manage")}
+            </Button>
+          </div>
+        </section>
+
+        <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-3">
           <div>
-            <p className="font-medium">{t("settings.langTitle")}</p>
+            <p className="text-sm font-medium">{t("settings.langTitle")}</p>
             <p className="text-xs text-muted-foreground">{t("settings.langHint")}</p>
           </div>
           <LanguageSwitcher />
         </section>
 
         {userId ? (
-          <section className="space-y-3 rounded-2xl bg-secondary/60 p-4">
-            <p className="flex items-center gap-2 font-medium">
+          <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
+            <p className="flex items-center gap-2 text-sm font-medium">
               <User className="size-4" /> {t("settings.nameTitle")}
             </p>
-            <p className="text-xs text-muted-foreground">{t("settings.nameHint")}</p>
-            <Input
-              value={name}
-              maxLength={60}
-              onChange={(e) => setName(e.target.value)}
-              className="h-11 rounded-2xl text-base"
-            />
-            <Button
-              variant="secondary"
-              className="h-11 w-full rounded-2xl text-sm"
-              disabled={savingName || name.trim().length < 1 || name.trim() === (myName ?? "")}
-              onClick={handleSaveName}
-            >
-              {savingName ? <Loader2 className="size-4 animate-spin" /> : null}
-              {t("settings.nameSave")}
-            </Button>
+            <div className="flex gap-2">
+              <Input
+                value={name}
+                maxLength={60}
+                onChange={(e) => setName(e.target.value)}
+                className="h-10 flex-1 rounded-2xl text-base"
+              />
+              <Button
+                variant="secondary"
+                className="h-10 rounded-2xl px-3 text-xs"
+                disabled={savingName || name.trim().length < 1 || name.trim() === (myName ?? "")}
+                onClick={handleSaveName}
+              >
+                {savingName ? <Loader2 className="size-4 animate-spin" /> : null}
+                {t("settings.nameSave")}
+              </Button>
+            </div>
           </section>
         ) : null}
 
         {person ? (
-          <section className="space-y-3 rounded-2xl bg-secondary/60 p-4">
-            <p className="flex items-center gap-2 font-medium">
+          <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
+            <p className="flex items-center gap-2 text-sm font-medium">
               <MapPin className="size-4" /> {t("address.section")}
             </p>
             <p className="text-xs text-muted-foreground">
@@ -170,7 +215,7 @@ export function SettingsDialog({
             </p>
             <Button
               variant="secondary"
-              className="h-11 w-full rounded-2xl text-sm"
+              className="h-10 w-full rounded-2xl text-xs"
               onClick={() => setAddressOpen(true)}
             >
               {person.address ? t("address.change") : t("address.add")}
@@ -203,49 +248,6 @@ export function SettingsDialog({
           />
         ) : null}
 
-        <section className="space-y-3 rounded-2xl bg-secondary/60 p-4">
-          <p className="flex items-center gap-2 font-medium">
-            <Sparkles className="size-4" /> {t("settings.premium")}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {isPremium
-              ? t("settings.premiumActive")
-              : isTrialActive
-                ? trialDaysLeft === 1
-                  ? t("settings.trialLeftOne")
-                  : t("settings.trialLeft", { n: String(trialDaysLeft) })
-                : t("settings.trialEnded")}
-          </p>
-          {isPremium ? null : (
-            <p className="text-xs text-muted-foreground">{t("settings.premiumInactive")}</p>
-          )}
-
-          <Button
-            className="h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground hover:bg-primary/90"
-            disabled={purchasing || isLoadingPremium}
-            onClick={handlePurchase}
-          >
-            {purchasing ? <Loader2 className="size-4 animate-spin" /> : null}
-            {t("settings.start")}
-          </Button>
-
-          <div className="flex gap-2">
-            <Button
-              className="h-11 flex-1 rounded-2xl bg-primary text-sm text-primary-foreground hover:bg-primary/90"
-              disabled={restoring}
-              onClick={handleRestore}
-            >
-              {restoring ? <Loader2 className="size-4 animate-spin" /> : null}
-              {t("settings.restore")}
-            </Button>
-            <Button
-              className="h-11 flex-1 rounded-2xl bg-primary text-sm text-primary-foreground hover:bg-primary/90"
-              onClick={handleManage}
-            >
-              {t("settings.manage")}
-            </Button>
-          </div>
-        </section>
 
       </DialogContent>
     </Dialog>
