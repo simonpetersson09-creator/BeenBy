@@ -60,7 +60,9 @@ export function SettingsDialog({
     isTrialActive,
     trialDaysLeft,
     hasAccess,
+    priceLabel,
   } = usePremium();
+
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
@@ -160,9 +162,12 @@ export function SettingsDialog({
               onClick={handlePurchase}
             >
               {purchasing ? <Loader2 className="size-4 animate-spin" /> : null}
-              {t("settings.start")}
+              {priceLabel
+                ? `${t("settings.start")} · ${t("paywall.price", { price: priceLabel })}`
+                : t("settings.start")}
             </Button>
           )}
+
 
 
           <div className="flex gap-2">
