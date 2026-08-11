@@ -117,13 +117,13 @@
   }
 
   html {
-    background-color: #afa9a6;
+    background-color: var(--background);
     color-scheme: light;
     min-height: 100%;
   }
 
   body {
-    background-color: #afa9a6;
+    background-color: var(--background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -137,7 +137,7 @@
     content: "";
     position: fixed;
     inset: -100vh 0;
-    background-color: #afa9a6;
+    background-color: var(--background);
     z-index: -1;
     pointer-events: none;
   }
