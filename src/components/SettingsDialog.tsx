@@ -110,14 +110,6 @@ export function SettingsDialog({
     // blank screen you get when the router re-renders while the session is gone.
     window.location.replace("/start/valkommen");
   }
-    try {
-      await supabase.auth.signOut();
-    } catch {
-      /* ignore */
-    }
-    await navigate({ to: "/start/valkommen", replace: true });
-    if (typeof window !== "undefined") window.location.reload();
-  }
 
 
 
