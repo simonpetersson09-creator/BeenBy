@@ -985,7 +985,7 @@ const fr: AppDict = {
   "geofence.openSettings": "Ouvrir les réglages",
   "geofence.on": "Le rappel est activé.",
   "geofence.off": "Le rappel est désactivé.",
-  "geofence.offNote": "La localisation n"est pas utilisée quand le rappel est désactivé.",
+  "geofence.offNote": "La localisation n’est pas utilisée quand le rappel est désactivé.",
   "geofence.locked": "Inclus dans Premium",
   "geofence.saveFailed": "Impossible d’enregistrer le réglage.",
   "geofence.askTitle": "Vous prévenir à votre arrivée ?",
