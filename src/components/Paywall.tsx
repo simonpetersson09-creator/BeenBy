@@ -81,8 +81,11 @@ export function Paywall({
           onClick={handlePurchase}
         >
           {purchasing ? <Loader2 className="size-4 animate-spin" /> : null}
-          {t("settings.start")}
+          {priceLabel
+            ? `${t("settings.start")} · ${t("paywall.price", { price: priceLabel })}`
+            : t("settings.start")}
         </Button>
+
 
         <div className="flex gap-2">
           <Button
