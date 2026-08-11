@@ -232,6 +232,10 @@ final class BeenbyGeofenceManager: NSObject, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        // A failed one-shot fix must not notify: drop pending entries silently
+        // (cooldown untouched, so a later real arrival still works).
+        pendingVerifications.removeAll()
         onError?(["message": error.localizedDescription])
     }
+
 }
