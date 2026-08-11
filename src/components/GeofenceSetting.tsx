@@ -53,10 +53,10 @@ export function GeofenceSetting({
     reason === "notifications-denied";
 
   return (
-    <section className="space-y-3 rounded-2xl bg-secondary/60 p-4">
+    <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="flex items-center gap-2 font-medium">
+          <p className="flex items-center gap-2 text-sm font-medium">
             {hasAccess ? <Bell className="size-4" /> : <Lock className="size-4" />}{" "}
             {t("geofence.title")}
           </p>
@@ -99,7 +99,7 @@ export function GeofenceSetting({
           {canOpenSettings ? (
             <Button
               variant="secondary"
-              className="h-10 w-full rounded-2xl text-sm"
+              className="h-10 w-full rounded-2xl text-xs"
               onClick={() => void openNativeSettings()}
             >
               {t("geofence.openSettings")}
