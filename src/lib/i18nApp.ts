@@ -87,7 +87,7 @@ const sv: AppDict = {
   "settings.langTitle": "Språk",
   "settings.joinTitle": "Gå med i en familjecirkel",
   "settings.joinHint": "Har du fått en kod av ett syskon?",
-  "settings.joinCta": "Gå med med kod",
+  "settings.joinCta": "Gå med via kod",
   "settings.langHint": "Gäller hela appen.",
   "settings.nameTitle": "Ditt namn",
   "settings.nameHint": "Namnet syskonen ser i familjen.",
