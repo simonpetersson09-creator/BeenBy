@@ -318,6 +318,8 @@ export function HomeScreen({
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
         person={person}
+        userId={userId}
+        myName={members.find((m) => m.user_id === userId)?.name ?? ""}
         onPersonUpdated={refresh}
         geofence={{
           enabled: geofence.enabled,

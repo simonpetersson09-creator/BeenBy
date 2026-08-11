@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader2, MapPin, Sparkles } from "lucide-react";
+import { Loader2, MapPin, Sparkles, User } from "lucide-react";
 import { toast } from "sonner";
 
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
@@ -13,6 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
 import type { GeofenceBlockReason } from "@/lib/geofenceSync";
 import { useT } from "@/lib/i18n";
 import {
@@ -31,10 +33,14 @@ export function SettingsDialog({
   onPersonUpdated,
   geofence,
   onOpenPaywall,
+  userId,
+  myName,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   person?: EditablePerson | null;
+  userId?: string;
+  myName?: string;
   onPersonUpdated?: () => void;
   geofence?: {
     enabled: boolean;
@@ -55,6 +61,27 @@ export function SettingsDialog({
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
+  const [name, setName] = useState(myName ?? "");
+  const [savingName, setSavingName] = useState(false);
+
+  useEffect(() => {
+    if (open) setName(myName ?? "");
+  }, [open, myName]);
+
+  async function handleSaveName() {
+    if (!userId) return;
+    const next = name.trim();
+    if (next.length < 1 || savingName) return;
+    setSavingName(true);
+    const { error } = await supabase.from("profiles").update({ name: next }).eq("id", userId);
+    setSavingName(false);
+    if (error) {
+      toast.error(t("settings.nameFailed"));
+      return;
+    }
+    toast.success(t("settings.nameSaved"));
+    onPersonUpdated?.();
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -95,7 +122,7 @@ export function SettingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-3xl sm:max-w-md">
+      <DialogContent className="max-h-[85dvh] overflow-y-auto rounded-3xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl">{t("settings.title")}</DialogTitle>
           <DialogDescription>{t("settings.sub")}</DialogDescription>
@@ -108,6 +135,30 @@ export function SettingsDialog({
           </div>
           <LanguageSwitcher />
         </section>
+
+        {userId ? (
+          <section className="space-y-3 rounded-2xl bg-secondary/60 p-4">
+            <p className="flex items-center gap-2 font-medium">
+              <User className="size-4" /> {t("settings.nameTitle")}
+            </p>
+            <p className="text-xs text-muted-foreground">{t("settings.nameHint")}</p>
+            <Input
+              value={name}
+              maxLength={60}
+              onChange={(e) => setName(e.target.value)}
+              className="h-11 rounded-2xl text-base"
+            />
+            <Button
+              variant="secondary"
+              className="h-11 w-full rounded-2xl text-sm"
+              disabled={savingName || name.trim().length < 1 || name.trim() === (myName ?? "")}
+              onClick={handleSaveName}
+            >
+              {savingName ? <Loader2 className="size-4 animate-spin" /> : null}
+              {t("settings.nameSave")}
+            </Button>
+          </section>
+        ) : null}
 
         {person ? (
           <section className="space-y-3 rounded-2xl bg-secondary/60 p-4">

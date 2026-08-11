@@ -54,7 +54,7 @@ function WelcomePage() {
   }
 
   return (
-    <main className="mx-auto flex h-dvh w-full max-w-md flex-col justify-center gap-5 overflow-hidden px-6 py-8">
+    <main className="mx-auto flex h-dvh w-full max-w-md flex-col justify-center gap-5 overflow-hidden px-6 pt-8 pb-12">
       <div className="animate-rise-in space-y-3">
         <h1 className="text-3xl leading-tight text-primary">{t("welcome.title")}</h1>
         <p className="text-base text-muted-foreground">{t("welcome.sub")}</p>
@@ -69,7 +69,7 @@ function WelcomePage() {
         ))}
       </ul>
 
-      <div className="relative flex items-center gap-2">
+      <div className="relative mt-6 flex items-center gap-2 pt-4">
         {showHint ? (
           <button
             type="button"
