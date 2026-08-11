@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Loader2, MapPin, Sparkles, User } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { KeyRound, Loader2, MapPin, Sparkles, User, Users } from "lucide-react";
 import { toast } from "sonner";
 
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
@@ -52,6 +53,7 @@ export function SettingsDialog({
   onOpenPaywall?: () => void;
 }) {
   const t = useT();
+  const navigate = useNavigate();
   const {
     isPremium,
     loading: isLoadingPremium,
@@ -180,6 +182,30 @@ export function SettingsDialog({
             </Button>
           </div>
         </section>
+
+        <section className="space-y-2 rounded-2xl border border-primary/15 bg-secondary/60 p-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="flex items-center gap-2 text-sm font-medium">
+                <Users className="size-4" /> {t("settings.joinTitle")}
+              </p>
+              <p className="text-xs text-muted-foreground">{t("settings.joinHint")}</p>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            className="h-11 w-full justify-center gap-2 rounded-2xl border-primary/30 text-sm font-medium"
+            onClick={() => {
+              onOpenChange(false);
+              void navigate({ to: "/start/kod" });
+            }}
+          >
+            <KeyRound className="size-4" />
+            {t("settings.joinCta")}
+          </Button>
+        </section>
+
+
 
         <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-3">
           <div>
