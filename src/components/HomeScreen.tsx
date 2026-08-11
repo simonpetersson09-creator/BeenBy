@@ -181,14 +181,13 @@ export function HomeScreen({
   }
 
   async function completePlanned(p: PlannedVisit) {
-    await supabase.from("visits").insert({
-      family_circle_id: circle.id,
-      person_id: p.person_id,
-      user_id: userId,
-      visited_at: new Date().toISOString(),
-      local_day: p.planned_date,
+    await recordVisit({
+      familyCircleId: circle.id,
+      personId: p.person_id,
+      userId,
+      timezone: tz,
       source: "confirmed_planned_visit",
-      client_token: newClientToken(),
+      localDay: p.planned_date,
     });
     await supabase.from("planned_visits").update({ status: "completed" }).eq("id", p.id);
     setSelectedDay(null);
