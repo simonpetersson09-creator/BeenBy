@@ -26,7 +26,7 @@ import { useGeofenceSync } from "@/hooks/useGeofenceSync";
 import { useOnlineStatus } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { addDays, relativeLabel, todayKey } from "@/lib/dates";
-import { useT } from "@/lib/i18n";
+import { useT, usePersonLabel } from "@/lib/i18n";
 import { getPending, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
 import { refreshTrialStatus, useAccess } from "@/lib/premiumStore";
@@ -43,6 +43,7 @@ export function HomeScreen({
   refresh: () => void;
 }) {
   const t = useT();
+  const pl = usePersonLabel();
   const { circle, person, members, visits, planned } = data;
   const tz = circle.timezone;
   const online = useOnlineStatus();

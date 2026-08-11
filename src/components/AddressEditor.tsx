@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { searchAddress, type GeocodeHit } from "@/lib/geocode";
-import { useT } from "@/lib/i18n";
+import { useT, usePersonLabel } from "@/lib/i18n";
 
 export type EditablePerson = {
   id: string;
@@ -42,6 +42,7 @@ export function AddressEditor({
   onSaved?: (() => void) | undefined;
 }) {
   const t = useT();
+  const pl = usePersonLabel();
   const [query, setQuery] = useState(person.address ?? "");
   const [resolved, setResolved] = useState<string | null>(person.address);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(

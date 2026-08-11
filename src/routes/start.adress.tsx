@@ -8,7 +8,7 @@ import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useT } from "@/lib/i18n";
+import { useT, usePersonLabel } from "@/lib/i18n";
 import { searchAddress } from "@/lib/geocode";
 import { patchDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
 
@@ -54,6 +54,7 @@ function AddressPage() {
 function AddressStep({ draft }: { draft: OnboardingDraft }) {
   const navigate = useNavigate();
   const t = useT();
+  const pl = usePersonLabel();
   const [address, setAddress] = useState(draft.address);
   const [resolvedAddress, setResolvedAddress] = useState<string | null>(draft.resolvedAddress);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
