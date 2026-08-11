@@ -143,7 +143,11 @@ final class BeenbyGeofenceManager: NSObject, CLLocationManagerDelegate {
             payload["longitude"] = circular.center.longitude
             payload["radius"] = circular.radius
         }
-        // This step only forwards the event to JS — no notification, no visit.
+        // Show the local arrival notification natively — this must work even
+        // when the app is not running, so it cannot depend on JS.
+        BeenbyArrivalNotifications.shared.presentArrivalNotification(identifier: region.identifier)
+
+        // Also forward the event to JS when the app happens to be running.
         onEnter?(payload)
     }
 
