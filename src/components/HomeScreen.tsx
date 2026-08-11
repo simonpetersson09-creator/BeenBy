@@ -57,7 +57,6 @@ export function HomeScreen({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmSecond, setConfirmSecond] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const { hasAccess, isPremium, isTrialActive, trialDaysLeft } = useAccess();
