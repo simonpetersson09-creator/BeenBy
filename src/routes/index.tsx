@@ -8,6 +8,7 @@ import { useCircleData } from "@/hooks/useCircleData";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { ensureUser } from "@/lib/auth";
+import { useT } from "@/lib/i18n";
 import { getRecovery } from "@/lib/recovery";
 
 export const Route = createFileRoute("/")({
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const t = useT();
   const navigate = useNavigate();
   const { user, loading } = useSession();
   const { data, isLoading, error, refetch } = useCircleData(user?.id);
@@ -92,9 +94,7 @@ function Index() {
   if (error || authFailed) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-8 text-center">
-        <p className="text-sm text-muted-foreground">
-          Kunde inte hämta din familjecirkel just nu. Kontrollera uppkopplingen.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("error.loadCircle")}</p>
         <Button
           onClick={() => {
             setAuthFailed(false);
@@ -102,15 +102,16 @@ function Index() {
             void refetch();
           }}
         >
-          Försök igen
+          {t("error.retry")}
         </Button>
         <button
           type="button"
           className="text-xs underline text-muted-foreground"
           onClick={() => void navigate({ to: "/start/kod" })}
         >
-          Ange familjekod
+          {t("error.enterCode")}
         </button>
+
       </div>
     );
   }

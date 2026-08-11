@@ -6,6 +6,9 @@
 export type AppDict = Record<string, string>;
 
 const sv: AppDict = {
+  "error.loadCircle": "Kunde inte hämta din familjecirkel just nu. Kontrollera uppkopplingen.",
+  "error.retry": "Försök igen",
+  "error.enterCode": "Ange familjekod",
   "address.section": "Besöksadress",
   "address.missing": "Adress saknas",
   "address.add": "Lägg till adress",
@@ -173,6 +176,9 @@ const sv: AppDict = {
 };
 
 const en: AppDict = {
+  "error.loadCircle": "We couldn't load your family circle right now. Check your connection.",
+  "error.retry": "Try again",
+  "error.enterCode": "Enter family code",
   "address.section": "Visiting address",
   "address.missing": "No address saved",
   "address.add": "Add address",
@@ -340,6 +346,9 @@ const en: AppDict = {
 };
 
 const de: AppDict = {
+  "error.loadCircle": "Dein Familienkreis konnte gerade nicht geladen werden. Prüfe deine Verbindung.",
+  "error.retry": "Erneut versuchen",
+  "error.enterCode": "Familiencode eingeben",
   "address.section": "Besuchsadresse",
   "address.missing": "Keine Adresse gespeichert",
   "address.add": "Adresse hinzufügen",
@@ -507,6 +516,9 @@ const de: AppDict = {
 };
 
 const da: AppDict = {
+  "error.loadCircle": "Vi kunne ikke hente din familiecirkel lige nu. Tjek din forbindelse.",
+  "error.retry": "Prøv igen",
+  "error.enterCode": "Indtast familiekode",
   "address.section": "Besøgsadresse",
   "address.missing": "Ingen adresse gemt",
   "address.add": "Tilføj adresse",
@@ -674,6 +686,9 @@ const da: AppDict = {
 };
 
 const fi: AppDict = {
+  "error.loadCircle": "Perhepiiriäsi ei voitu ladata juuri nyt. Tarkista yhteys.",
+  "error.retry": "Yritä uudelleen",
+  "error.enterCode": "Syötä perhekoodi",
   "address.section": "Vierailuosoite",
   "address.missing": "Osoitetta ei ole tallennettu",
   "address.add": "Lisää osoite",
@@ -841,6 +856,9 @@ const fi: AppDict = {
 };
 
 const es: AppDict = {
+  "error.loadCircle": "No pudimos cargar tu círculo familiar ahora mismo. Comprueba tu conexión.",
+  "error.retry": "Intentar de nuevo",
+  "error.enterCode": "Introducir código familiar",
   "address.section": "Dirección de visita",
   "address.missing": "No hay dirección guardada",
   "address.add": "Añadir dirección",
@@ -1008,6 +1026,9 @@ const es: AppDict = {
 };
 
 const fr: AppDict = {
+  "error.loadCircle": "Impossible de charger votre cercle familial pour le moment. Vérifiez votre connexion.",
+  "error.retry": "Réessayer",
+  "error.enterCode": "Saisir le code famille",
   "address.section": "Adresse de visite",
   "address.missing": "Aucune adresse enregistrée",
   "address.add": "Ajouter une adresse",
