@@ -118,8 +118,9 @@ public class BeenbyGeofencePlugin: CAPPlugin, CAPBridgedPlugin {
                 "identifier": identifier,
                 "radius": effectiveRadius
             ])
-        case .failure(let message):
+        case .failure(let error):
             // Never crash — report as an event and resolve with started: false.
+            let message = error.localizedDescription
             notifyListeners("geofenceError", data: ["identifier": identifier, "message": message])
             call.resolve([
                 "started": false,

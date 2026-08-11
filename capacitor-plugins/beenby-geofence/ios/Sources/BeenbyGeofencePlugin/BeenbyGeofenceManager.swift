@@ -13,6 +13,22 @@ import Foundation
  *   - local notifications / notification actions
  *   - any visit registration
  */
+/// Errors that region monitoring can fail with. Swift.Result requires the
+/// Failure type to conform to Error, so plain String is not allowed.
+enum GeofenceError: LocalizedError {
+    case monitoringUnavailable
+    case invalidCoordinates
+
+    var errorDescription: String? {
+        switch self {
+        case .monitoringUnavailable:
+            return "Region monitoring is not available on this device"
+        case .invalidCoordinates:
+            return "Invalid coordinates"
+        }
+    }
+}
+
 final class BeenbyGeofenceManager: NSObject, CLLocationManagerDelegate {
 
     static let shared = BeenbyGeofenceManager()
@@ -87,14 +103,14 @@ final class BeenbyGeofenceManager: NSObject, CLLocationManagerDelegate {
     }
 
     @discardableResult
-    func startMonitoring(identifier: String, latitude: Double, longitude: Double, radius: Double) -> Result<Double, String> {
+    func startMonitoring(identifier: String, latitude: Double, longitude: Double, radius: Double) -> Result<Double, GeofenceError> {
         guard isMonitoringAvailable else {
-            return .failure("Region monitoring is not available on this device")
+            return .failure(.monitoringUnavailable)
         }
         let effectiveRadius = clampedRadius(radius)
         let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         guard CLLocationCoordinate2DIsValid(center) else {
-            return .failure("Invalid coordinates")
+            return .failure(.invalidCoordinates)
         }
 
         // Replace any previous region with the same identifier so we never
