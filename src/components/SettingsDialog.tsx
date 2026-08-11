@@ -1,11 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { KeyRound, Loader2, MapPin, Sparkles, User, Users } from "lucide-react";
+import { KeyRound, Loader2, MapPin, RotateCcw, Sparkles, User, Users } from "lucide-react";
 import { toast } from "sonner";
 
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
 import { GeofenceSetting } from "@/components/GeofenceSetting";
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,6 +29,8 @@ import { supabase } from "@/integrations/supabase/client";
 import type { GeofenceBlockReason } from "@/lib/geofenceSync";
 import { useT } from "@/lib/i18n";
 import { PRIVACY_POLICY_URL, TERMS_URL, openExternal } from "@/lib/legal";
+import { clearDraft } from "@/lib/onboardingDraft";
+import { clearRecovery } from "@/lib/recovery";
 import {
   manageSubscription,
   purchasePremium,
@@ -68,6 +80,34 @@ export function SettingsDialog({
   const [addressOpen, setAddressOpen] = useState(false);
   const [name, setName] = useState(myName ?? "");
   const [savingName, setSavingName] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
+
+  /**
+   * Start over on this device: clears the local onboarding draft, the saved
+   * recovery details and the anonymous session, then returns to the welcome
+   * page. Nothing is deleted on the server — the family circle lives on and
+   * can be rejoined with the family code.
+   */
+  async function handleReset() {
+    setResetOpen(false);
+    onOpenChange(false);
+    clearDraft();
+    clearRecovery();
+    try {
+      window.localStorage.removeItem("beenby.familyTipSeen");
+    } catch {
+      /* storage unavailable */
+    }
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      /* ignore */
+    }
+    await navigate({ to: "/start/valkommen", replace: true });
+    if (typeof window !== "undefined") window.location.reload();
+  }
+
+
 
   useEffect(() => {
     if (open) setName(myName ?? "");
@@ -311,6 +351,39 @@ export function SettingsDialog({
             </Button>
           </div>
         </section>
+
+        <section className="space-y-2 rounded-2xl border border-destructive/20 bg-destructive/5 p-3">
+          <p className="flex items-center gap-2 text-sm font-medium">
+            <RotateCcw className="size-4" /> {t("reset.title")}
+          </p>
+          <p className="text-xs text-muted-foreground">{t("reset.desc")}</p>
+          <Button
+            variant="secondary"
+            className="h-10 w-full rounded-2xl text-xs text-destructive"
+            onClick={() => setResetOpen(true)}
+          >
+            {t("reset.button")}
+          </Button>
+        </section>
+
+        <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+          <AlertDialogContent className="rounded-3xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t("reset.confirmTitle")}</AlertDialogTitle>
+              <AlertDialogDescription>{t("reset.confirmDesc")}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-2xl">{t("reset.cancel")}</AlertDialogCancel>
+              <AlertDialogAction
+                className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => void handleReset()}
+              >
+                {t("reset.confirm")}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
       </DialogContent>
     </Dialog>
   );
