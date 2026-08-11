@@ -3,8 +3,8 @@
  * Fill these in when the final URLs are ready — empty string hides nothing,
  * the button just tells the user the link is coming.
  */
-export const PRIVACY_POLICY_URL = "";
-export const TERMS_URL = "";
+export const PRIVACY_POLICY_URL = "https://beenby-terms-hub.lovable.app";
+export const TERMS_URL = "https://beenby-terms-hub.lovable.app";
 
 export function openExternal(url: string) {
   if (!url) return false;
