@@ -256,7 +256,31 @@ export function SettingsDialog({
           />
         ) : null}
 
-
+        <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
+          <p className="flex items-center gap-2 text-sm font-medium">
+            <ShieldCheck className="size-4" /> {t("legal.section")}
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              variant="secondary"
+              className="h-10 rounded-2xl text-xs"
+              onClick={() => {
+                if (!openExternal(PRIVACY_POLICY_URL)) toast.message(t("legal.privacy"));
+              }}
+            >
+              {t("legal.privacy")}
+            </Button>
+            <Button
+              variant="secondary"
+              className="h-10 rounded-2xl text-xs"
+              onClick={() => {
+                if (!openExternal(TERMS_URL)) toast.message(t("legal.terms"));
+              }}
+            >
+              {t("legal.terms")}
+            </Button>
+          </div>
+        </section>
       </DialogContent>
     </Dialog>
   );
