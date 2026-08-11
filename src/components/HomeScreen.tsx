@@ -21,6 +21,7 @@ import {
 import type { CircleData, PlannedVisit } from "@/hooks/useCircleData";
 import { useFamilyNotifications } from "@/hooks/useFamilyNotifications";
 import { useGeofenceVisits } from "@/hooks/useGeofenceVisits";
+import { useGeofenceSync } from "@/hooks/useGeofenceSync";
 import { useOnlineStatus } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { addDays, relativeLabel, todayKey } from "@/lib/dates";
@@ -273,6 +274,13 @@ export function HomeScreen({
         onOpenChange={setSettingsOpen}
         person={person}
         onPersonUpdated={refresh}
+        geofence={{
+          enabled: geofence.enabled,
+          ...(geofence.reason ? { reason: geofence.reason } : {}),
+          busy: geofence.busy,
+          toggle: handleGeofenceToggle,
+        }}
+        onOpenPaywall={() => setPaywallOpen(true)}
       />
 
       <Paywall open={paywallOpen} onOpenChange={setPaywallOpen} />
