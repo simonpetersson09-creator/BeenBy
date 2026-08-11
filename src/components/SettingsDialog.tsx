@@ -145,14 +145,22 @@ export function SettingsDialog({
                 : t("settings.trialEnded")}
           </p>
 
-          <Button
-            className="h-11 w-full rounded-2xl bg-primary text-sm text-primary-foreground hover:bg-primary/90"
-            disabled={purchasing || isLoadingPremium}
-            onClick={handlePurchase}
-          >
-            {purchasing ? <Loader2 className="size-4 animate-spin" /> : null}
-            {t("settings.start")}
-          </Button>
+          {isPremium ? (
+            <div className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-sm font-medium text-primary-foreground">
+              <Sparkles className="size-4" />
+              {t("settings.premiumActiveBtn")}
+            </div>
+          ) : (
+            <Button
+              className="h-11 w-full rounded-2xl bg-primary text-sm text-primary-foreground hover:bg-primary/90"
+              disabled={purchasing || isLoadingPremium}
+              onClick={handlePurchase}
+            >
+              {purchasing ? <Loader2 className="size-4 animate-spin" /> : null}
+              {t("settings.start")}
+            </Button>
+          )}
+
 
           <div className="flex gap-2">
             <Button
