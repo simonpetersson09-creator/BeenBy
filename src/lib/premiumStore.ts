@@ -52,9 +52,9 @@ export type PremiumState = {
 };
 
 const initial: PremiumState = {
-  isPremium: true,
+  isPremium: false,
   loading: false,
-  checked: true,
+  checked: false,
   source: "fallback",
   trialDaysLeft: 0,
   isTrialActive: false,
@@ -109,7 +109,7 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
     const status = await getSubscriptionStatus();
     const priceLabel = await getPremiumPrice();
     setState({
-      isPremium: true,
+      isPremium: status.isPremium,
       ...(status.productId ? { productId: status.productId } : {}),
       ...(status.expiresAt ? { expiresAt: status.expiresAt } : {}),
       ...(priceLabel ? { priceLabel } : {}),
