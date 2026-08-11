@@ -35,12 +35,24 @@ public class BeenbyGeofencePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "requestAlwaysPermission", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "startMonitoringRegion", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "stopMonitoringRegion", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "getMonitoredRegions", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "getMonitoredRegions", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getNotificationPermissionStatus", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "requestNotificationPermission", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getPendingConfirmations", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "clearPendingConfirmation", returnType: CAPPluginReturnPromise)
     ]
 
     private let geofence = BeenbyGeofenceManager.shared
+    private let arrivals = BeenbyArrivalNotifications.shared
 
     override public func load() {
+        // Registers the BEENBY_ARRIVAL category and installs the notification
+        // delegate (merging with any existing categories/delegate).
+        arrivals.configure()
+        arrivals.onConfirmed = { [weak self] payload in
+            self?.notifyListeners("geofenceConfirmed", data: payload)
+        }
+
         // Single delegate wiring for the shared, long-lived manager.
         geofence.onEnter = { [weak self] payload in
             self?.notifyListeners("geofenceEnter", data: payload)
@@ -87,6 +99,15 @@ public class BeenbyGeofencePlugin: CAPPlugin, CAPBridgedPlugin {
         }
         let radius = call.getDouble("radius") ?? 150
 
+        // Persist non-secret region metadata so a background/terminated launch
+        // can build the notification text without running any JS.
+        if let parsed = BeenbyArrivalNotifications.shared.regionMeta(for: identifier) {
+            arrivals.saveRegionMeta(identifier: identifier,
+                                    familyCircleId: call.getString("familyCircleId") ?? parsed.familyCircleId,
+                                    personId: call.getString("personId") ?? parsed.personId,
+                                    personName: call.getString("personName") ?? parsed.personName)
+        }
+
         switch geofence.startMonitoring(identifier: identifier,
                                         latitude: latitude,
                                         longitude: longitude,
@@ -114,10 +135,38 @@ public class BeenbyGeofencePlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         let stopped = geofence.stopMonitoring(identifier: identifier)
+        arrivals.removeRegionMeta(identifier: identifier)
         call.resolve(["stopped": stopped, "identifier": identifier])
     }
 
     @objc func getMonitoredRegions(_ call: CAPPluginCall) {
         call.resolve(["regions": geofence.monitoredRegions()])
+    }
+
+    // MARK: - Notifications
+
+    @objc func getNotificationPermissionStatus(_ call: CAPPluginCall) {
+        arrivals.getPermissionStatus { status in
+            call.resolve(["status": status])
+        }
+    }
+
+    @objc func requestNotificationPermission(_ call: CAPPluginCall) {
+        arrivals.requestPermission { status, granted in
+            call.resolve(["status": status, "granted": granted])
+        }
+    }
+
+    @objc func getPendingConfirmations(_ call: CAPPluginCall) {
+        call.resolve(["confirmations": arrivals.pendingConfirmations()])
+    }
+
+    @objc func clearPendingConfirmation(_ call: CAPPluginCall) {
+        guard let id = call.getString("id"), !id.isEmpty else {
+            call.reject("id is required")
+            return
+        }
+        let cleared = arrivals.clearPendingConfirmation(id: id)
+        call.resolve(["cleared": cleared])
     }
 }
