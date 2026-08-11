@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build:ios": "vite build --config vite.ios.config.ts"
+    "build:ios": "vite build --config vite.ios.config.ts",
+    "icons": "capacitor-assets generate --ios"
   },
   "dependencies": {
     "@capacitor/app": "^8",
