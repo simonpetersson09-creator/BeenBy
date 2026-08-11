@@ -103,14 +103,14 @@ final class BeenbyGeofenceManager: NSObject, CLLocationManagerDelegate {
     }
 
     @discardableResult
-    func startMonitoring(identifier: String, latitude: Double, longitude: Double, radius: Double) -> Result<Double, String> {
+    func startMonitoring(identifier: String, latitude: Double, longitude: Double, radius: Double) -> Result<Double, GeofenceError> {
         guard isMonitoringAvailable else {
-            return .failure("Region monitoring is not available on this device")
+            return .failure(.monitoringUnavailable)
         }
         let effectiveRadius = clampedRadius(radius)
         let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         guard CLLocationCoordinate2DIsValid(center) else {
-            return .failure("Invalid coordinates")
+            return .failure(.invalidCoordinates)
         }
 
         // Replace any previous region with the same identifier so we never
