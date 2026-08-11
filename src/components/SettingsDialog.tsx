@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader2, MapPin, Sparkles, User } from "lucide-react";
+import { Loader2, MapPin, ShieldCheck, Sparkles, User } from "lucide-react";
 import { toast } from "sonner";
 
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
