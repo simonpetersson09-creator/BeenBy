@@ -256,20 +256,9 @@ export function HomeScreen({
     toast.success(t("toast.visitSaved"));
   }
 
-  async function invite() {
-    setInviteUrl(null);
+  /** Sharing uses the family code only — no link is generated or shared. */
+  function invite() {
     setInviteOpen(true);
-    const { data: inv, error } = await supabase
-      .from("invitations")
-      .insert({ family_circle_id: circle.id, created_by: userId })
-      .select("invite_token")
-      .single();
-    if (error || !inv) {
-      setInviteOpen(false);
-      toast.error(t("toast.inviteError"));
-      return;
-    }
-    setInviteUrl(`${window.location.origin}/join/${inv.invite_token}`);
   }
 
   const planDates = Array.from({ length: 14 }, (_, i) => addDays(today, i));
