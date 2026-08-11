@@ -204,7 +204,11 @@ export async function openNativeSettings(): Promise<boolean> {
   if (!isNativeGeofenceAvailable()) return false;
   try {
     const { App } = await import("@capacitor/app");
-    await App.openUrl({ url: "app-settings:" });
+    const opener = App as unknown as {
+      openUrl?: (options: { url: string }) => Promise<unknown>;
+    };
+    if (typeof opener.openUrl !== "function") return false;
+    await opener.openUrl({ url: "app-settings:" });
     return true;
   } catch {
     return false;
