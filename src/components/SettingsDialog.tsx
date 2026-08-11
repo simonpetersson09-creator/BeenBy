@@ -127,9 +127,9 @@ export function SettingsDialog({
           </section>
         ) : null}
 
-        {person && geofence ? (
+        {geofence ? (
           <GeofenceSetting
-            personName={person.name}
+            personName={person?.name ?? ""}
             hasAccess={hasAccess}
             enabled={geofence.enabled}
             {...(geofence.reason ? { reason: geofence.reason } : {})}
