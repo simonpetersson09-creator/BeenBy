@@ -124,37 +124,35 @@ export function SettingsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
-        className="max-h-[88dvh] gap-2 overflow-y-auto rounded-3xl p-4 sm:max-w-md"
+        className="max-h-[88dvh] gap-2.5 overflow-y-auto rounded-3xl p-5 sm:max-w-md"
       >
-        <DialogHeader className="space-y-0">
-          <DialogTitle className="text-base">{t("settings.title")}</DialogTitle>
-          <DialogDescription className="text-[11px]">{t("settings.sub")}</DialogDescription>
+        <DialogHeader className="space-y-0.5">
+          <DialogTitle className="text-lg">{t("settings.title")}</DialogTitle>
+          <DialogDescription className="text-xs">{t("settings.sub")}</DialogDescription>
         </DialogHeader>
 
-        <section className="space-y-1.5 rounded-2xl bg-secondary/60 p-2.5">
-          <div className="flex items-baseline justify-between gap-2">
-            <p className="flex items-center gap-1.5 text-sm font-medium">
-              <Sparkles className="size-4" /> {t("settings.premium")}
-            </p>
-            <p className="text-[11px] text-muted-foreground">
-              {isPremium
-                ? t("settings.premiumActive")
-                : isTrialActive
-                  ? trialDaysLeft === 1
-                    ? t("settings.trialLeftOne")
-                    : t("settings.trialLeft", { n: String(trialDaysLeft) })
-                  : t("settings.trialEnded")}
-            </p>
-          </div>
+        <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
+          <p className="flex items-center gap-2 text-sm font-medium">
+            <Sparkles className="size-4" /> {t("settings.premium")}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {isPremium
+              ? t("settings.premiumActive")
+              : isTrialActive
+                ? trialDaysLeft === 1
+                  ? t("settings.trialLeftOne")
+                  : t("settings.trialLeft", { n: String(trialDaysLeft) })
+                : t("settings.trialEnded")}
+          </p>
 
           {isPremium ? (
-            <div className="flex h-10 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-sm font-medium text-primary-foreground">
+            <div className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-sm font-medium text-primary-foreground">
               <Sparkles className="size-4" />
               {t("settings.premiumActiveBtn")}
             </div>
           ) : (
             <Button
-              className="h-10 w-full rounded-2xl bg-primary text-sm text-primary-foreground hover:bg-primary/90"
+              className="h-11 w-full rounded-2xl bg-primary text-sm text-primary-foreground hover:bg-primary/90"
               disabled={purchasing || isLoadingPremium}
               onClick={handlePurchase}
             >
@@ -163,9 +161,10 @@ export function SettingsDialog({
             </Button>
           )}
 
+
           <div className="flex gap-2">
             <Button
-              className="h-9 flex-1 rounded-2xl bg-primary text-xs text-primary-foreground hover:bg-primary/90"
+              className="h-10 flex-1 rounded-2xl bg-primary text-xs text-primary-foreground hover:bg-primary/90"
               disabled={restoring}
               onClick={handleRestore}
             >
@@ -173,7 +172,7 @@ export function SettingsDialog({
               {t("settings.restore")}
             </Button>
             <Button
-              className="h-9 flex-1 rounded-2xl bg-primary text-xs text-primary-foreground hover:bg-primary/90"
+              className="h-10 flex-1 rounded-2xl bg-primary text-xs text-primary-foreground hover:bg-primary/90"
               onClick={handleManage}
             >
               {t("settings.manage")}
@@ -181,14 +180,17 @@ export function SettingsDialog({
           </div>
         </section>
 
-        <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 px-2.5 py-2">
-          <p className="text-sm font-medium">{t("settings.langTitle")}</p>
+        <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-3">
+          <div>
+            <p className="text-sm font-medium">{t("settings.langTitle")}</p>
+            <p className="text-xs text-muted-foreground">{t("settings.langHint")}</p>
+          </div>
           <LanguageSwitcher />
         </section>
 
         {userId ? (
-          <section className="space-y-1.5 rounded-2xl bg-secondary/60 p-2.5">
-            <p className="flex items-center gap-1.5 text-sm font-medium">
+          <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
+            <p className="flex items-center gap-2 text-sm font-medium">
               <User className="size-4" /> {t("settings.nameTitle")}
             </p>
             <div className="flex gap-2">
@@ -196,11 +198,11 @@ export function SettingsDialog({
                 value={name}
                 maxLength={60}
                 onChange={(e) => setName(e.target.value)}
-                className="h-9 flex-1 rounded-2xl text-base"
+                className="h-10 flex-1 rounded-2xl text-base"
               />
               <Button
                 variant="secondary"
-                className="h-9 rounded-2xl px-3 text-xs"
+                className="h-10 rounded-2xl px-3 text-xs"
                 disabled={savingName || name.trim().length < 1 || name.trim() === (myName ?? "")}
                 onClick={handleSaveName}
               >
@@ -212,18 +214,16 @@ export function SettingsDialog({
         ) : null}
 
         {person ? (
-          <section className="flex items-center justify-between gap-2 rounded-2xl bg-secondary/60 p-2.5">
-            <div className="min-w-0">
-              <p className="flex items-center gap-1.5 text-sm font-medium">
-                <MapPin className="size-4" /> {t("address.section")}
-              </p>
-              <p className="truncate text-[11px] text-muted-foreground">
-                {person.address ? person.address : t("address.missing")}
-              </p>
-            </div>
+          <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
+            <p className="flex items-center gap-2 text-sm font-medium">
+              <MapPin className="size-4" /> {t("address.section")}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {person.address ? person.address : t("address.missing")}
+            </p>
             <Button
               variant="secondary"
-              className="h-9 shrink-0 rounded-2xl px-3 text-xs"
+              className="h-10 w-full rounded-2xl text-xs"
               onClick={() => setAddressOpen(true)}
             >
               {person.address ? t("address.change") : t("address.add")}
