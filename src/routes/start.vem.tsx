@@ -31,7 +31,12 @@ export const Route = createFileRoute("/start/vem")({
 });
 
 function WhoPage() {
-  return <StartShell>{({ draft }) => <WhoStep initialPerson={draft.personName} initialMe={draft.myName} />}</StartShell>;
+  const navigate = useNavigate();
+  return (
+    <StartShell onBack={() => void navigate({ to: "/start/valkommen" })}>
+      {({ draft }) => <WhoStep initialPerson={draft.personName} initialMe={draft.myName} />}
+    </StartShell>
+  );
 }
 
 function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialMe: string }) {

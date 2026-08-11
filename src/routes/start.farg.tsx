@@ -33,7 +33,12 @@ export const Route = createFileRoute("/start/farg")({
 });
 
 function ColorPage() {
-  return <StartShell>{({ userId, draft }) => <ColorStep userId={userId} draft={draft} />}</StartShell>;
+  const navigate = useNavigate();
+  return (
+    <StartShell onBack={() => void navigate({ to: "/start/adress" })}>
+      {({ userId, draft }) => <ColorStep userId={userId} draft={draft} />}
+    </StartShell>
+  );
 }
 
 function ColorStep({ userId, draft }: { userId: string; draft: OnboardingDraft }) {

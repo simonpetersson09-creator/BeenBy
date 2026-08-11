@@ -43,7 +43,12 @@ export const Route = createFileRoute("/start/adress")({
 });
 
 function AddressPage() {
-  return <StartShell>{({ draft }) => <AddressStep draft={draft} />}</StartShell>;
+  const navigate = useNavigate();
+  return (
+    <StartShell onBack={() => void navigate({ to: "/start/vem" })}>
+      {({ draft }) => <AddressStep draft={draft} />}
+    </StartShell>
+  );
 }
 
 function AddressStep({ draft }: { draft: OnboardingDraft }) {
