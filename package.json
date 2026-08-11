@@ -50,6 +50,7 @@
     "@tanstack/react-router": "1.170.18",
     "@tanstack/react-start": "1.168.32",
     "@tanstack/router-plugin": "1.168.23",
+    "beenby-geofence": "file:./capacitor-plugins/beenby-geofence",
     "beenby-storekit": "file:./capacitor-plugins/beenby-storekit",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
