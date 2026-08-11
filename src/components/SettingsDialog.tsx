@@ -27,7 +27,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import type { GeofenceBlockReason } from "@/lib/geofenceSync";
-import { useT } from "@/lib/i18n";
+import { useT, usePersonLabel } from "@/lib/i18n";
 import { PRIVACY_POLICY_URL, TERMS_URL, openExternal } from "@/lib/legal";
 import { clearDraft } from "@/lib/onboardingDraft";
 import { clearRecovery } from "@/lib/recovery";
@@ -65,6 +65,7 @@ export function SettingsDialog({
   onOpenPaywall?: () => void;
 }) {
   const t = useT();
+  const pl = usePersonLabel();
   const navigate = useNavigate();
   const {
     isPremium,
@@ -81,6 +82,7 @@ export function SettingsDialog({
   const [name, setName] = useState(myName ?? "");
   const [savingName, setSavingName] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   /**
    * Start over on this device: clears the local onboarding draft, the saved
@@ -89,8 +91,9 @@ export function SettingsDialog({
    * can be rejoined with the family code.
    */
   async function handleReset() {
+    if (resetting) return;
+    setResetting(true);
     setResetOpen(false);
-    onOpenChange(false);
     clearDraft();
     clearRecovery();
     try {
@@ -103,8 +106,9 @@ export function SettingsDialog({
     } catch {
       /* ignore */
     }
-    await navigate({ to: "/start/valkommen", replace: true });
-    if (typeof window !== "undefined") window.location.reload();
+    // Hard navigation: rebuilds the whole app state from scratch and avoids the
+    // blank screen you get when the router re-renders while the session is gone.
+    window.location.replace("/start/valkommen");
   }
 
 
@@ -166,6 +170,7 @@ export function SettingsDialog({
   }
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
@@ -305,7 +310,7 @@ export function SettingsDialog({
 
         {geofence ? (
           <GeofenceSetting
-            personName={person?.name ?? ""}
+            personName={pl(person?.name)}
             hasAccess={hasAccess}
             enabled={geofence.enabled}
             {...(geofence.reason ? { reason: geofence.reason } : {})}
@@ -366,25 +371,26 @@ export function SettingsDialog({
           </Button>
         </section>
 
-        <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
-          <AlertDialogContent className="rounded-3xl">
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t("reset.confirmTitle")}</AlertDialogTitle>
-              <AlertDialogDescription>{t("reset.confirmDesc")}</AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-2xl">{t("reset.cancel")}</AlertDialogCancel>
-              <AlertDialogAction
-                className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                onClick={() => void handleReset()}
-              >
-                {t("reset.confirm")}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
 
       </DialogContent>
     </Dialog>
+      <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+        <AlertDialogContent className="rounded-3xl">
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t("reset.confirmTitle")}</AlertDialogTitle>
+          <AlertDialogDescription>{t("reset.confirmDesc")}</AlertDialogDescription>
+          </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="rounded-2xl">{t("reset.cancel")}</AlertDialogCancel>
+          <AlertDialogAction
+            className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            onClick={() => void handleReset()}
+          >
+            {t("reset.confirm")}
+          </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+        </AlertDialog>
+    </>
   );
 }

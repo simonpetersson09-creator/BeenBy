@@ -534,3 +534,20 @@ export function useT() {
   const lang = useLang();
   return (key: string, vars?: Record<string, string>) => translate(lang, key, vars);
 }
+
+/**
+ * "Mamma"/"Pappa" are stored as canonical Swedish values in the database.
+ * Show them in the reader's language; custom names are returned untouched.
+ */
+export function personLabel(name: string | null | undefined, lang: Lang = getLang()): string {
+  const value = (name ?? "").trim();
+  const key = value.toLowerCase();
+  if (key === "mamma") return translate(lang, "vem.mamma");
+  if (key === "pappa") return translate(lang, "vem.pappa");
+  return value;
+}
+
+export function usePersonLabel() {
+  const lang = useLang();
+  return (name: string | null | undefined) => personLabel(name, lang);
+}

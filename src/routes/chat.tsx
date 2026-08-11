@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useCircleData, type Member } from "@/hooks/useCircleData";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
-import { localeOf, useT } from "@/lib/i18n";
+import { localeOf, useT, usePersonLabel } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import { useAccess } from "@/lib/premiumStore";
 
@@ -52,6 +52,7 @@ function timeLabel(iso: string, tz: string) {
 
 function ChatPage() {
   const t = useT();
+  const pl = usePersonLabel();
   const { user, loading } = useSession();
   const { data, isLoading } = useCircleData(user?.id);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -167,7 +168,7 @@ function ChatPage() {
         <div>
           <h1 className="text-xl leading-tight">{t("chat.title")}</h1>
           <p className="text-xs text-muted-foreground">
-            {t("chat.about", { name: data.person?.name ?? data.circle.name })}
+            {t("chat.about", { name: pl(data.person?.name) || data.circle.name })}
           </p>
         </div>
       </header>
