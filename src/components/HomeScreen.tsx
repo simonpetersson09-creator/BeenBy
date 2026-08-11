@@ -59,7 +59,8 @@ export function HomeScreen({
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const [paywallOpen, setPaywallOpen] = useState(false);
-  const { hasAccess } = useAccess();
+  const [showTooltip, setShowTooltip] = useState(false);
+  const { hasAccess, isPremium, isTrialActive, trialDaysLeft } = useAccess();
   const locked = !hasAccess;
 
   // Arrival reminder (geofence): keeps the native region in sync with the
@@ -107,6 +108,18 @@ export function HomeScreen({
 
 
 
+
+  // The family tooltip is shown once, briefly, the first time.
+  useEffect(() => {
+    if (members.length !== 1) return;
+    if (window.localStorage.getItem("beenby.familyTipSeen")) return;
+    setShowTooltip(true);
+    const timer = window.setTimeout(() => {
+      window.localStorage.setItem("beenby.familyTipSeen", "1");
+      setShowTooltip(false);
+    }, 8000);
+    return () => window.clearTimeout(timer);
+  }, [members.length]);
 
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState<PendingVisit[]>([]);
@@ -295,10 +308,14 @@ export function HomeScreen({
           </Button>
 
 
-          {members.length === 1 ? (
+          {showTooltip ? (
             <button
               type="button"
-              onClick={() => setFamilyOpen(true)}
+              onClick={() => {
+                window.localStorage.setItem("beenby.familyTipSeen", "1");
+                setShowTooltip(false);
+                setFamilyOpen(true);
+              }}
               className="absolute right-0 top-full z-20 mt-2 w-56 animate-in fade-in slide-in-from-top-1 rounded-2xl bg-primary px-3 py-2 text-left text-[0.7rem] leading-snug text-primary-foreground shadow-lift"
             >
               <span
@@ -381,7 +398,14 @@ export function HomeScreen({
         </div>
       ) : null}
 
-      <section className="rounded-3xl border border-primary/40 bg-transparent px-3 py-4">
+      <section className="relative rounded-3xl border border-primary/40 bg-transparent px-3 py-4">
+        {!isPremium && isTrialActive ? (
+          <span className="absolute -top-2.5 left-3 rounded-full bg-primary px-2.5 py-1 text-[0.62rem] leading-none font-medium text-primary-foreground shadow-soft">
+            {trialDaysLeft === 1
+              ? t("home.trialLeftOne")
+              : t("home.trialLeft", { n: String(trialDaysLeft) })}
+          </span>
+        ) : null}
         <h2 className="mb-3 text-center text-base leading-tight text-primary">{t("home.overview")}</h2>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
         <div className="mt-3 flex w-full flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-primary/25 pt-3 text-[0.68rem] text-muted-foreground">
