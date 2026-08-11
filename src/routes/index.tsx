@@ -92,9 +92,7 @@ function Index() {
   if (error || authFailed) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-8 text-center">
-        <p className="text-sm text-muted-foreground">
-          Kunde inte hämta din familjecirkel just nu. Kontrollera uppkopplingen.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("error.loadCircle")}</p>
         <Button
           onClick={() => {
             setAuthFailed(false);
@@ -102,15 +100,16 @@ function Index() {
             void refetch();
           }}
         >
-          Försök igen
+          {t("error.retry")}
         </Button>
         <button
           type="button"
           className="text-xs underline text-muted-foreground"
           onClick={() => void navigate({ to: "/start/kod" })}
         >
-          Ange familjekod
+          {t("error.enterCode")}
         </button>
+
       </div>
     );
   }
