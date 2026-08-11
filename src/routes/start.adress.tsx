@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useT } from "@/lib/i18n";
-import { geocodeAddress } from "@/lib/geocode.functions";
+import { searchAddress } from "@/lib/geocode";
 import { patchDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
 
 type GeocodeHit = {
@@ -64,7 +64,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
     if (query.length < 3) return;
     setSearching(true);
     try {
-      const hits = await geocodeAddress({ data: { query } });
+      const hits = await searchAddress(query);
       setResults(hits);
       if (hits.length === 0) {
         toast.error(t("adress.noHits"));

@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'app.beenbys.mobile',
   appName: 'Beenby',
-  webDir: '.output/public',
+  webDir: 'dist/client',
   ios: {
     contentInset: 'always',
   },

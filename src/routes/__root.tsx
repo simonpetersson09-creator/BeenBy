@@ -13,6 +13,7 @@ import { Toaster } from "../components/ui/sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { startPremiumLifecycle } from "../lib/premiumStore";
+import { IS_NATIVE_SPA } from "../lib/runtime";
 
 function NotFoundComponent() {
   return (
@@ -107,6 +108,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 
 function RootShell({ children }: { children: ReactNode }) {
+  // Static Capacitor build: index.html already provides <html>/<head>/<body>,
+  // so the shell only renders head content + children into #root.
+  if (IS_NATIVE_SPA) {
+    return (
+      <>
+        <HeadContent />
+        {children}
+      </>
+    );
+  }
+
   return (
     <html lang="en">
       <head>
