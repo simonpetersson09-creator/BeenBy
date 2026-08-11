@@ -111,6 +111,12 @@ export function GeofenceSetting({
           {enabled ? t("geofence.on") : t("geofence.off")}
         </p>
       )}
+
+      {hasAccess && !enabled ? (
+        <p className="text-[11px] leading-snug text-muted-foreground/80">
+          {t("geofence.offNote")}
+        </p>
+      ) : null}
     </section>
   );
 }
