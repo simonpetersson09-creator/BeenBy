@@ -330,6 +330,36 @@ export function HomeScreen({
 
       <Paywall open={paywallOpen} onOpenChange={setPaywallOpen} />
 
+      <Dialog open={askGeofence} onOpenChange={(o) => (o ? setAskGeofence(true) : closeGeofenceAsk())}>
+        <DialogContent className="max-w-sm rounded-3xl">
+          <DialogHeader>
+            <DialogTitle>{t("geofence.askTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("geofence.askBody", { name: person?.name ?? circle.name })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2 space-y-2">
+            <Button
+              className="h-12 w-full rounded-2xl text-sm"
+              onClick={() => {
+                closeGeofenceAsk();
+                handleGeofenceToggle(true);
+              }}
+            >
+              {t("geofence.askYes")}
+            </Button>
+            <Button
+              variant="ghost"
+              className="h-11 w-full rounded-2xl text-sm"
+              onClick={closeGeofenceAsk}
+            >
+              {t("geofence.askLater")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+
       <InviteSheet
         open={inviteOpen}
         onOpenChange={setInviteOpen}
