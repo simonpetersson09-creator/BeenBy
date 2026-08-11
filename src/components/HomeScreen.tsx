@@ -24,10 +24,11 @@ import { useOnlineStatus } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { addDays, relativeLabel, todayKey } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
-import { dequeue, enqueue, getPending, newClientToken, type PendingVisit } from "@/lib/offline";
+import { getPending, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
 import { refreshTrialStatus, useAccess } from "@/lib/premiumStore";
 import { saveRecovery } from "@/lib/recovery";
+import { deleteVisit, flushPendingVisits, recordVisit, type VisitSource } from "@/lib/visits";
 
 export function HomeScreen({
   data,
