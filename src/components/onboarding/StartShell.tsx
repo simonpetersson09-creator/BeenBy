@@ -40,15 +40,17 @@ export function StartShell({
 
   return (
     <main
-      className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 pb-8"
-      style={{
-        paddingTop: onBack
-          ? "calc(env(safe-area-inset-top, 0px) + 5rem)"
-          : "2rem",
-      }}
+      className="mx-auto flex h-dvh w-full max-w-md flex-col overflow-y-auto px-6 pb-8"
+      style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)" }}
     >
-      {onBack ? <BackButton onClick={onBack} /> : null}
-      <div className="animate-rise-in space-y-4">{children({ userId: user.id, draft })}</div>
+      {onBack ? (
+        <div className="mb-4 shrink-0">
+          <BackButton onClick={onBack} inline />
+        </div>
+      ) : null}
+      <div className="flex flex-1 flex-col justify-center">
+        <div className="animate-rise-in space-y-4">{children({ userId: user.id, draft })}</div>
+      </div>
     </main>
   );
 }
