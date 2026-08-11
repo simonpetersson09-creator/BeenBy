@@ -52,9 +52,9 @@ export type PremiumState = {
 };
 
 const initial: PremiumState = {
-  isPremium: false,
+  isPremium: true,
   loading: false,
-  checked: false,
+  checked: true,
   source: "fallback",
   trialDaysLeft: 0,
   isTrialActive: false,
