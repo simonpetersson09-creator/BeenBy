@@ -39,7 +39,7 @@ export function AddressEditor({
   person: EditablePerson;
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  onSaved?: () => void;
+  onSaved?: (() => void) | undefined;
 }) {
   const t = useT();
   const [query, setQuery] = useState(person.address ?? "");
