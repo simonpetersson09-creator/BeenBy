@@ -15,6 +15,7 @@ export type Circle = {
 export type Person = {
   id: string;
   name: string;
+  address: string | null;
   location_latitude: number | null;
   location_longitude: number | null;
   geofence_radius: number;
@@ -79,7 +80,7 @@ async function loadCircle(userId: string): Promise<CircleData | null> {
   const [persons, members, names, visits, planned] = await Promise.all([
     supabase
       .from("persons")
-      .select("id, name, location_latitude, location_longitude, geofence_radius")
+      .select("id, name, address, location_latitude, location_longitude, geofence_radius")
       .eq("family_circle_id", circleId)
       .order("created_at", { ascending: true }),
     supabase
