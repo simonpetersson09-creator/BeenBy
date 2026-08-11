@@ -99,86 +99,56 @@ export function HomeScreen({
   );
 
   const flush = useCallback(async () => {
-    const items = getPending();
-    for (const item of items) {
-      const { error } = await supabase.from("visits").insert({
-        family_circle_id: item.familyCircleId,
-        person_id: item.personId,
-        user_id: userId,
-        visited_at: item.visitedAt,
-        local_day: item.localDay,
-        source: item.source,
-        client_token: item.clientToken,
-      });
-      // 23505 = the same visit already reached the server; safe to drop.
-      if (!error || error.code === "23505") dequeue(item.clientToken);
-    }
-    if (items.length > 0) refresh();
+    const flushed = await flushPendingVisits(userId);
+    if (flushed > 0) refresh();
   }, [refresh, userId]);
 
   useEffect(() => {
     if (online) void flush();
   }, [online, flush]);
 
-  async function saveVisit(source: string) {
+  async function saveVisit(source: VisitSource) {
     if (!person) return;
     if (busy) return;
     setBusy(true);
-    const clientToken = newClientToken();
-    const item: PendingVisit = {
-      clientToken,
+    const result = await recordVisit({
       familyCircleId: circle.id,
       personId: person.id,
-      visitedAt: new Date().toISOString(),
-      localDay: todayKey(tz),
+      userId,
+      timezone: tz,
       source,
-    };
-
-    if (!navigator.onLine) {
-      enqueue(item);
-      setBusy(false);
-      toast.message(t("toast.savedLocal"), {
-        description: t("toast.savedLocalDesc"),
-      });
-      return;
-    }
-
-    const { data: inserted, error } = await supabase
-      .from("visits")
-      .insert({
-        family_circle_id: item.familyCircleId,
-        person_id: item.personId,
-        user_id: userId,
-        visited_at: item.visitedAt,
-        local_day: item.localDay,
-        source: item.source,
-        client_token: item.clientToken,
-      })
-      .select("id")
-      .maybeSingle();
+    });
     setBusy(false);
 
-    if (error) {
-      if (error.code === "23505") return; // duplicate double-tap, nothing to do
-      enqueue(item);
-      toast.message(t("toast.offline"), { description: t("toast.offlineDesc") });
+    if (result.status === "queued") {
+      if (result.reason === "offline") {
+        toast.message(t("toast.savedLocal"), {
+          description: t("toast.savedLocalDesc"),
+        });
+      } else {
+        toast.message(t("toast.offline"), { description: t("toast.offlineDesc") });
+      }
       return;
     }
 
+    if (result.status === "duplicate") return; // duplicate double-tap, nothing to do
+
+    const visitId = result.visitId;
     refresh();
     toast.success(t("toast.visitSaved"), {
       duration: 6000,
-      action: inserted
+      action: visitId
         ? {
             label: t("toast.undo"),
             onClick: async () => {
-              await supabase.from("visits").delete().eq("id", inserted.id);
+              await deleteVisit(visitId);
               refresh();
             },
           }
         : undefined,
     });
   }
+
 
   function handleImHere() {
     if (locked) {
