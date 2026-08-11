@@ -2,7 +2,16 @@ import { Copy, Mail, MessageCircle, MessageSquare, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useT } from "@/lib/i18n";
-import { shareInvite } from "@/lib/native";
+import {
+  copyText,
+  mailtoUrl,
+  messengerUrl,
+  openAppOrShare,
+  openExternalUrl,
+  shareLink,
+  smsUrl,
+  whatsappUrl,
+} from "@/lib/share";
 
 type Props = {
   open: boolean;
@@ -16,8 +25,19 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
   const t = useT();
   const text = url ? `${message} ${url}` : message;
 
-  function openApp(href: string) {
-    window.open(href, "_blank", "noopener,noreferrer");
+  const sharePayload = { title: t("invite.subject"), text: message, url: url ?? "" };
+
+  /** Systems schemes (sms:/mailto:) are always handled by iOS — just open them. */
+  function openSystem(href: string) {
+    openExternalUrl(href);
+    onOpenChange(false);
+  }
+
+  /** App links that may not resolve — fall back to the native share sheet. */
+  async function openAppWithFallback(href: string) {
+    if (!url) return;
+    const result = await openAppOrShare(href, sharePayload);
+    if (result === "copied") toast.success(t("invite.copied"));
     onOpenChange(false);
   }
 
@@ -27,36 +47,28 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
       label: "WhatsApp",
       icon: MessageCircle,
       tint: "bg-[#25D366]/15 text-[#128C4A]",
-      onClick: () => openApp(`https://wa.me/?text=${encodeURIComponent(text)}`),
+      onClick: () => void openAppWithFallback(whatsappUrl(text)),
     },
     {
       key: "messenger",
       label: "Messenger",
       icon: Share2,
       tint: "bg-[#0084FF]/15 text-[#0064C8]",
-      onClick: () =>
-        openApp(
-          url
-            ? `fb-messenger://share?link=${encodeURIComponent(url)}`
-            : `https://www.messenger.com/`,
-        ),
+      onClick: () => void openAppWithFallback(url ? messengerUrl(url) : "https://www.messenger.com/"),
     },
     {
       key: "sms",
       label: "SMS",
       icon: MessageSquare,
       tint: "bg-primary/10 text-primary",
-      onClick: () => openApp(`sms:?&body=${encodeURIComponent(text)}`),
+      onClick: () => openSystem(smsUrl(text)),
     },
     {
       key: "mail",
       label: t("invite.mail"),
       icon: Mail,
       tint: "bg-secondary text-primary",
-      onClick: () =>
-        openApp(
-          `mailto:?subject=${encodeURIComponent(t("invite.subject"))}&body=${encodeURIComponent(text)}`,
-        ),
+      onClick: () => openSystem(mailtoUrl(t("invite.subject"), text)),
     },
   ];
 
@@ -91,7 +103,7 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
             disabled={!url}
             onClick={async () => {
               if (!url) return;
-              await navigator.clipboard.writeText(url);
+              await copyText(url);
               toast.success(t("invite.copied"));
               onOpenChange(false);
             }}
@@ -104,7 +116,7 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
             disabled={!url}
             onClick={async () => {
               if (!url) return;
-              const result = await shareInvite(url, message);
+              const result = await shareLink(sharePayload);
               if (result === "copied") toast.success(t("invite.copied"));
               onOpenChange(false);
             }}
