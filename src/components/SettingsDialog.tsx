@@ -311,6 +311,39 @@ export function SettingsDialog({
             </Button>
           </div>
         </section>
+
+        <section className="space-y-2 rounded-2xl border border-destructive/20 bg-destructive/5 p-3">
+          <p className="flex items-center gap-2 text-sm font-medium">
+            <RotateCcw className="size-4" /> {t("reset.title")}
+          </p>
+          <p className="text-xs text-muted-foreground">{t("reset.desc")}</p>
+          <Button
+            variant="secondary"
+            className="h-10 w-full rounded-2xl text-xs text-destructive"
+            onClick={() => setResetOpen(true)}
+          >
+            {t("reset.button")}
+          </Button>
+        </section>
+
+        <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+          <AlertDialogContent className="rounded-3xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t("reset.confirmTitle")}</AlertDialogTitle>
+              <AlertDialogDescription>{t("reset.confirmDesc")}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-2xl">{t("reset.cancel")}</AlertDialogCancel>
+              <AlertDialogAction
+                className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => void handleReset()}
+              >
+                {t("reset.confirm")}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
       </DialogContent>
     </Dialog>
   );
