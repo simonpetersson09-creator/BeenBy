@@ -88,6 +88,23 @@ export function HomeScreen({
     [geofence, t],
   );
 
+  // Ask once, in-app, whether the arrival reminder should be turned on.
+  const [askGeofence, setAskGeofence] = useState(false);
+  const askKey = `beenby.geofenceAsked.${circle.id}`;
+  const hasCoords = person?.location_latitude != null && person?.location_longitude != null;
+  useEffect(() => {
+    if (!hasAccess || !hasCoords || geofence.enabled || geofence.busy) return;
+    if (window.localStorage.getItem(askKey)) return;
+    const timer = window.setTimeout(() => setAskGeofence(true), 900);
+    return () => window.clearTimeout(timer);
+  }, [hasAccess, hasCoords, geofence.enabled, geofence.busy, askKey]);
+
+  function closeGeofenceAsk() {
+    window.localStorage.setItem(askKey, "1");
+    setAskGeofence(false);
+  }
+
+
 
 
 
