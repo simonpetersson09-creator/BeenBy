@@ -5,7 +5,6 @@ import { useT } from "@/lib/i18n";
 import {
   copyText,
   mailtoUrl,
-  messengerUrl,
   openAppOrShare,
   openExternalUrl,
   shareLink,
@@ -16,18 +15,21 @@ import {
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  url: string | null;
-  message: string;
+  /** The family invitation code — the only thing we ever share. */
+  code: string | null;
 };
 
-/** Bottom sheet with the messaging apps people actually use to send an invite. */
-export function InviteSheet({ open, onOpenChange, url, message }: Props) {
+/**
+ * Bottom sheet for sending the invitation. We never share a URL: BeenBy is
+ * joined with the family code, so every option sends the same short message
+ * containing that code.
+ */
+export function InviteSheet({ open, onOpenChange, code }: Props) {
   const t = useT();
-  const text = url ? `${message} ${url}` : message;
+  const text = code ? t("invite.codeMsg", { code }) : "";
+  const sharePayload = { title: t("invite.subject"), text };
 
-  const sharePayload = { title: t("invite.subject"), text: message, url: url ?? "" };
-
-  /** Systems schemes (sms:/mailto:) are always handled by iOS — just open them. */
+  /** System schemes (sms:/mailto:) are always handled by iOS — just open them. */
   function openSystem(href: string) {
     openExternalUrl(href);
     onOpenChange(false);
@@ -35,8 +37,16 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
 
   /** App links that may not resolve — fall back to the native share sheet. */
   async function openAppWithFallback(href: string) {
-    if (!url) return;
+    if (!code) return;
     const result = await openAppOrShare(href, sharePayload);
+    if (result === "copied") toast.success(t("invite.copied"));
+    onOpenChange(false);
+  }
+
+  /** Messenger has no text-only share scheme, so use the native share sheet. */
+  async function shareViaSheet() {
+    if (!code) return;
+    const result = await shareLink(sharePayload);
     if (result === "copied") toast.success(t("invite.copied"));
     onOpenChange(false);
   }
@@ -54,7 +64,7 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
       label: "Messenger",
       icon: Share2,
       tint: "bg-[#0084FF]/15 text-[#0064C8]",
-      onClick: () => void openAppWithFallback(url ? messengerUrl(url) : "https://www.messenger.com/"),
+      onClick: () => void shareViaSheet(),
     },
     {
       key: "sms",
@@ -80,13 +90,19 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
           <SheetDescription>{t("invite.sub")}</SheetDescription>
         </SheetHeader>
 
+        {code ? (
+          <p className="mt-3 rounded-2xl bg-secondary/60 py-3 text-center text-2xl tracking-[0.3em] text-primary">
+            {code}
+          </p>
+        ) : null}
+
         <div className="mt-4 grid grid-cols-4 gap-3">
           {options.map((o) => (
             <button
               key={o.key}
               type="button"
               onClick={o.onClick}
-              disabled={!url}
+              disabled={!code}
               className="flex flex-col items-center gap-2 rounded-2xl p-2 transition active:scale-95 disabled:opacity-50"
             >
               <span className={`flex size-14 items-center justify-center rounded-2xl ${o.tint}`}>
@@ -100,10 +116,10 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
         <div className="mt-5 grid grid-cols-2 gap-3">
           <button
             type="button"
-            disabled={!url}
+            disabled={!code}
             onClick={async () => {
-              if (!url) return;
-              await copyText(url);
+              if (!code) return;
+              await copyText(code);
               toast.success(t("invite.copied"));
               onOpenChange(false);
             }}
@@ -113,13 +129,8 @@ export function InviteSheet({ open, onOpenChange, url, message }: Props) {
           </button>
           <button
             type="button"
-            disabled={!url}
-            onClick={async () => {
-              if (!url) return;
-              const result = await shareLink(sharePayload);
-              if (result === "copied") toast.success(t("invite.copied"));
-              onOpenChange(false);
-            }}
+            disabled={!code}
+            onClick={() => void shareViaSheet()}
             className="flex h-12 items-center justify-center gap-2 rounded-2xl bg-primary text-sm text-primary-foreground disabled:opacity-50"
           >
             <Share2 className="size-4" /> {t("invite.more")}
