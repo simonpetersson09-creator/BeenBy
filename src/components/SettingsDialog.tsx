@@ -78,6 +78,34 @@ export function SettingsDialog({
   const [addressOpen, setAddressOpen] = useState(false);
   const [name, setName] = useState(myName ?? "");
   const [savingName, setSavingName] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
+
+  /**
+   * Start over on this device: clears the local onboarding draft, the saved
+   * recovery details and the anonymous session, then returns to the welcome
+   * page. Nothing is deleted on the server — the family circle lives on and
+   * can be rejoined with the family code.
+   */
+  async function handleReset() {
+    setResetOpen(false);
+    onOpenChange(false);
+    clearDraft();
+    clearRecovery();
+    try {
+      window.localStorage.removeItem("beenby.familyTipSeen");
+    } catch {
+      /* storage unavailable */
+    }
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      /* ignore */
+    }
+    await navigate({ to: "/start/valkommen", replace: true });
+    if (typeof window !== "undefined") window.location.reload();
+  }
+
+
 
   useEffect(() => {
     if (open) setName(myName ?? "");
