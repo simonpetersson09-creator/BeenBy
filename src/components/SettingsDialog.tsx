@@ -60,7 +60,9 @@ export function SettingsDialog({
     isTrialActive,
     trialDaysLeft,
     hasAccess,
+    priceLabel,
   } = usePremium();
+
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
