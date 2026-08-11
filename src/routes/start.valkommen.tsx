@@ -69,7 +69,7 @@ function WelcomePage() {
         ))}
       </ul>
 
-      <div className="relative flex items-center gap-2">
+      <div className="relative mt-6 flex items-center gap-2 pt-4">
         {showHint ? (
           <button
             type="button"
