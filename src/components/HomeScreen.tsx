@@ -4,6 +4,7 @@ import { CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, Refres
 import { toast } from "sonner";
 
 
+import { BackButton } from "@/components/BackButton";
 import { DayDetail } from "@/components/DayDetail";
 import { DotGrid, buildDays } from "@/components/DotGrid";
 import { InviteSheet } from "@/components/InviteSheet";
