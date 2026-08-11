@@ -14,9 +14,9 @@ import { toast } from "sonner";
 
 import { addGeofenceConfirmedListener } from "@/lib/geofence";
 import { processPendingGeofenceConfirmations } from "@/lib/geofenceVisits";
-import { t } from "@/lib/i18nApp";
 
-export function useGeofenceVisits(onRecorded: () => void) {
+/** `successMessage` comes from the caller's `useT()` so i18n stays in one place. */
+export function useGeofenceVisits(onRecorded: () => void, successMessage: string) {
   useEffect(() => {
     let cancelled = false;
 
@@ -24,7 +24,7 @@ export function useGeofenceVisits(onRecorded: () => void) {
       const result = await processPendingGeofenceConfirmations();
       if (cancelled || result.recorded === 0) return;
       onRecorded();
-      toast.success(t("toast.geofenceVisitSaved"));
+      toast.success(successMessage);
     };
 
     void run();
@@ -67,5 +67,5 @@ export function useGeofenceVisits(onRecorded: () => void) {
       removeConfirmed?.();
       removeNative?.();
     };
-  }, [onRecorded]);
+  }, [onRecorded, successMessage]);
 }
