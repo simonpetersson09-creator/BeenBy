@@ -27,16 +27,8 @@ export function isCapabilityAvailable(capability: NativeCapability): boolean {
 
 /** Native share sheet with a clipboard fallback. Returns how it was shared. */
 export async function shareInvite(url: string, text: string): Promise<"shared" | "copied"> {
-  if (isCapabilityAvailable("share-sheet")) {
-    try {
-      await navigator.share({ title: "Inbjudan", text, url });
-      return "shared";
-    } catch {
-      /* user cancelled — fall through to copy */
-    }
-  }
-  await navigator.clipboard.writeText(url);
-  return "copied";
+  const { shareLink } = await import("@/lib/share");
+  return await shareLink({ title: "Inbjudan", text, url });
 }
 
 /**
