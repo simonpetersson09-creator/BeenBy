@@ -363,6 +363,7 @@ export type Database = {
           trial_started_at: string
         }[]
       }
+      has_app_access: { Args: { _user?: string }; Returns: boolean }
       is_circle_creator: { Args: { _circle: string }; Returns: boolean }
       is_circle_member: { Args: { _circle: string }; Returns: boolean }
       join_circle: {
