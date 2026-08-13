@@ -1,0 +1,2 @@
+update public.profiles set trial_started_at = now() - interval '4 days' where id in ('f1e7c746-27b0-4b2e-aa34-9a4fbc464475','f40475d8-db30-44a6-8bae-878b7bf2f3a1','28649d5a-c2e4-4244-a3bd-8395d2f4e498');
+update public.profiles set name = 'Simon' where id = '28649d5a-c2e4-4244-a3bd-8395d2f4e498' and coalesce(name,'') = '';
