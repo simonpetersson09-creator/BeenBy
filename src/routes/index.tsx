@@ -107,7 +107,7 @@ function Index() {
         <button
           type="button"
           className="text-xs underline text-muted-foreground"
-          onClick={() => void navigate({ to: "/start/kod", search: {} })}
+          onClick={() => void navigate({ to: "/start/kod", search: { from: undefined } })}
         >
           {t("error.enterCode")}
         </button>
