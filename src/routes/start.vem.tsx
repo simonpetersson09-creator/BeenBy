@@ -139,7 +139,7 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
         <SectionHeader step={3} title={t("vem.s3.title")} hint={t("vem.s3.hint")} />
         <button
           type="button"
-          onClick={() => void navigate({ to: "/start/kod", search: {} })}
+          onClick={() => void navigate({ to: "/start/kod", search: { from: undefined } })}
           className="mx-auto flex items-center gap-2 rounded-full border border-primary/40 bg-card/60 py-2.5 pr-4 pl-2.5 text-sm text-foreground transition-colors hover:bg-card"
         >
           <span className="flex size-8 items-center justify-center rounded-full bg-primary/10">
