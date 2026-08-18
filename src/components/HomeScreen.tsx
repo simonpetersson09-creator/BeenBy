@@ -24,6 +24,7 @@ import { useFamilyNotifications } from "@/hooks/useFamilyNotifications";
 import { useGeofenceVisits } from "@/hooks/useGeofenceVisits";
 import { useGeofenceSync } from "@/hooks/useGeofenceSync";
 import { useOnlineStatus } from "@/hooks/useSession";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { supabase } from "@/integrations/supabase/client";
 import { addDays, relativeLabel, todayKey } from "@/lib/dates";
 import { useT, usePersonLabel } from "@/lib/i18n";
@@ -58,6 +59,8 @@ export function HomeScreen({
   const [familyOpen, setFamilyOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmSecond, setConfirmSecond] = useState(false);
+  const [confirmVisit, setConfirmVisit] = useState(false);
+  const unread = useUnreadMessages(circle.id, userId);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -223,7 +226,8 @@ export function HomeScreen({
       setConfirmSecond(true);
       return;
     }
-    void saveVisit("manual");
+    // Always ask once more so a visit is never registered by mistake.
+    setConfirmVisit(true);
   }
 
   async function planVisit(date: string) {
@@ -502,11 +506,20 @@ export function HomeScreen({
           ) : (
             <Button
               asChild
-              aria-label={t("home.chatAria")}
-              className="size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+              aria-label={
+                unread > 0
+                  ? `${t("home.chatAria")} – ${t("home.unread", { n: String(unread) })}`
+                  : t("home.chatAria")
+              }
+              className="relative size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
             >
               <Link to="/chat">
                 <MessageCircle className="size-5" />
+                {unread > 0 ? (
+                  <span className="absolute -right-1 -top-1 flex min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 py-0.5 text-[0.65rem] font-semibold leading-none text-destructive-foreground shadow-soft">
+                    {unread > 99 ? "99+" : unread}
+                  </span>
+                ) : null}
               </Link>
             </Button>
           )}
@@ -611,6 +624,35 @@ export function HomeScreen({
               }}
             >
               {t("home.dupYes")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={confirmVisit} onOpenChange={setConfirmVisit}>
+        <DialogContent className="rounded-3xl sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-xl">{t("home.confirmTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("home.confirmDesc", { name: pl(person?.name) || circle.name })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              className="h-12 flex-1 rounded-2xl"
+              onClick={() => setConfirmVisit(false)}
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button
+              className="h-12 flex-1 rounded-2xl"
+              onClick={() => {
+                setConfirmVisit(false);
+                void saveVisit("manual");
+              }}
+            >
+              {t("home.confirmYes")}
             </Button>
           </div>
         </DialogContent>

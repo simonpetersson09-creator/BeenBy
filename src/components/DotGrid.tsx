@@ -1,4 +1,4 @@
-import { build28DayGrid, weekdayLabels, shortLabel, todayKey, weekNumber } from "@/lib/dates";
+import { buildVisitGrid, weekdayLabels, shortLabel, todayKey, weekNumber } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,7 @@ export function buildDays(
   const colorOf = (userId: string) => colorById(members.find((m) => m.user_id === userId)?.personal_color).hex;
   const nameOf = (userId: string) => members.find((m) => m.user_id === userId)?.name ?? "";
 
-  return build28DayGrid(timeZone).map((day) => ({
+  return buildVisitGrid(timeZone).map((day) => ({
     day,
     done: visits
       .filter((v) => v.local_day === day)

@@ -78,6 +78,44 @@ export function useFamilyNotifications({
           });
         },
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "visits",
+          filter: `family_circle_id=eq.${circleId}`,
+        },
+        (payload) => {
+          const row = payload.new as { user_id: string };
+          if (row.user_id === userId) return;
+          void nameOf(row.user_id).then((name) => {
+            if (!active) return;
+            toast.success(tRef.current("notify.visit", { name }));
+            onEventRef.current?.();
+          });
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "planned_visits",
+          filter: `family_circle_id=eq.${circleId}`,
+        },
+        (payload) => {
+          const row = payload.new as { user_id: string };
+          if (row.user_id === userId) return;
+          void nameOf(row.user_id).then((name) => {
+            if (!active) return;
+            toast(tRef.current("notify.planned", { name }), {
+              description: tRef.current("notify.plannedDesc"),
+            });
+            onEventRef.current?.();
+          });
+        },
+      )
       .subscribe();
 
     return () => {
