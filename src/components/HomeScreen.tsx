@@ -24,6 +24,7 @@ import { useFamilyNotifications } from "@/hooks/useFamilyNotifications";
 import { useGeofenceVisits } from "@/hooks/useGeofenceVisits";
 import { useGeofenceSync } from "@/hooks/useGeofenceSync";
 import { useOnlineStatus } from "@/hooks/useSession";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { supabase } from "@/integrations/supabase/client";
 import { addDays, relativeLabel, todayKey } from "@/lib/dates";
 import { useT, usePersonLabel } from "@/lib/i18n";
