@@ -17,6 +17,7 @@ import { Route as StartFargRouteImport } from './routes/start.farg'
 import { Route as StartKodRouteImport } from './routes/start.kod'
 import { Route as StartValkommenRouteImport } from './routes/start.valkommen'
 import { Route as StartVemRouteImport } from './routes/start.vem'
+import { Route as ApiPublicPushRouteImport } from './routes/api/public/push'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,11 @@ const StartVemRoute = StartVemRouteImport.update({
   path: '/start/vem',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPushRoute = ApiPublicPushRouteImport.update({
+  id: '/api/public/push',
+  path: '/api/public/push',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/start/kod': typeof StartKodRoute
   '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
+  '/api/public/push': typeof ApiPublicPushRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/start/kod': typeof StartKodRoute
   '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
+  '/api/public/push': typeof ApiPublicPushRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/start/kod': typeof StartKodRoute
   '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
+  '/api/public/push': typeof ApiPublicPushRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/start/kod'
     | '/start/valkommen'
     | '/start/vem'
+    | '/api/public/push'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/start/kod'
     | '/start/valkommen'
     | '/start/vem'
+    | '/api/public/push'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/start/kod'
     | '/start/valkommen'
     | '/start/vem'
+    | '/api/public/push'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   StartKodRoute: typeof StartKodRoute
   StartValkommenRoute: typeof StartValkommenRoute
   StartVemRoute: typeof StartVemRoute
+  ApiPublicPushRoute: typeof ApiPublicPushRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StartVemRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/push': {
+      id: '/api/public/push'
+      path: '/api/public/push'
+      fullPath: '/api/public/push'
+      preLoaderRoute: typeof ApiPublicPushRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   StartKodRoute: StartKodRoute,
   StartValkommenRoute: StartValkommenRoute,
   StartVemRoute: StartVemRoute,
+  ApiPublicPushRoute: ApiPublicPushRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
