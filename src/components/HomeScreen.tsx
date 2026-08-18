@@ -32,6 +32,8 @@ import { addDays, relativeLabel, todayKey } from "@/lib/dates";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { getPending, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
+import { registerPushNotifications } from "@/lib/push";
+
 import { refreshTrialStatus, useAccess } from "@/lib/premiumStore";
 import { saveRecovery } from "@/lib/recovery";
 import { deleteVisit, flushPendingVisits, recordVisit, type VisitSource } from "@/lib/visits";
