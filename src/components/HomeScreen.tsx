@@ -32,6 +32,8 @@ import { addDays, relativeLabel, todayKey } from "@/lib/dates";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { getPending, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
+import { registerPushNotifications } from "@/lib/push";
+
 import { refreshTrialStatus, useAccess } from "@/lib/premiumStore";
 import { saveRecovery } from "@/lib/recovery";
 import { deleteVisit, flushPendingVisits, recordVisit, type VisitSource } from "@/lib/visits";
@@ -53,8 +55,13 @@ export function HomeScreen({
 
   // Toast the siblings when someone writes in the chat or joins the family.
   useFamilyNotifications({ circleId: circle.id, userId, onEvent: refresh });
+  // Real push notifications (iOS) so notices arrive even when the app is closed.
+  useEffect(() => {
+    void registerPushNotifications();
+  }, [userId]);
   // "Ja" on a geofence arrival notification → existing recordVisit() path.
   useGeofenceVisits(refresh, t("toast.geofenceVisitSaved"));
+
 
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [planOpen, setPlanOpen] = useState(false);
