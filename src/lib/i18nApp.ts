@@ -180,6 +180,18 @@ const sv: AppDict = {
   "date.tomorrow": "Imorgon",
   "member.fallback": "Familjemedlem",
   "common.no": "Nej",
+  "notify.visit": "{name} registrerade ett besök",
+  "notify.planned": "{name} planerade ett besök",
+  "notify.plannedDesc": "Besöket syns nu i översikten.",
+  "chat.addPhoto": "Lägg till bild",
+  "chat.imageError": "Bilden kunde inte skickas.",
+  "chat.photoAlt": "Bild i chatten",
+  "chat.sendingImage": "Skickar bild…",
+  "home.unread": "{n} olästa meddelanden",
+  "home.confirmTitle": "Registrera besök?",
+  "home.confirmDesc": "Vill du registrera att du är hos {name} nu?",
+  "home.confirmYes": "Ja, jag är här",
+  "common.cancel": "Avbryt",
 };
 
 const en: AppDict = {
@@ -357,6 +369,18 @@ const en: AppDict = {
   "date.tomorrow": "Tomorrow",
   "member.fallback": "Family member",
   "common.no": "No",
+  "notify.visit": "{name} logged a visit",
+  "notify.planned": "{name} planned a visit",
+  "notify.plannedDesc": "The visit now shows in the overview.",
+  "chat.addPhoto": "Add photo",
+  "chat.imageError": "The photo couldn't be sent.",
+  "chat.photoAlt": "Photo in the chat",
+  "chat.sendingImage": "Sending photo…",
+  "home.unread": "{n} unread messages",
+  "home.confirmTitle": "Log the visit?",
+  "home.confirmDesc": "Do you want to log that you're with {name} now?",
+  "home.confirmYes": "Yes, I'm here",
+  "common.cancel": "Cancel",
 };
 
 const de: AppDict = {
@@ -534,6 +558,18 @@ const de: AppDict = {
   "date.tomorrow": "Morgen",
   "member.fallback": "Familienmitglied",
   "common.no": "Nein",
+  "notify.visit": "{name} hat einen Besuch eingetragen",
+  "notify.planned": "{name} hat einen Besuch geplant",
+  "notify.plannedDesc": "Der Besuch ist jetzt in der Übersicht zu sehen.",
+  "chat.addPhoto": "Bild hinzufügen",
+  "chat.imageError": "Das Bild konnte nicht gesendet werden.",
+  "chat.photoAlt": "Bild im Chat",
+  "chat.sendingImage": "Bild wird gesendet…",
+  "home.unread": "{n} ungelesene Nachrichten",
+  "home.confirmTitle": "Besuch eintragen?",
+  "home.confirmDesc": "Möchtest du eintragen, dass du jetzt bei {name} bist?",
+  "home.confirmYes": "Ja, ich bin da",
+  "common.cancel": "Abbrechen",
 };
 
 const da: AppDict = {
@@ -711,6 +747,18 @@ const da: AppDict = {
   "date.tomorrow": "I morgen",
   "member.fallback": "Familiemedlem",
   "common.no": "Nej",
+  "notify.visit": "{name} registrerede et besøg",
+  "notify.planned": "{name} planlagde et besøg",
+  "notify.plannedDesc": "Besøget vises nu i oversigten.",
+  "chat.addPhoto": "Tilføj billede",
+  "chat.imageError": "Billedet kunne ikke sendes.",
+  "chat.photoAlt": "Billede i chatten",
+  "chat.sendingImage": "Sender billede…",
+  "home.unread": "{n} ulæste beskeder",
+  "home.confirmTitle": "Registrér besøg?",
+  "home.confirmDesc": "Vil du registrere, at du er hos {name} nu?",
+  "home.confirmYes": "Ja, jeg er her",
+  "common.cancel": "Annullér",
 };
 
 const fi: AppDict = {
@@ -888,6 +936,18 @@ const fi: AppDict = {
   "date.tomorrow": "Huomenna",
   "member.fallback": "Perheenjäsen",
   "common.no": "Ei",
+  "notify.visit": "{name} kirjasi käynnin",
+  "notify.planned": "{name} suunnitteli käynnin",
+  "notify.plannedDesc": "Käynti näkyy nyt yleisnäkymässä.",
+  "chat.addPhoto": "Lisää kuva",
+  "chat.imageError": "Kuvaa ei voitu lähettää.",
+  "chat.photoAlt": "Kuva chatissa",
+  "chat.sendingImage": "Lähetetään kuvaa…",
+  "home.unread": "{n} lukematonta viestiä",
+  "home.confirmTitle": "Kirjataanko käynti?",
+  "home.confirmDesc": "Haluatko kirjata, että olet nyt {name}:n luona?",
+  "home.confirmYes": "Kyllä, olen täällä",
+  "common.cancel": "Peruuta",
 };
 
 const es: AppDict = {
@@ -1065,6 +1125,18 @@ const es: AppDict = {
   "date.tomorrow": "Mañana",
   "member.fallback": "Miembro de la familia",
   "common.no": "No",
+  "notify.visit": "{name} registró una visita",
+  "notify.planned": "{name} planeó una visita",
+  "notify.plannedDesc": "La visita ya aparece en el resumen.",
+  "chat.addPhoto": "Añadir foto",
+  "chat.imageError": "No se pudo enviar la foto.",
+  "chat.photoAlt": "Foto en el chat",
+  "chat.sendingImage": "Enviando foto…",
+  "home.unread": "{n} mensajes sin leer",
+  "home.confirmTitle": "¿Registrar la visita?",
+  "home.confirmDesc": "¿Quieres registrar que estás con {name} ahora?",
+  "home.confirmYes": "Sí, estoy aquí",
+  "common.cancel": "Cancelar",
 };
 
 const fr: AppDict = {
@@ -1242,6 +1314,18 @@ const fr: AppDict = {
   "date.tomorrow": "Demain",
   "member.fallback": "Membre de la famille",
   "common.no": "Non",
+  "notify.visit": "{name} a enregistré une visite",
+  "notify.planned": "{name} a prévu une visite",
+  "notify.plannedDesc": "La visite apparaît maintenant dans l'aperçu.",
+  "chat.addPhoto": "Ajouter une photo",
+  "chat.imageError": "La photo n'a pas pu être envoyée.",
+  "chat.photoAlt": "Photo dans le chat",
+  "chat.sendingImage": "Envoi de la photo…",
+  "home.unread": "{n} messages non lus",
+  "home.confirmTitle": "Enregistrer la visite ?",
+  "home.confirmDesc": "Veux-tu enregistrer que tu es chez {name} maintenant ?",
+  "home.confirmYes": "Oui, je suis là",
+  "common.cancel": "Annuler",
 };
 
 export const appDicts = { sv, en, de, da, fi, es, fr };
