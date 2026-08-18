@@ -628,6 +628,35 @@ export function HomeScreen({
           </div>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={confirmVisit} onOpenChange={setConfirmVisit}>
+        <DialogContent className="rounded-3xl sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-xl">{t("home.confirmTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("home.confirmDesc", { name: pl(person?.name) || circle.name })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              className="h-12 flex-1 rounded-2xl"
+              onClick={() => setConfirmVisit(false)}
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button
+              className="h-12 flex-1 rounded-2xl"
+              onClick={() => {
+                setConfirmVisit(false);
+                void saveVisit("manual");
+              }}
+            >
+              {t("home.confirmYes")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
