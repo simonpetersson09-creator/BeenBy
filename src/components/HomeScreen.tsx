@@ -506,11 +506,20 @@ export function HomeScreen({
           ) : (
             <Button
               asChild
-              aria-label={t("home.chatAria")}
-              className="size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+              aria-label={
+                unread > 0
+                  ? `${t("home.chatAria")} – ${t("home.unread", { n: String(unread) })}`
+                  : t("home.chatAria")
+              }
+              className="relative size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
             >
               <Link to="/chat">
                 <MessageCircle className="size-5" />
+                {unread > 0 ? (
+                  <span className="absolute -right-1 -top-1 flex min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 py-0.5 text-[0.65rem] font-semibold leading-none text-destructive-foreground shadow-soft">
+                    {unread > 99 ? "99+" : unread}
+                  </span>
+                ) : null}
               </Link>
             </Button>
           )}
