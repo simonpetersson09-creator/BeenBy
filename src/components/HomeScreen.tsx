@@ -556,8 +556,8 @@ export function HomeScreen({
             <DialogTitle className="text-xl">{t("home.planTitle")}</DialogTitle>
             <DialogDescription>{t("home.planDesc")}</DialogDescription>
           </DialogHeader>
-          <div className="grid max-h-80 grid-cols-2 gap-2 overflow-y-auto">
-            {planDates.map((d) => (
+          <div className="grid grid-cols-2 gap-2">
+            {planDates.slice(0, 6).map((d) => (
               <button
                 key={d}
                 type="button"
@@ -568,6 +568,23 @@ export function HomeScreen({
               </button>
             ))}
           </div>
+          <div className="rounded-2xl border">
+            <p className="px-4 pt-3 text-xs font-medium text-muted-foreground">
+              {t("home.planMore")}
+            </p>
+            <Calendar
+              mode="single"
+              weekStartsOn={1}
+              disabled={{ before: new Date() }}
+              onSelect={(d) => {
+                if (!d) return;
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                planVisit(key);
+              }}
+              className="pointer-events-auto p-3"
+            />
+          </div>
+
         </DialogContent>
       </Dialog>
 
