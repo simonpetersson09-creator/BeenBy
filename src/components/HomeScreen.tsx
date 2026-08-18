@@ -450,24 +450,37 @@ export function HomeScreen({
       </section>
 
       <section className="mt-3 rounded-2xl border border-primary/30 px-4 py-3">
-        <p className="mb-2 text-[0.62rem] font-medium uppercase tracking-[0.2em] text-primary/60">
+        <p className="mb-2.5 text-[0.62rem] font-medium uppercase tracking-[0.2em] text-primary/60">
           {t("home.who")}
         </p>
-        <ul className="flex flex-wrap gap-x-4 gap-y-2">
-          {members.map((m) => (
-            <li key={m.id} className="flex items-center gap-2 text-xs">
-              <span
-                className="size-3.5 rounded-full shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
-                style={{ backgroundColor: colorById(m.personal_color).hex }}
-              />
-              <span className={m.user_id === userId ? "font-medium" : undefined}>
-                {m.name}
-                {m.user_id === userId ? ` ${t("home.you")}` : ""}
-              </span>
-            </li>
-          ))}
+        <ul className="flex flex-wrap gap-2">
+          {members.map((m) => {
+            const hex = colorById(m.personal_color).hex;
+            const isMe = m.user_id === userId;
+            return (
+              <li
+                key={m.id}
+                className="flex items-center gap-2 rounded-full border py-1 pl-1 pr-3"
+                style={{ borderColor: hex, backgroundColor: `${hex}1f` }}
+              >
+                <span
+                  className="flex size-6 items-center justify-center rounded-full text-[0.62rem] font-semibold text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+                  style={{ backgroundColor: hex }}
+                >
+                  {m.name.trim().charAt(0).toUpperCase()}
+                </span>
+                <span className="text-xs font-medium leading-tight">
+                  {m.name}
+                  {isMe ? (
+                    <span className="ml-1 font-normal text-muted-foreground">{t("home.you")}</span>
+                  ) : null}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </section>
+
 
 
 
