@@ -223,7 +223,8 @@ export function HomeScreen({
       setConfirmSecond(true);
       return;
     }
-    void saveVisit("manual");
+    // Always ask once more so a visit is never registered by mistake.
+    setConfirmVisit(true);
   }
 
   async function planVisit(date: string) {
