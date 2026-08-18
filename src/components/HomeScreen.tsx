@@ -12,6 +12,8 @@ import { Paywall } from "@/components/Paywall";
 import { SettingsDialog } from "@/components/SettingsDialog";
 
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+
 import {
   Dialog,
   DialogContent,
