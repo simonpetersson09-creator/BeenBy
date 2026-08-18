@@ -44,14 +44,14 @@ export function weekdayLabels(): string[] {
 }
 
 /**
- * 28 days: the two previous weeks, the current week and the coming week.
+ * 35 days: the two previous weeks, the current week and the two coming weeks.
  * Every row is a Monday–Sunday week.
  */
-export function build28DayGrid(timeZone: string): string[] {
+export function buildVisitGrid(timeZone: string): string[] {
   const today = todayKey(timeZone);
   const mondayThisWeek = addDays(today, -weekdayIndex(today));
   const start = addDays(mondayThisWeek, -14);
-  return Array.from({ length: 28 }, (_, i) => addDays(start, i));
+  return Array.from({ length: 35 }, (_, i) => addDays(start, i));
 }
 
 /** ISO-8601 week number (Swedish "veckonummer"). */
