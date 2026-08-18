@@ -53,8 +53,13 @@ export function HomeScreen({
 
   // Toast the siblings when someone writes in the chat or joins the family.
   useFamilyNotifications({ circleId: circle.id, userId, onEvent: refresh });
+  // Real push notifications (iOS) so notices arrive even when the app is closed.
+  useEffect(() => {
+    void registerPushNotifications();
+  }, [userId]);
   // "Ja" on a geofence arrival notification → existing recordVisit() path.
   useGeofenceVisits(refresh, t("toast.geofenceVisitSaved"));
+
 
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [planOpen, setPlanOpen] = useState(false);
