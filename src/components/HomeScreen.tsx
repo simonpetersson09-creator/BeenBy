@@ -58,6 +58,8 @@ export function HomeScreen({
   const [familyOpen, setFamilyOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmSecond, setConfirmSecond] = useState(false);
+  const [confirmVisit, setConfirmVisit] = useState(false);
+  const unread = useUnreadMessages(circle.id, userId);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
