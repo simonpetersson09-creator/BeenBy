@@ -299,21 +299,21 @@ export function HomeScreen({
   const planDates = Array.from({ length: 14 }, (_, i) => addDays(today, i));
 
   return (
-    <div className="app-scroll mx-auto h-dvh w-full max-w-md px-4 pb-32 pt-5">
-      <header className="mb-3 flex items-center justify-between gap-3">
+    <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-40 pt-8">
+      <header className="mb-6 flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-primary/60">
+          <p className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-primary/60">
             {t("home.eyebrow")}
           </p>
-          <h1 className="mt-0.5 truncate text-[1.75rem] leading-[1.05] text-primary">
+          <h1 className="mt-1 truncate text-[2rem] leading-[1.1] text-primary">
             {pl(person?.name) || circle.name}
           </h1>
-          <span className="mt-1.5 block h-px w-10 bg-primary/30" />
+          <span className="mt-2 block h-px w-10 bg-primary/30" />
         </div>
         <div className="relative flex shrink-0 gap-2">
           <Button
             onClick={() => setFamilyOpen(true)}
-            className="h-11 rounded-2xl bg-primary px-3 text-xs font-medium leading-tight text-primary-foreground shadow-soft hover:bg-primary/90"
+            className="h-12 rounded-2xl bg-primary px-3 text-xs font-medium leading-tight text-primary-foreground shadow-soft hover:bg-primary/90"
           >
             <span className="whitespace-pre-line text-center">{t("home.inviteSiblings")}</span>
           </Button>
@@ -321,10 +321,11 @@ export function HomeScreen({
             size="icon"
             aria-label={t("home.settings")}
             onClick={() => setSettingsOpen(true)}
-            className="size-11 rounded-2xl bg-primary text-primary-foreground shadow-soft hover:bg-primary/90"
+            className="size-12 rounded-2xl bg-primary text-primary-foreground shadow-soft hover:bg-primary/90"
           >
-            <Settings className="size-5" />
+            <Settings className="size-6" />
           </Button>
+
 
           {showTooltip ? (
             <button
@@ -340,10 +341,12 @@ export function HomeScreen({
                 aria-hidden
                 className="absolute -top-1.5 right-[7.5rem] size-3 rotate-45 rounded-[2px] bg-primary"
               />
+
               {t("home.tooltip")}
             </button>
           ) : null}
         </div>
+
       </header>
 
 
@@ -404,7 +407,7 @@ export function HomeScreen({
 
 
       {!online || pending.length > 0 ? (
-        <div className="mb-3 flex items-center gap-2 rounded-2xl bg-secondary px-3 py-2 text-xs">
+        <div className="mb-4 flex items-center gap-2 rounded-2xl bg-secondary px-4 py-3 text-sm">
           {online ? <RefreshCw className="size-4" /> : <CloudOff className="size-4" />}
           <span>
             {pending.length > 0
@@ -414,23 +417,25 @@ export function HomeScreen({
         </div>
       ) : null}
 
-      <section className="relative rounded-3xl border border-primary/40 bg-transparent px-2.5 py-3">
+      <section className="relative rounded-3xl border border-primary/40 bg-transparent px-3 py-4">
         {isPremium ? (
-          <span className="absolute -top-2 left-3 rounded-full bg-primary px-2 py-0.5 text-[0.6rem] leading-none font-medium text-primary-foreground shadow-soft">
+          <span className="absolute -top-2.5 left-3 rounded-full bg-primary px-2.5 py-1 text-[0.62rem] leading-none font-medium text-primary-foreground shadow-soft">
             {t("home.premiumBadge")}
           </span>
         ) : isTrialActive ? (
-          <span className="absolute -top-2 left-3 rounded-full border border-primary/30 bg-card px-2 py-0.5 text-[0.6rem] leading-none font-medium text-primary shadow-soft">
+          <span className="absolute -top-2.5 left-3 rounded-full border border-primary/30 bg-card px-2.5 py-1 text-[0.62rem] leading-none font-medium text-primary shadow-soft">
             {trialDaysLeft === 1
               ? t("home.trialLeftOne")
               : t("home.trialLeft", { n: String(trialDaysLeft) })}
           </span>
         ) : null}
-        <h2 className="mb-2 text-center text-sm leading-tight text-primary">{t("home.overview")}</h2>
+        <h2 className="mb-3 text-center text-base leading-tight text-primary">{t("home.overview")}</h2>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
       </section>
 
-      <section className="mt-2 rounded-2xl bg-card px-3 py-1.5 shadow-soft">
+
+
+      <section className="mt-3 rounded-2xl bg-card px-3 py-2 shadow-soft">
         {nextPlanned ? (
           (() => {
             const plannedMember = members.find((m) => m.user_id === nextPlanned.user_id);
@@ -439,10 +444,10 @@ export function HomeScreen({
             return (
               <div className="flex items-center gap-2">
                 <div
-                  className="flex size-6 shrink-0 items-center justify-center rounded-lg text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+                  className="flex size-7 shrink-0 items-center justify-center rounded-lg text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
                   style={{ backgroundColor: hex }}
                 >
-                  <span className="text-[0.65rem] font-bold leading-none">
+                  <span className="text-xs font-bold leading-none">
                     {plannedMember?.name.trim().charAt(0).toUpperCase() ?? "?"}
                   </span>
                 </div>
@@ -472,27 +477,27 @@ export function HomeScreen({
         )}
       </section>
 
-      <section className="mt-2 rounded-2xl border border-primary/30 px-3 py-2">
-        <p className="mb-1.5 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-primary/60">
+      <section className="mt-3 rounded-2xl border border-primary/30 px-4 py-3">
+        <p className="mb-2.5 text-[0.62rem] font-medium uppercase tracking-[0.2em] text-primary/60">
           {t("home.who")}
         </p>
-        <ul className="flex flex-wrap gap-1.5">
+        <ul className="flex flex-wrap gap-2">
           {members.map((m) => {
             const hex = colorById(m.personal_color).hex;
             const isMe = m.user_id === userId;
             return (
               <li
                 key={m.id}
-                className="flex items-center gap-1.5 rounded-full border py-0.5 pl-0.5 pr-2.5"
+                className="flex items-center gap-2 rounded-full border py-1 pl-1 pr-3"
                 style={{ borderColor: hex, backgroundColor: `${hex}1f` }}
               >
                 <span
-                  className="flex size-5 items-center justify-center rounded-full text-[0.55rem] font-semibold text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+                  className="flex size-6 items-center justify-center rounded-full text-[0.62rem] font-semibold text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
                   style={{ backgroundColor: hex }}
                 >
                   {m.name.trim().charAt(0).toUpperCase()}
                 </span>
-                <span className="text-[0.7rem] font-medium leading-tight">
+                <span className="text-xs font-medium leading-tight">
                   {m.name}
                   {isMe ? (
                     <span className="ml-1 font-normal text-muted-foreground">{t("home.you")}</span>
@@ -504,11 +509,16 @@ export function HomeScreen({
         </ul>
       </section>
 
-      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-4 pb-6 pt-4">
+
+
+
+
+
+      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-6">
         <Button
           onClick={handleImHere}
           disabled={busy || !person}
-          className="h-11 w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
+          className="h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
         >
           {busy ? (
             <Loader2 className="size-4 animate-spin" />
@@ -521,7 +531,7 @@ export function HomeScreen({
         </Button>
         <div className="mt-2 flex gap-2">
           <Button
-            className="h-11 flex-1 rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
+            className="h-12 flex-1 rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
             onClick={() => {
               if (locked) {
                 setPaywallOpen(true);
@@ -539,7 +549,7 @@ export function HomeScreen({
             <Button
               aria-label={t("access.locked")}
               onClick={() => setPaywallOpen(true)}
-              className="relative size-11 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+              className="relative size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
             >
               <MessageCircle className="size-5" />
               <Lock className="absolute -right-0.5 -top-0.5 size-3.5 rounded-full bg-primary p-0.5 text-primary-foreground" />
@@ -552,7 +562,7 @@ export function HomeScreen({
                   ? `${t("home.chatAria")} – ${t("home.unread", { n: String(unread) })}`
                   : t("home.chatAria")
               }
-              className="relative size-11 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+              className="relative size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
             >
               <Link to="/chat">
                 <MessageCircle className="size-5" />
@@ -564,7 +574,10 @@ export function HomeScreen({
               </Link>
             </Button>
           )}
+
         </div>
+
+
       </div>
 
       <DayDetail
