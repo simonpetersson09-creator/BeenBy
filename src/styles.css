@@ -136,6 +136,7 @@
     height: 100%;
     overflow: hidden;
     overscroll-behavior: none;
+    width: 100%;
   }
 
   body {
@@ -147,6 +148,9 @@
     height: 100%;
     overflow: hidden;
     overscroll-behavior: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
   }
 
   button,
@@ -167,7 +171,8 @@
 
   body > div:first-child {
     background-color: transparent;
-    min-height: var(--app-height, 100dvh);
+    height: 100%;
+    overflow: hidden;
   }
 
   /*
