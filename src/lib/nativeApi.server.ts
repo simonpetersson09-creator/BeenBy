@@ -88,9 +88,15 @@ export async function authenticate(
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
   });
 
-  const { data, error } = await supabase.auth.getClaims(token);
-  const userId = data?.claims?.sub;
-  if (error || !userId) return jsonResponse(request, { error: "unauthorized" }, 401);
+  let userId: string | undefined;
+  try {
+    const { data, error } = await supabase.auth.getClaims(token);
+    if (!error) userId = data?.claims?.sub;
+  } catch {
+    // Malformed or forged token: never log its contents.
+    userId = undefined;
+  }
+  if (!userId) return jsonResponse(request, { error: "unauthorized" }, 401);
 
   return { supabase, userId };
 }
