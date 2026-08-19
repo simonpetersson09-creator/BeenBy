@@ -167,7 +167,7 @@ export function DotGrid({
         })}
       </div>
 
-      <div className="mt-3 flex items-center justify-center gap-3 text-[0.6rem] text-muted-foreground">
+      <div className="mt-3 flex items-center justify-center gap-3 text-[0.6rem] text-primary">
         <span className="flex items-center gap-1.5 whitespace-nowrap">
           <span
             className="block size-3.5 rounded-full shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
