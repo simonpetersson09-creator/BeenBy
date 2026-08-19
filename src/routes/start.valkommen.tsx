@@ -33,6 +33,7 @@ const points = [
   { icon: CalendarHeart, key: "welcome.p2" },
   { icon: Hand, key: "welcome.p3" },
   { icon: BellRing, key: "welcome.p4" },
+  { icon: Users, key: "welcome.p4sub" },
 ];
 
 const HINT_KEY = "beenby.langHintSeen";
