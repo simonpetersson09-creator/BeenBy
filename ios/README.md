@@ -29,8 +29,13 @@ npm run ios:plist
 
 Det lägger in (idempotent):
 
-- `NSCameraUsageDescription`
-- `NSPhotoLibraryUsageDescription`
+- `NSCameraUsageDescription` (engelsk bastext)
+- `NSPhotoLibraryUsageDescription` (engelsk bastext)
+- `CFBundleLocalizations` med `en, sv, de, da, fi, es, fr`
+- `ios/App/App/<språk>.lproj/InfoPlist.strings` med översatta behörighetstexter
+
+Första gången: dra in de sju `*.lproj`-mapparna i Xcode (App-target → Copy Bundle
+Resources) så att de översatta behörighetstexterna följer med i bygget.
 
 `NSPhotoLibraryAddUsageDescription` behövs inte – appen sparar aldrig bilder tillbaka
 till telefonens bildbibliotek. Inga nya capabilities krävs i Xcode.

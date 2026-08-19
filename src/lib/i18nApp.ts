@@ -6,6 +6,13 @@
 export type AppDict = Record<string, string>;
 
 const sv: AppDict = {
+  "native.requiresApp": "Kräver appen installerad på telefonen.",
+  "notfound.title": "Sidan hittades inte",
+  "notfound.sub": "Sidan du letar efter finns inte eller har flyttats.",
+  "notfound.cta": "Till startsidan",
+  "apperror.title": "Sidan kunde inte laddas",
+  "apperror.sub": "Något gick fel hos oss. Prova att ladda om eller gå tillbaka till startsidan.",
+  "apperror.retry": "Försök igen",
   "act.greet": "Bara hälsa på",
   "act.meds": "Mediciner",
   "act.shop": "Handla",
@@ -224,6 +231,13 @@ const sv: AppDict = {
 };
 
 const en: AppDict = {
+  "native.requiresApp": "Requires the app installed on your phone.",
+  "notfound.title": "Page not found",
+  "notfound.sub": "The page you're looking for doesn't exist or has been moved.",
+  "notfound.cta": "Go home",
+  "apperror.title": "This page didn't load",
+  "apperror.sub": "Something went wrong on our end. Try refreshing or head back home.",
+  "apperror.retry": "Try again",
   "act.greet": "Just visiting",
   "act.meds": "Medicines",
   "act.shop": "Shopping",
@@ -442,6 +456,13 @@ const en: AppDict = {
 };
 
 const de: AppDict = {
+  "native.requiresApp": "Erfordert die installierte App auf dem Handy.",
+  "notfound.title": "Seite nicht gefunden",
+  "notfound.sub": "Die gesuchte Seite gibt es nicht oder sie wurde verschoben.",
+  "notfound.cta": "Zur Startseite",
+  "apperror.title": "Diese Seite wurde nicht geladen",
+  "apperror.sub": "Bei uns ist etwas schiefgelaufen. Lade neu oder geh zurück zur Startseite.",
+  "apperror.retry": "Erneut versuchen",
   "act.greet": "Nur besuchen",
   "act.meds": "Medikamente",
   "act.shop": "Einkaufen",
@@ -660,6 +681,13 @@ const de: AppDict = {
 };
 
 const da: AppDict = {
+  "native.requiresApp": "Kræver, at appen er installeret på telefonen.",
+  "notfound.title": "Siden blev ikke fundet",
+  "notfound.sub": "Siden, du leder efter, findes ikke eller er flyttet.",
+  "notfound.cta": "Til forsiden",
+  "apperror.title": "Siden kunne ikke indlæses",
+  "apperror.sub": "Noget gik galt hos os. Prøv at genindlæse eller gå tilbage til forsiden.",
+  "apperror.retry": "Prøv igen",
   "act.greet": "Bare på besøg",
   "act.meds": "Medicin",
   "act.shop": "Indkøb",
@@ -878,6 +906,13 @@ const da: AppDict = {
 };
 
 const fi: AppDict = {
+  "native.requiresApp": "Vaatii sovelluksen asennettuna puhelimeen.",
+  "notfound.title": "Sivua ei löytynyt",
+  "notfound.sub": "Etsimääsi sivua ei ole tai se on siirretty.",
+  "notfound.cta": "Etusivulle",
+  "apperror.title": "Sivun lataus epäonnistui",
+  "apperror.sub": "Jokin meni pieleen. Yritä päivittää sivu tai palaa etusivulle.",
+  "apperror.retry": "Yritä uudelleen",
   "act.greet": "Vain käymässä",
   "act.meds": "Lääkkeet",
   "act.shop": "Kaupassa",
@@ -1096,6 +1131,13 @@ const fi: AppDict = {
 };
 
 const es: AppDict = {
+  "native.requiresApp": "Requiere la app instalada en el teléfono.",
+  "notfound.title": "Página no encontrada",
+  "notfound.sub": "La página que buscas no existe o se ha movido.",
+  "notfound.cta": "Ir al inicio",
+  "apperror.title": "Esta página no se ha cargado",
+  "apperror.sub": "Algo ha fallado por nuestra parte. Prueba a recargar o vuelve al inicio.",
+  "apperror.retry": "Reintentar",
   "act.greet": "Solo visita",
   "act.meds": "Medicinas",
   "act.shop": "Compras",
@@ -1314,6 +1356,13 @@ const es: AppDict = {
 };
 
 const fr: AppDict = {
+  "native.requiresApp": "Nécessite l'application installée sur le téléphone.",
+  "notfound.title": "Page introuvable",
+  "notfound.sub": "La page que vous cherchez n'existe pas ou a été déplacée.",
+  "notfound.cta": "Accueil",
+  "apperror.title": "Cette page n'a pas pu être chargée",
+  "apperror.sub": "Un problème est survenu de notre côté. Rechargez ou revenez à l'accueil.",
+  "apperror.retry": "Réessayer",
   "act.greet": "Simple visite",
   "act.meds": "Médicaments",
   "act.shop": "Courses",

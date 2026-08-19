@@ -6,6 +6,8 @@
  * location and notifications are enhancements, never requirements.
  */
 
+import { getLang, translate } from "@/lib/i18n";
+
 export type NativeCapability =
   | "background-geofencing"
   | "local-notifications"
@@ -28,7 +30,7 @@ export function isCapabilityAvailable(capability: NativeCapability): boolean {
 /** Native share sheet with a clipboard fallback. Returns how it was shared. */
 export async function shareInvite(url: string, text: string): Promise<"shared" | "copied"> {
   const { shareLink } = await import("@/lib/share");
-  return await shareLink({ title: "Inbjudan", text, url });
+  return await shareLink({ title: translate(getLang(), "invite.subject"), text, url });
 }
 
 /**
@@ -70,9 +72,9 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number): numb
  * so nothing pretends to work that doesn't.
  */
 export function registerGeofence(): { registered: false; reason: string } {
-  return { registered: false, reason: "Kräver appen installerad på telefonen." };
+  return { registered: false, reason: translate(getLang(), "native.requiresApp") };
 }
 
 export function scheduleLocalNotification(): { scheduled: false; reason: string } {
-  return { scheduled: false, reason: "Kräver appen installerad på telefonen." };
+  return { scheduled: false, reason: translate(getLang(), "native.requiresApp") };
 }

@@ -10,15 +10,15 @@ export const Route = createFileRoute("/join/$token")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Gå med i familjecirkeln – Nära" },
+      { title: "Join the family circle – BeenBy" },
       {
         name: "description",
-        content: "Du har blivit inbjuden att hålla koll på besöken tillsammans med din familj.",
+        content: "You have been invited to keep track of visits together with your family.",
       },
-      { property: "og:title", content: "Gå med i familjecirkeln – Nära" },
+      { property: "og:title", content: "Join the family circle – BeenBy" },
       {
         property: "og:description",
-        content: "Du har blivit inbjuden att hålla koll på besöken tillsammans med din familj.",
+        content: "You have been invited to keep track of visits together with your family.",
       },
     ],
   }),
