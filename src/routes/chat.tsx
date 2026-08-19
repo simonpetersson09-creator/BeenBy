@@ -1,9 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Camera, ImagePlus, Loader2, Lock, Send, X } from "lucide-react";
+import { ArrowLeft, Camera, ImagePlus, Loader2, Lock, Send, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Paywall } from "@/components/Paywall";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCircleData, type Member } from "@/hooks/useCircleData";
@@ -86,6 +96,8 @@ function ChatPage() {
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const { hasAccess } = useAccess();
   const [paywallOpen, setPaywallOpen] = useState(false);
+  const [toDelete, setToDelete] = useState<Message | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const locked = !hasAccess;
 
   useEffect(() => {
@@ -95,6 +107,8 @@ function ChatPage() {
       setPreparing(false);
       setSourceOpen(false);
       setPaywallOpen(false);
+      setToDelete(null);
+      setDeleting(false);
     };
     window.addEventListener("beenby:resume", resetTransientUi);
     return () => window.removeEventListener("beenby:resume", resetTransientUi);
@@ -317,6 +331,24 @@ function ChatPage() {
   }
 
 
+  async function removeMessage(m: Message) {
+    setDeleting(true);
+    try {
+      const { error } = await supabase.from("messages").delete().eq("id", m.id);
+      if (error) {
+        toast.error(t("chat.deleteError"));
+        return;
+      }
+      if (m.image_path) {
+        void supabase.storage.from("chat-images").remove([m.image_path]);
+      }
+      setMessages((prev) => prev.filter((x) => x.id !== m.id));
+      setToDelete(null);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   if (loading || isLoading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
@@ -362,6 +394,31 @@ function ChatPage() {
 
       <Paywall open={paywallOpen} onOpenChange={setPaywallOpen} />
 
+      <AlertDialog
+        open={toDelete !== null}
+        onOpenChange={(o) => (o ? undefined : setToDelete(null))}
+      >
+        <AlertDialogContent className="rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("chat.deleteConfirm")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("chat.deleteConfirmDesc")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-2xl">{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-2xl"
+              disabled={deleting}
+              onClick={(e) => {
+                e.preventDefault();
+                if (toDelete) void removeMessage(toDelete);
+              }}
+            >
+              {deleting ? <Loader2 className="size-4 animate-spin" /> : t("chat.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="flex-1 space-y-3 pb-32">
         {messages.length === 0 ? (
           <p className="mt-10 text-center text-xs text-muted-foreground">
@@ -382,34 +439,49 @@ function ChatPage() {
                   <span className="size-2 rounded-full" style={{ backgroundColor: color }} />
                   {mine ? t("chat.you") : (member?.name ?? t("chat.someone"))} · {timeLabel(m.created_at, tz)}
                 </p>
-                <div
-                  className="overflow-hidden rounded-2xl shadow-soft"
-                  style={{
-                    backgroundColor: dark ? color : `${color}26`,
-                    color: dark ? "#ffffff" : undefined,
-                    border: dark ? undefined : `1px solid ${color}66`,
-                  }}
-                >
-                  {m.image_path ? (
-                    url ? (
-                      <img
-                        src={url}
-                        alt={t("chat.photoAlt")}
-                        loading="lazy"
-                        className="max-h-72 w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-40 w-56 items-center justify-center">
-                        <Loader2 className="size-4 animate-spin opacity-60" />
-                      </div>
-                    )
+                <div className="flex items-end gap-1">
+                  {mine ? (
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      aria-label={t("chat.delete")}
+                      onClick={() => setToDelete(m)}
+                      className="size-8 shrink-0 rounded-xl text-muted-foreground"
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
                   ) : null}
-                  {m.body ? <p className="px-4 py-2.5 text-sm">{m.body}</p> : null}
+                  <div
+                    className="overflow-hidden rounded-2xl shadow-soft"
+                    style={{
+                      backgroundColor: dark ? color : `${color}26`,
+                      color: dark ? "#ffffff" : undefined,
+                      border: dark ? undefined : `1px solid ${color}66`,
+                    }}
+                  >
+                    {m.image_path ? (
+                      url ? (
+                        <img
+                          src={url}
+                          alt={t("chat.photoAlt")}
+                          loading="lazy"
+                          className="max-h-72 w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-40 w-56 items-center justify-center">
+                          <Loader2 className="size-4 animate-spin opacity-60" />
+                        </div>
+                      )
+                    ) : null}
+                    {m.body ? <p className="px-4 py-2.5 text-sm">{m.body}</p> : null}
+                  </div>
                 </div>
               </div>
             </div>
           );
         })}
+
         <div ref={bottomRef} />
       </div>
 
