@@ -382,34 +382,49 @@ function ChatPage() {
                   <span className="size-2 rounded-full" style={{ backgroundColor: color }} />
                   {mine ? t("chat.you") : (member?.name ?? t("chat.someone"))} · {timeLabel(m.created_at, tz)}
                 </p>
-                <div
-                  className="overflow-hidden rounded-2xl shadow-soft"
-                  style={{
-                    backgroundColor: dark ? color : `${color}26`,
-                    color: dark ? "#ffffff" : undefined,
-                    border: dark ? undefined : `1px solid ${color}66`,
-                  }}
-                >
-                  {m.image_path ? (
-                    url ? (
-                      <img
-                        src={url}
-                        alt={t("chat.photoAlt")}
-                        loading="lazy"
-                        className="max-h-72 w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-40 w-56 items-center justify-center">
-                        <Loader2 className="size-4 animate-spin opacity-60" />
-                      </div>
-                    )
+                <div className="flex items-end gap-1">
+                  {mine ? (
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      aria-label={t("chat.delete")}
+                      onClick={() => setToDelete(m)}
+                      className="size-8 shrink-0 rounded-xl text-muted-foreground"
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
                   ) : null}
-                  {m.body ? <p className="px-4 py-2.5 text-sm">{m.body}</p> : null}
+                  <div
+                    className="overflow-hidden rounded-2xl shadow-soft"
+                    style={{
+                      backgroundColor: dark ? color : `${color}26`,
+                      color: dark ? "#ffffff" : undefined,
+                      border: dark ? undefined : `1px solid ${color}66`,
+                    }}
+                  >
+                    {m.image_path ? (
+                      url ? (
+                        <img
+                          src={url}
+                          alt={t("chat.photoAlt")}
+                          loading="lazy"
+                          className="max-h-72 w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-40 w-56 items-center justify-center">
+                          <Loader2 className="size-4 animate-spin opacity-60" />
+                        </div>
+                      )
+                    ) : null}
+                    {m.body ? <p className="px-4 py-2.5 text-sm">{m.body}</p> : null}
+                  </div>
                 </div>
               </div>
             </div>
           );
         })}
+
         <div ref={bottomRef} />
       </div>
 
