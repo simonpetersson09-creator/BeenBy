@@ -299,21 +299,21 @@ export function HomeScreen({
   const planDates = Array.from({ length: 14 }, (_, i) => addDays(today, i));
 
   return (
-    <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-40 pt-8">
-      <header className="mb-6 flex items-center justify-between gap-3">
+    <div className="app-scroll mx-auto h-dvh w-full max-w-md px-4 pb-32 pt-5">
+      <header className="mb-3 flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-primary/60">
+          <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-primary/60">
             {t("home.eyebrow")}
           </p>
-          <h1 className="mt-1 truncate text-[2rem] leading-[1.1] text-primary">
+          <h1 className="mt-0.5 truncate text-[1.75rem] leading-[1.05] text-primary">
             {pl(person?.name) || circle.name}
           </h1>
-          <span className="mt-2 block h-px w-10 bg-primary/30" />
+          <span className="mt-1.5 block h-px w-10 bg-primary/30" />
         </div>
         <div className="relative flex shrink-0 gap-2">
           <Button
             onClick={() => setFamilyOpen(true)}
-            className="h-12 rounded-2xl bg-primary px-3 text-xs font-medium leading-tight text-primary-foreground shadow-soft hover:bg-primary/90"
+            className="h-11 rounded-2xl bg-primary px-3 text-xs font-medium leading-tight text-primary-foreground shadow-soft hover:bg-primary/90"
           >
             <span className="whitespace-pre-line text-center">{t("home.inviteSiblings")}</span>
           </Button>
@@ -321,11 +321,10 @@ export function HomeScreen({
             size="icon"
             aria-label={t("home.settings")}
             onClick={() => setSettingsOpen(true)}
-            className="size-12 rounded-2xl bg-primary text-primary-foreground shadow-soft hover:bg-primary/90"
+            className="size-11 rounded-2xl bg-primary text-primary-foreground shadow-soft hover:bg-primary/90"
           >
-            <Settings className="size-6" />
+            <Settings className="size-5" />
           </Button>
-
 
           {showTooltip ? (
             <button
@@ -341,12 +340,10 @@ export function HomeScreen({
                 aria-hidden
                 className="absolute -top-1.5 right-[7.5rem] size-3 rotate-45 rounded-[2px] bg-primary"
               />
-
               {t("home.tooltip")}
             </button>
           ) : null}
         </div>
-
       </header>
 
 
