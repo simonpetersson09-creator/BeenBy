@@ -207,18 +207,18 @@ export function SettingsDialog({
     if (resetting) return;
     setResetting(true);
     setResetOpen(false);
-    clearDraft();
-    clearRecovery();
-    // iOS keeps monitoring regions after the app closes — drop them all, or the
-    // old address would keep sending arrival notifications after a reset.
-    await stopAllBeenbyGeofences();
-    // Stop push to this device so the old phone does not keep getting family
-    // notifications after the app is reset.
-    await unregisterPushNotifications();
     try {
+      clearDraft();
+      clearRecovery();
+      // iOS keeps monitoring regions after the app closes — drop them all, or the
+      // old address would keep sending arrival notifications after a reset.
+      await stopAllBeenbyGeofences();
+      // Stop push to this device so the old phone does not keep getting family
+      // notifications after the app is reset.
+      await unregisterPushNotifications();
       window.localStorage.removeItem("beenby.familyTipSeen");
     } catch {
-      /* storage unavailable */
+      // Continue the reset even if a native cleanup step is unavailable.
     }
     try {
       await supabase.auth.signOut();
@@ -232,6 +232,7 @@ export function SettingsDialog({
     // on to the welcome screen because there is no circle any more.
     const root = `${window.location.origin}/`;
     window.location.replace(root);
+    setResetting(false);
   }
 
 
