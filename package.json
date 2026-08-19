@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "build:ios": "vite build --config vite.ios.config.ts",
-    "icons": "capacitor-assets generate --ios"
+    "icons": "capacitor-assets generate --ios",
+    "ios:plist": "node scripts/patch-ios-plist.mjs"
   },
   "dependencies": {
     "@capacitor/app": "^8",
