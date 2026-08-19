@@ -59,7 +59,7 @@ const sv: AppDict = {
   "home.legend.done": "Fylld = besökt",
   "home.legend.planned": "Streckad = planerat",
   "home.legend.empty": "Tom = inget besök",
-  "home.next": "Nästa besök:",
+  "home.next": "Nästa besök",
   "home.noPlanned": "Inget besök är planerat än. Planera gärna ett – det syns direkt för de andra.",
   "home.who": "Vem är vem",
   "home.you": "(du)",
