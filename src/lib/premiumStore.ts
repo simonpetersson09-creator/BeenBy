@@ -53,7 +53,7 @@ export type PremiumState = {
   /** Premium OR an active trial. */
   hasAccess: boolean;
   /** Set when a real server verification failed (shown to the user). */
-  verifyError?: string;
+  verifyError?: string | undefined;
 };
 
 const initial: PremiumState = {
