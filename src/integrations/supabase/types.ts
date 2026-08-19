@@ -322,6 +322,36 @@ export type Database = {
         }
         Relationships: []
       }
+      push_log: {
+        Row: {
+          created_at: string
+          detail: string | null
+          devices: number
+          id: string
+          recipients: number
+          source_table: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          devices?: number
+          id?: string
+          recipients?: number
+          source_table: string
+          status: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          devices?: number
+          id?: string
+          recipients?: number
+          source_table?: string
+          status?: string
+        }
+        Relationships: []
+      }
       visits: {
         Row: {
           activities: string[]
