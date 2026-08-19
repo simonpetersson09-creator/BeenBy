@@ -314,9 +314,9 @@ export function HomeScreen({
           <Button
             variant="ghost"
             onClick={() => setFamilyOpen(true)}
-            className="h-12 rounded-2xl border border-primary/20 bg-primary/10 px-4 text-sm font-medium text-primary hover:bg-primary/20"
+            className="h-12 rounded-2xl border border-primary/20 bg-primary/10 px-3 text-xs font-medium leading-tight text-primary hover:bg-primary/20"
           >
-            {t("home.inviteSiblings")}
+            <span className="whitespace-pre-line text-center">{t("home.inviteSiblings")}</span>
           </Button>
           <Button
             variant="ghost"
