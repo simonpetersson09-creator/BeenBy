@@ -84,6 +84,11 @@ export function SettingsDialog({
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
+  const [pushOn, setPushOn] = useState(true);
+
+  useEffect(() => {
+    setPushOn(isPushEnabled());
+  }, []);
   const [name, setName] = useState(myName ?? "");
   const [savingName, setSavingName] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
