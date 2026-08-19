@@ -183,7 +183,7 @@ export function DotGrid({
           {t("home.legend.planned")}
         </span>
         <span className="flex items-center gap-1.5 whitespace-nowrap">
-          <span className="block size-3.5 rounded-full border border-foreground/20 bg-foreground/15" />
+          <span className="block size-3.5 rounded-full border border-foreground/25 bg-foreground/[0.08]" />
           {t("home.legend.empty")}
         </span>
       </div>
