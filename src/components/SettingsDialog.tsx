@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import type { GeofenceBlockReason } from "@/lib/geofenceSync";
+import { stopAllBeenbyGeofences, type GeofenceBlockReason } from "@/lib/geofenceSync";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { PRIVACY_POLICY_URL, TERMS_URL, openExternal } from "@/lib/legal";
 import { clearDraft } from "@/lib/onboardingDraft";
