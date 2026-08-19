@@ -6,6 +6,16 @@
 export type AppDict = Record<string, string>;
 
 const sv: AppDict = {
+  "act.greet": "Bara hälsa på",
+  "act.meds": "Mediciner",
+  "act.shop": "Handla",
+  "act.bills": "Räkningar",
+  "act.care": "Vård & ärenden",
+  "act.home": "Hjälp hemma",
+  "act.other": "Annat",
+  "act.title": "Vad gäller besöket?",
+  "act.optional": "Frivilligt – hoppa över om du vill",
+  "act.otherPlaceholder": "Skriv kort vad det gäller",
   "error.loadCircle": "Kunde inte hämta din familjecirkel just nu. Kontrollera uppkopplingen.",
   "error.retry": "Försök igen",
   "error.enterCode": "Ange familjekod",
@@ -196,6 +206,16 @@ const sv: AppDict = {
 };
 
 const en: AppDict = {
+  "act.greet": "Just visiting",
+  "act.meds": "Medicines",
+  "act.shop": "Shopping",
+  "act.bills": "Bills",
+  "act.care": "Care & errands",
+  "act.home": "Help at home",
+  "act.other": "Other",
+  "act.title": "What is the visit about?",
+  "act.optional": "Optional – skip if you like",
+  "act.otherPlaceholder": "Briefly, what is it about?",
   "error.loadCircle": "We couldn't load your family circle right now. Check your connection.",
   "error.retry": "Try again",
   "error.enterCode": "Enter family code",
@@ -386,6 +406,16 @@ const en: AppDict = {
 };
 
 const de: AppDict = {
+  "act.greet": "Nur besuchen",
+  "act.meds": "Medikamente",
+  "act.shop": "Einkaufen",
+  "act.bills": "Rechnungen",
+  "act.care": "Arzt & Behörden",
+  "act.home": "Hilfe zu Hause",
+  "act.other": "Sonstiges",
+  "act.title": "Worum geht es beim Besuch?",
+  "act.optional": "Optional – kann übersprungen werden",
+  "act.otherPlaceholder": "Kurz beschreiben",
   "error.loadCircle": "Dein Familienkreis konnte gerade nicht geladen werden. Prüfe deine Verbindung.",
   "error.retry": "Erneut versuchen",
   "error.enterCode": "Familiencode eingeben",
@@ -576,6 +606,16 @@ const de: AppDict = {
 };
 
 const da: AppDict = {
+  "act.greet": "Bare på besøg",
+  "act.meds": "Medicin",
+  "act.shop": "Indkøb",
+  "act.bills": "Regninger",
+  "act.care": "Læge & ærinder",
+  "act.home": "Hjælp hjemme",
+  "act.other": "Andet",
+  "act.title": "Hvad handler besøget om?",
+  "act.optional": "Frivilligt – spring over hvis du vil",
+  "act.otherPlaceholder": "Skriv kort hvad det gælder",
   "error.loadCircle": "Vi kunne ikke hente din familiecirkel lige nu. Tjek din forbindelse.",
   "error.retry": "Prøv igen",
   "error.enterCode": "Indtast familiekode",
@@ -766,6 +806,16 @@ const da: AppDict = {
 };
 
 const fi: AppDict = {
+  "act.greet": "Vain käymässä",
+  "act.meds": "Lääkkeet",
+  "act.shop": "Kaupassa",
+  "act.bills": "Laskut",
+  "act.care": "Hoito & asiointi",
+  "act.home": "Apua kotona",
+  "act.other": "Muu",
+  "act.title": "Mitä käynti koskee?",
+  "act.optional": "Vapaaehtoinen – voit ohittaa",
+  "act.otherPlaceholder": "Kirjoita lyhyesti",
   "error.loadCircle": "Perhepiiriäsi ei voitu ladata juuri nyt. Tarkista yhteys.",
   "error.retry": "Yritä uudelleen",
   "error.enterCode": "Syötä perhekoodi",
@@ -956,6 +1006,16 @@ const fi: AppDict = {
 };
 
 const es: AppDict = {
+  "act.greet": "Solo visita",
+  "act.meds": "Medicinas",
+  "act.shop": "Compras",
+  "act.bills": "Facturas",
+  "act.care": "Salud y gestiones",
+  "act.home": "Ayuda en casa",
+  "act.other": "Otro",
+  "act.title": "¿De qué trata la visita?",
+  "act.optional": "Opcional: puedes omitirlo",
+  "act.otherPlaceholder": "Describe brevemente",
   "error.loadCircle": "No pudimos cargar tu círculo familiar ahora mismo. Comprueba tu conexión.",
   "error.retry": "Intentar de nuevo",
   "error.enterCode": "Introducir código familiar",
@@ -1146,6 +1206,16 @@ const es: AppDict = {
 };
 
 const fr: AppDict = {
+  "act.greet": "Simple visite",
+  "act.meds": "Médicaments",
+  "act.shop": "Courses",
+  "act.bills": "Factures",
+  "act.care": "Santé & démarches",
+  "act.home": "Aide à la maison",
+  "act.other": "Autre",
+  "act.title": "De quoi s'agit-il ?",
+  "act.optional": "Facultatif – vous pouvez passer",
+  "act.otherPlaceholder": "Décrivez brièvement",
   "error.loadCircle": "Impossible de charger votre cercle familial pour le moment. Vérifiez votre connexion.",
   "error.retry": "Réessayer",
   "error.enterCode": "Saisir le code famille",

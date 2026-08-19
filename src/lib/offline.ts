@@ -13,7 +13,12 @@ export type PendingVisit = {
   visitedAt: string;
   localDay: string;
   source: string;
+  /** Optional activity ids (see src/lib/activities.ts). */
+  activities?: string[];
+  /** Short free text for the "other" activity. */
+  activityNote?: string | null;
 };
+
 
 const KEY = "pending-visits-v1";
 

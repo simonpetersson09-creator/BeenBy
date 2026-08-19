@@ -219,6 +219,8 @@ export type Database = {
       }
       planned_visits: {
         Row: {
+          activities: string[]
+          activity_note: string | null
           created_at: string
           family_circle_id: string
           id: string
@@ -228,6 +230,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          activities?: string[]
+          activity_note?: string | null
           created_at?: string
           family_circle_id: string
           id?: string
@@ -237,6 +241,8 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          activities?: string[]
+          activity_note?: string | null
           created_at?: string
           family_circle_id?: string
           id?: string
@@ -318,6 +324,8 @@ export type Database = {
       }
       visits: {
         Row: {
+          activities: string[]
+          activity_note: string | null
           client_token: string | null
           created_at: string
           family_circle_id: string
@@ -329,6 +337,8 @@ export type Database = {
           visited_at: string
         }
         Insert: {
+          activities?: string[]
+          activity_note?: string | null
           client_token?: string | null
           created_at?: string
           family_circle_id: string
@@ -340,6 +350,8 @@ export type Database = {
           visited_at?: string
         }
         Update: {
+          activities?: string[]
+          activity_note?: string | null
           client_token?: string | null
           created_at?: string
           family_circle_id?: string
