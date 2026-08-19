@@ -64,7 +64,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
   const [results, setResults] = useState<GeocodeHit[]>([]);
   const [mapOpen, setMapOpen] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [locating, setLocating] = useState(false);
+  const [visitNotifications, setVisitNotifications] = useState(draft.visitNotifications);
 
   async function lookupAddress() {
     const query = address.trim();
