@@ -40,7 +40,7 @@ export function StartShell({
 
   return (
     <main
-      className="mx-auto flex h-dvh w-full max-w-md flex-col overflow-y-auto px-6 pb-8"
+      className="app-scroll mx-auto flex h-dvh w-full max-w-md flex-col px-6 pb-8"
       style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)" }}
     >
       {onBack ? (
