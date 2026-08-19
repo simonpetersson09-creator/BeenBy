@@ -81,27 +81,33 @@ export function AddressEditor({
   async function save() {
     if (!coords || !resolved) return;
     setSaving(true);
-    // Only these three columns — geofence_radius is intentionally left as is.
-    const { error } = await supabase
-      .from("persons")
-      .update({
-        address: resolved,
-        location_latitude: coords.lat,
-        location_longitude: coords.lng,
-      })
-      .eq("id", person.id);
-    setSaving(false);
-    if (error) {
+    try {
+      // Only these three columns — geofence_radius is intentionally left as is.
+      const { error } = await supabase
+        .from("persons")
+        .update({
+          address: resolved,
+          location_latitude: coords.lat,
+          location_longitude: coords.lng,
+        })
+        .eq("id", person.id);
+      if (error) {
+        console.error(error);
+        toast.error(t("address.saveFailed"));
+        return;
+      }
+      // Drop the region for the previous address immediately; the geofence sync
+      // then re-creates one for the new coordinates.
+      await stopAllBeenbyGeofences();
+      toast.success(t("address.saved"));
+      onSaved?.();
+      onOpenChange(false);
+    } catch (error) {
       console.error(error);
       toast.error(t("address.saveFailed"));
-      return;
+    } finally {
+      setSaving(false);
     }
-    // Drop the region for the previous address immediately; the geofence sync
-    // then re-creates one for the new coordinates.
-    await stopAllBeenbyGeofences();
-    toast.success(t("address.saved"));
-    onSaved?.();
-    onOpenChange(false);
   }
 
   return (
