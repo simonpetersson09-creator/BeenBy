@@ -15,17 +15,17 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Nära – håll koll på besöken tillsammans" },
+      { title: "BeenBy – keep track of family visits together" },
       {
         name: "description",
         content:
-          "Se familjens besök hos mamma eller pappa i en enkel 28-dagarsvy, planera nästa besök och registrera ditt eget med ett tryck.",
+          "See the family's visits to mum or dad in a simple five-week overview, plan the next visit and log your own with one tap.",
       },
-      { property: "og:title", content: "Nära – håll koll på besöken tillsammans" },
+      { property: "og:title", content: "BeenBy – keep track of family visits together" },
       {
         property: "og:description",
         content:
-          "En lugn översikt över familjens besök. Registrera ditt besök med ett tryck och se syskonens uppdateringar direkt.",
+          "A calm overview of the family's visits. Log your visit with one tap and see your siblings' updates instantly.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

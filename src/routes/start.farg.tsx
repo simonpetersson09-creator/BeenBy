@@ -15,15 +15,15 @@ export const Route = createFileRoute("/start/farg")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Välj din färg – Nära" },
+      { title: "Pick your colour – BeenBy" },
       {
         name: "description",
-        content: "Sista steget: välj färgen som visar dina besök i familjens översikt.",
+        content: "Final step: pick the colour that marks your visits in the family overview.",
       },
-      { property: "og:title", content: "Välj din färg – Nära" },
+      { property: "og:title", content: "Pick your colour – BeenBy" },
       {
         property: "og:description",
-        content: "Färgen visar vem som varit på besök i familjens 28-dagarsvy.",
+        content: "The colour shows who has visited in the family's five-week overview.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

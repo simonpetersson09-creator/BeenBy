@@ -17,15 +17,15 @@ export const Route = createFileRoute("/start/kod")({
   }),
   head: () => ({
     meta: [
-      { title: "Ange familjekod – Nära" },
+      { title: "Enter family code – BeenBy" },
       {
         name: "description",
-        content: "Har du fått en familjekod? Ange den här för att gå med i familjens besöksöversikt.",
+        content: "Got a family code? Enter it here to join the family's visit overview.",
       },
-      { property: "og:title", content: "Ange familjekod – Nära" },
+      { property: "og:title", content: "Enter family code – BeenBy" },
       {
         property: "og:description",
-        content: "Gå med i familjen med koden du fått av ett syskon.",
+        content: "Join the family with the code you got from a sibling.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

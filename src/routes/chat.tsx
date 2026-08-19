@@ -33,16 +33,16 @@ export const Route = createFileRoute("/chat")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Familjechatten – Nära" },
+      { title: "Family chat – BeenBy" },
       {
         name: "description",
         content:
-          "En liten chatt för syskonen: skriv en kommentar om besöket, stäm av vem som åker nästa gång.",
+          "A small chat for the siblings: comment on a visit and agree on who goes next time.",
       },
-      { property: "og:title", content: "Familjechatten – Nära" },
+      { property: "og:title", content: "Family chat – BeenBy" },
       {
         property: "og:description",
-        content: "Skriv en kort kommentar till syskonen om besöken – enkelt och lugnt.",
+        content: "Leave a short note for your siblings about the visits – simple and calm.",
       },
     ],
   }),

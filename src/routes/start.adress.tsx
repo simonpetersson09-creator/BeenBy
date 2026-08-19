@@ -25,15 +25,15 @@ export const Route = createFileRoute("/start/adress")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Var bor personen? – Nära" },
+      { title: "Where does the person live? – BeenBy" },
       {
         name: "description",
-        content: "Ange adressen som utgångspunkt för besöken. Platsdelning är helt frivillig.",
+        content: "Add the address the visits are based on. Sharing your location is entirely optional.",
       },
-      { property: "og:title", content: "Var bor personen? – Nära" },
+      { property: "og:title", content: "Where does the person live? – BeenBy" },
       {
         property: "og:description",
-        content: "Adressen används som utgångspunkt – ingen i familjen ser var du befinner dig.",
+        content: "The address is only a reference point – nobody in the family sees where you are.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

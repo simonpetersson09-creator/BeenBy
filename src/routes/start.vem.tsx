@@ -13,15 +13,15 @@ export const Route = createFileRoute("/start/vem")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Vem vill ni hålla kontakten med? – Nära" },
+      { title: "Who do you want to stay in touch with? – BeenBy" },
       {
         name: "description",
-        content: "Första steget: välj vem familjen håller kontakten med och ange ditt eget namn.",
+        content: "Step one: choose who the family stays in touch with and enter your own name.",
       },
-      { property: "og:title", content: "Vem vill ni hålla kontakten med? – Nära" },
+      { property: "og:title", content: "Who do you want to stay in touch with? – BeenBy" },
       {
         property: "og:description",
-        content: "Kom igång på under en minut – välj person och skriv ditt namn.",
+        content: "Get started in under a minute – pick the person and type your name.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
