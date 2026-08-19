@@ -6,6 +6,7 @@
  * The web deploy is untouched: `npm run build` still runs the TanStack Start /
  * Nitro / Cloudflare SSR build via vite.config.ts.
  */
+import { appendFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
@@ -16,22 +17,17 @@ import tsconfigPaths from "vite-tsconfig-paths";
 const projectRoot = fileURLToPath(new URL(".", import.meta.url));
 const apiRoutesDir = fileURLToPath(new URL("./src/routes/api/", import.meta.url));
 
-/**
- * The TanStack Start Vite plugin strips server routes (src/routes/api/**) from
- * the client bundle. This SPA build runs without that plugin, so those modules
- * would drag @tanstack/start-server-core (and its plugin-only virtual imports
- * such as `#tanstack-start-entry` / `tanstack-start-manifest:v`) into the
- * browser graph and break the build. Replace each server route with an inert
- * client-side route so the generated route tree still resolves.
- */
 function stubServerRoutes() {
   return {
     name: "beenby:stub-server-routes",
     enforce: "pre" as const,
-    resolveId(source: string, importer?: string) { if (importer&&importer.includes("start-server-core")&&false)console.log();if (|| source.includes("tanstack-start-entry")) console.log("IMP", source, "<-", importer); return null; },
+    resolveId(source: string, importer?: string) {
+      appendFileSync("/tmp/trace.log", `${importer ?? "-"} >> ${source}\n`);
+      return null;
+    },
     load(id: string) {
       const file = id.split("?")[0] ?? id;
-      if (importer&&importer.includes("start-server-core")&&false)console.log();if (!file.startsWith(apiRoutesDir) || !/\.tsx?$/.test(file)) return null;
+      if (!file.startsWith(apiRoutesDir) || !/\.tsx?$/.test(file)) return null;
       const routePath = `/${file.slice(apiRoutesDir.length).replace(/\.tsx?$/, "")}`;
       return [
         `import { createFileRoute } from "@tanstack/react-router";`,
@@ -43,16 +39,13 @@ function stubServerRoutes() {
 
 export default defineConfig({
   root: fileURLToPath(new URL("./capacitor", import.meta.url)),
-  // Relative asset URLs so the bundle works under capacitor:// / file:// origins.
   base: "./",
   publicDir: fileURLToPath(new URL("./public", import.meta.url)),
   envDir: projectRoot,
   plugins: [stubServerRoutes(), tsconfigPaths({ root: projectRoot }), react(), tailwindcss()],
   define: {
-
     "import.meta.env.VITE_IOS_SPA": JSON.stringify("true"),
   },
-
   build: {
     outDir: fileURLToPath(new URL("./dist/client", import.meta.url)),
     emptyOutDir: true,
