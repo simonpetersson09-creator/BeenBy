@@ -90,7 +90,32 @@ if (!xml.includes("<key>CFBundleLocalizations</key>")) {
   added.push("CFBundleLocalizations");
 }
 
+/**
+ * Background modes. Without `remote-notification` iOS silently drops the
+ * silent/foreground handling of push, and without `location` the geofence
+ * plugin stops monitoring when the app is not running.
+ */
+const BACKGROUND_MODES = ["remote-notification", "location", "fetch"];
+if (!xml.includes("<key>UIBackgroundModes</key>")) {
+  const list = BACKGROUND_MODES.map((m) => `\t\t<string>${m}</string>`).join("\n");
+  xml = xml.replace(
+    /<dict>/,
+    `<dict>\n\t<key>UIBackgroundModes</key>\n\t<array>\n${list}\n\t</array>`,
+  );
+  added.push("UIBackgroundModes");
+} else {
+  for (const mode of BACKGROUND_MODES) {
+    if (xml.includes(`<string>${mode}</string>`)) continue;
+    xml = xml.replace(
+      /<key>UIBackgroundModes<\/key>\s*<array>/,
+      (match) => `${match}\n\t\t<string>${mode}</string>`,
+    );
+    added.push(`UIBackgroundModes:${mode}`);
+  }
+}
+
 writeFileSync(PLIST, xml);
+
 
 for (const lang of LANGS) {
   const dir = join(APP_DIR, `${lang}.lproj`);
