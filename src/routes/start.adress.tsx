@@ -8,6 +8,7 @@ import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { searchAddress } from "@/lib/geocode";
 import { patchDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
@@ -63,7 +64,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
   const [results, setResults] = useState<GeocodeHit[]>([]);
   const [mapOpen, setMapOpen] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [locating, setLocating] = useState(false);
+  const [visitNotifications, setVisitNotifications] = useState(draft.visitNotifications);
 
   async function lookupAddress() {
     const query = address.trim();
@@ -95,28 +96,6 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
       lng: hit.lng,
     });
     setMapOpen(true);
-  }
-
-  function useCurrentLocation() {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      toast.error(t("adress.geoUnsupported"));
-      return;
-    }
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setLocating(false);
-        toast.success(t("adress.saved"));
-      },
-      () => {
-        setLocating(false);
-        toast.message(t("adress.noLocation"), {
-          description: t("adress.noLocationDesc"),
-        });
-      },
-      { enableHighAccuracy: true, timeout: 10000 },
-    );
   }
 
   return (
@@ -243,15 +222,19 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           hint={t("adress.s2.hint")}
           optional={t("common.optional")}
         />
-        <Button
-          variant="secondary"
-          className="h-12 w-full rounded-2xl text-sm"
-          onClick={useCurrentLocation}
-          disabled={locating}
-        >
-          {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />}
-          {t("adress.useLocation")}
-        </Button>
+        <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-3 py-2.5">
+          <Label htmlFor="visit-notifications" className="text-sm text-foreground/90">
+            {visitNotifications ? t("adress.notifyOn") : t("adress.notifyOff")}
+          </Label>
+          <Switch
+            id="visit-notifications"
+            checked={visitNotifications}
+            onCheckedChange={(checked) => {
+              setVisitNotifications(checked);
+              patchDraft({ visitNotifications: checked });
+            }}
+          />
+        </div>
       </section>
 
       <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-3">
@@ -264,6 +247,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
               resolvedAddress,
               lat: coords?.lat ?? null,
               lng: coords?.lng ?? null,
+              visitNotifications,
             });
             void navigate({ to: "/start/farg" });
           }}
