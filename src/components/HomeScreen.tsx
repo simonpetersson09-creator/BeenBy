@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2, Users } from "lucide-react";
+import { CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2 } from "lucide-react";
 import { toast } from "sonner";
 
 
@@ -312,12 +312,10 @@ export function HomeScreen({
         <div className="relative flex shrink-0 gap-2">
           <Button
             variant="ghost"
-            size="icon"
-            aria-label={t("home.family")}
             onClick={() => setFamilyOpen(true)}
-            className="size-12 rounded-2xl border border-primary/20 bg-primary/10 text-primary hover:bg-primary/20"
+            className="h-12 rounded-2xl border border-primary/20 bg-primary/10 px-4 text-sm font-medium text-primary hover:bg-primary/20"
           >
-            <Users className="size-6" />
+            {t("home.inviteSiblings")}
           </Button>
           <Button
             variant="ghost"
@@ -342,7 +340,7 @@ export function HomeScreen({
             >
               <span
                 aria-hidden
-                className="absolute -top-1.5 right-[4.625rem] size-3 rotate-45 rounded-[2px] bg-primary"
+                className="absolute -top-1.5 right-[7.5rem] size-3 rotate-45 rounded-[2px] bg-primary"
               />
 
               {t("home.tooltip")}
