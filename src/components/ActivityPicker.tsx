@@ -32,12 +32,12 @@ export function ActivityPicker({
   }
 
   return (
-    <div className="rounded-2xl border border-primary/25 px-3 py-3">
-      <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em] text-primary/60">
+    <div className={cn("rounded-2xl border border-primary/25", compact ? "px-2.5 py-2" : "px-3 py-3")}>
+      <p className={cn("font-medium uppercase tracking-[0.18em] text-primary/60", compact ? "text-[0.6rem]" : "text-[0.62rem]")}>
         {t("act.title")}
       </p>
-      <p className="mt-0.5 text-[0.68rem] text-muted-foreground">{t("act.optional")}</p>
-      <div className="mt-2.5 flex flex-wrap gap-1.5">
+      <p className={cn("text-muted-foreground", compact ? "text-[0.6rem]" : "mt-0.5 text-[0.68rem]")}>{t("act.optional")}</p>
+      <div className={cn("flex flex-wrap", compact ? "mt-1.5 gap-1" : "mt-2.5 gap-1.5")}>
         {ACTIVITIES.map((a) => {
           const on = selected.includes(a.id);
           return (
@@ -47,7 +47,8 @@ export function ActivityPicker({
               aria-pressed={on}
               onClick={() => toggle(a.id)}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors",
+                "flex items-center gap-1.5 rounded-full border transition-colors",
+                compact ? "px-2 py-1 text-[0.7rem]" : "px-3 py-1.5 text-xs",
                 on
                   ? "border-primary bg-primary text-primary-foreground shadow-soft"
                   : "border-primary/25 bg-secondary/60 text-foreground hover:bg-accent",
@@ -64,7 +65,7 @@ export function ActivityPicker({
           value={note}
           onChange={(e) => onNoteChange(e.target.value.slice(0, 60))}
           placeholder={t("act.otherPlaceholder")}
-          className="mt-2.5 h-11 rounded-2xl"
+          className={cn("rounded-2xl", compact ? "mt-1.5 h-9" : "mt-2.5 h-11")}
         />
       ) : null}
     </div>
