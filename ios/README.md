@@ -7,12 +7,19 @@ Utan en giltig launch screen startar iOS appen i compatibility mode (4:3) med sv
 band över och under. Storyboarden är edge-to-edge, använder safe areas och BeenBys
 bakgrundsfärg `#AFA9A6` — ingen logotyp, för att undvika skalningsproblem.
 
-## Efter git pull
+## Från en färsk klon
+
+Xcode-projektet (`ios/App/App.xcodeproj`, `Info.plist`, `AppDelegate.swift`) genereras
+av Capacitor och ligger inte i git. Ett komplett bygge från noll:
 
 ```bash
-npm run build:ios
-npx cap sync ios
+npm install
+npm run ios:init   # npx cap add ios – hoppas över om projektet redan finns
+npm run ios:sync   # bygger webben, synkar och kör alla patchskript
 ```
+
+`ios:sync` är det enda kommando du behöver även efter en `git pull`; det kör
+`build:ios`, `npx cap sync ios` och därefter samtliga patchskript nedan.
 
 Kontrollera en gång i Xcode: target **App** → *General* → *App Icons and Launch Screen*
 → **Launch Screen File** = `LaunchScreen`. Avinstallera appen från enheten innan ny
@@ -44,6 +51,21 @@ Samma kommando kör även `scripts/patch-ios-project.mjs`, som registrerar de sj
 `*.lproj/InfoPlist.strings` som en variantgrupp i `App.xcodeproj` och lägger den i
 App-targetens *Copy Bundle Resources* samt i `knownRegions`. Ingen manuell
 drag-and-drop i Xcode behövs. Skriptet är idempotent och kan köras om efter varje sync.
+
+## Push och bakgrundslägen
+
+`scripts/patch-ios-capabilities.mjs` (körs av `npm run ios:plist` / `ios:sync`) sätter
+push-capability automatiskt – ingen manuell bock i Xcode:
+
+- skapar `ios/App/App/App.entitlements` med `aps-environment = production`
+  (TestFlight och App Store använder produktions-APNs; utvecklingsbyggen faller
+  automatiskt tillbaka till sandbox)
+- registrerar filen i `App.xcodeproj` och sätter `CODE_SIGN_ENTITLEMENTS`
+- `patch-ios-plist.mjs` lägger till `UIBackgroundModes` med
+  `remote-notification`, `location` och `fetch`
+
+Pushnotiser innehåller aldrig bilder, så någon Notification Service Extension
+behövs inte.
 
 `NSPhotoLibraryAddUsageDescription` behövs inte – appen sparar aldrig bilder tillbaka
 till telefonens bildbibliotek. Inga nya capabilities krävs i Xcode.

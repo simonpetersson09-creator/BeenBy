@@ -13,12 +13,14 @@
 import { useSyncExternalStore } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { claimTrialAnchor, getEntitlement, submitTransaction } from "@/lib/premium.functions";
 import {
   getSubscriptionStatus,
   getPremiumPrice,
   purchasePremium as purchasePremiumApi,
   restorePurchases as restorePurchasesApi,
   openSubscriptionManagement,
+  getDeviceAnchor,
   PREMIUM_PRODUCT_ID,
 } from "@/lib/premium";
 import type { PurchaseResult, RestoreResult, SubscriptionStatus } from "@/lib/storekit";
@@ -101,17 +103,44 @@ function getSnapshot() {
 
 let inFlight: Promise<PremiumState> | null = null;
 
-/** Ask StoreKit for the verified status and publish it to every subscriber. */
+/**
+ * Publish the *server's* Premium verdict.
+ *
+ * StoreKit on the device is only an input: whatever signed transaction (JWS)
+ * it hands us is sent to the backend, which verifies it against Apple's pinned
+ * certificate chain and writes `premium_entitlements`. The row the server
+ * returns — never the device — decides whether Premium is active, which is the
+ * same value the database uses in its access rules.
+ */
 export async function refreshPremiumStatus(): Promise<PremiumState> {
   if (inFlight) return inFlight;
   setState({ loading: true });
   inFlight = (async () => {
     const status = await getSubscriptionStatus();
     const priceLabel = await getPremiumPrice();
+
+    let verified: { isPremium: boolean; productId?: string; expiresAt?: string } | null = null;
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session?.user.id) {
+        if (status.jws) {
+          verified = await submitTransaction({ data: { jws: status.jws } });
+        } else {
+          verified = await getEntitlement();
+        }
+      }
+    } catch (error) {
+      console.warn("[premium] server verification unavailable", error);
+    }
+
+    const isPremium = verified ? verified.isPremium : false;
+    const productId = verified?.productId ?? status.productId;
+    const expiresAt = verified?.expiresAt ?? status.expiresAt;
+
     setState({
-      isPremium: status.isPremium,
-      ...(status.productId ? { productId: status.productId } : {}),
-      ...(status.expiresAt ? { expiresAt: status.expiresAt } : {}),
+      isPremium,
+      ...(productId ? { productId } : {}),
+      ...(expiresAt ? { expiresAt } : {}),
       ...(priceLabel ? { priceLabel } : {}),
       source: status.source,
       loading: false,
@@ -154,6 +183,18 @@ export async function refreshTrialStatus(): Promise<PremiumState> {
       const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session?.user.id) return state;
 
+      // Tie the free period to the device before reading it. A new anonymous
+      // user on the same phone inherits the original start date, so "start
+      // over" or a reinstall cannot hand out another 30 days.
+      const anchor = await getDeviceAnchor();
+      if (anchor) {
+        try {
+          await claimTrialAnchor({ data: { anchor } });
+        } catch (err) {
+          console.warn("[premium] trial anchor failed", err);
+        }
+      }
+
       const { data, error } = await supabase.rpc("get_trial_status");
       if (error) {
         console.warn("[premium] trial lookup failed", error);
@@ -185,8 +226,18 @@ export async function refreshTrialStatus(): Promise<PremiumState> {
 
 
 export async function purchasePremium(): Promise<PurchaseResult> {
-  const result = await purchasePremiumApi(PREMIUM_PRODUCT_ID);
-  // Always re-verify with StoreKit — never trust the purchase result alone.
+  const { data: sessionData } = await supabase.auth.getSession();
+  const userId = sessionData.session?.user.id;
+  const result = await purchasePremiumApi(PREMIUM_PRODUCT_ID, userId);
+  // Send Apple's signed transaction straight to the server, then re-read the
+  // verified state. The purchase result alone never unlocks anything.
+  if (result.jws && userId) {
+    try {
+      await submitTransaction({ data: { jws: result.jws } });
+    } catch (error) {
+      console.warn("[premium] could not submit transaction", error);
+    }
+  }
   await refreshPremiumStatus();
   return result;
 }

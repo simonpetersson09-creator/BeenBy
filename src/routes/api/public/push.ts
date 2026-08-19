@@ -308,27 +308,12 @@ export const Route = createFileRoute("/api/public/push")({
         const topic = process.env['APNS_BUNDLE_ID'] ?? "app.beenbys.mobile";
 
         const messageBody = payload.table === "messages" ? (record['body'] as string | undefined) : undefined;
-        const rawImagePath = payload.table === "messages" ? (record['image_path'] as string | undefined) : undefined;
-        // A signed URL may only ever be minted for an image that lives inside
-        // this message's own family circle AND belongs to its sender.
-        const imagePath =
-          rawImagePath && rawImagePath.startsWith(`${circleId}/${actorId}/`) && !rawImagePath.includes("..")
-            ? rawImagePath
-            : undefined;
-        if (rawImagePath && !imagePath) {
-          await log("blocked_image", "image_path outside the message's own circle");
-        }
-        let signedImageUrl: string | undefined;
-        if (imagePath) {
-          try {
-            const { data } = await supabaseAdmin.storage
-              .from("chat-images")
-              .createSignedUrl(imagePath, 60 * 60 * 24 * 7);
-            signedImageUrl = data?.signedUrl;
-          } catch {
-            /* ignore image signing errors */
-          }
-        }
+        // Chat photos are NEVER put in the notification: no signed URL leaves
+        // the backend and no image is attached. The notification only says that
+        // a photo arrived; the picture itself is fetched inside the app, where
+        // family membership is checked again.
+        const hasImage =
+          payload.table === "messages" ? typeof record['image_path'] === "string" && !!record['image_path'] : false;
 
         const failures: string[] = [];
         let sent = 0;
@@ -340,7 +325,7 @@ export const Route = createFileRoute("/api/public/push")({
               payload.table,
               profile?.name?.trim() || fallbackName(device.locale ?? "en"),
               messageBody,
-              !!signedImageUrl,
+              hasImage,
             );
             if (!text) return;
 
@@ -349,17 +334,21 @@ export const Route = createFileRoute("/api/public/push")({
               sound: "default",
               badge: 1,
             };
-            if (signedImageUrl) {
-              // Lets a Notification Service Extension on iOS replace the payload with the image.
-              aps["mutable-content"] = 1;
-            }
 
             const pushBody = JSON.stringify({
               aps,
               type: payload.table,
               circle_id: circleId,
-              ...(signedImageUrl ? { image: signedImageUrl } : {}),
             });
+
+            /** Apple has permanently rejected this token — stop sending to it. */
+            const dropToken = async () => {
+              await supabaseAdmin.from("device_tokens").delete().eq("token", device.token);
+            };
+            const isGone = (result: { status: number; body: string }) =>
+              result.status === 410 ||
+              (result.status === 400 &&
+                (result.body.includes("BadDeviceToken") || result.body.includes("Unregistered")));
 
             const primary = await sendApns(device.token, primaryHost, jwt, topic, pushBody);
             if (primary.ok) {
@@ -376,16 +365,17 @@ export const Route = createFileRoute("/api/public/push")({
                 return;
               }
               failures.push(`${fallback.status}:${fallback.body}`);
+              // Rejected by BOTH hosts: the token is dead, not just in the
+              // wrong environment. Without this it would be retried forever.
+              if (isGone(fallback)) await dropToken();
               return;
             }
 
             failures.push(`${primary.status}:${primary.body}`);
-            // Apple returns 410 for tokens that are no longer valid.
-            if (primary.status === 410) {
-              await supabaseAdmin.from("device_tokens").delete().eq("token", device.token);
-            }
+            if (isGone(primary)) await dropToken();
           }),
         );
+
 
         await log(failures.length === 0 ? "sent" : sent > 0 ? "partial" : "failed", failures.join(" | ") || undefined, {
           recipients: recipients.length,

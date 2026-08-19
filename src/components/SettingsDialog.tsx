@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Bell, KeyRound, Loader2, MapPin, Palette, RotateCcw, Sparkles, User, Users } from "lucide-react";
+import {
+  Bell,
+  KeyRound,
+  Loader2,
+  LogOut,
+  MapPin,
+  Palette,
+  RotateCcw,
+  Sparkles,
+  Trash2,
+  User,
+  Users,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
@@ -29,6 +41,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { deleteAccount, leaveFamilyCircle } from "@/lib/account.functions";
 import { stopAllBeenbyGeofences, type GeofenceBlockReason } from "@/lib/geofenceSync";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { PRIVACY_POLICY_URL, TERMS_URL, openExternal } from "@/lib/legal";
@@ -51,6 +64,7 @@ export function SettingsDialog({
   geofence,
   onOpenPaywall,
   userId,
+  circleId,
   myName,
   members,
 }: {
@@ -58,6 +72,7 @@ export function SettingsDialog({
   onOpenChange: (v: boolean) => void;
   person?: EditablePerson | null;
   userId?: string;
+  circleId?: string;
   myName?: string;
   members?: { user_id: string; personal_color: string }[];
   onPersonUpdated?: () => void;
@@ -93,6 +108,10 @@ export function SettingsDialog({
   const [savingName, setSavingName] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const myColor = members?.find((m) => m.user_id === userId)?.personal_color ?? null;
 
   async function handleColorChange(next: string) {
@@ -107,6 +126,76 @@ export function SettingsDialog({
     }
     toast.success(t("settings.colorSaved"));
     onPersonUpdated?.();
+  }
+
+  /**
+   * Clears everything this device keeps locally and returns to the welcome
+   * screen. Shared by "start over", "leave family" and "delete account".
+   */
+  async function wipeLocalAndRestart() {
+    clearDraft();
+    clearRecovery();
+    await stopAllBeenbyGeofences();
+    await unregisterPushNotifications();
+    try {
+      window.localStorage.removeItem("beenby.familyTipSeen");
+    } catch {
+      /* storage unavailable */
+    }
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      /* ignore */
+    }
+    window.location.replace(`${window.location.origin}/`);
+  }
+
+  /**
+   * Leaves the family circle on the SERVER. Access to the family's visits,
+   * chat and photos disappears immediately — the row level security rules stop
+   * matching the moment the membership is gone.
+   */
+  async function handleLeave() {
+    if (leaving || !circleId) return;
+    setLeaving(true);
+    setLeaveOpen(false);
+    try {
+      const result = await leaveFamilyCircle({ data: { circleId } });
+      if (!result.ok) {
+        toast.error(t("leave.failed"));
+        setLeaving(false);
+        return;
+      }
+    } catch {
+      toast.error(t("leave.failed"));
+      setLeaving(false);
+      return;
+    }
+    await wipeLocalAndRestart();
+  }
+
+  /**
+   * Deletes the account for real: profile, memberships, own messages and their
+   * photos, own visits and plans, devices, purchase record and the login
+   * itself. Required by App Store guideline 5.1.1(v).
+   */
+  async function handleDeleteAccount() {
+    if (deleting) return;
+    setDeleting(true);
+    setDeleteOpen(false);
+    try {
+      const result = await deleteAccount();
+      if (!result.ok) {
+        toast.error(t("delete.failed"));
+        setDeleting(false);
+        return;
+      }
+    } catch {
+      toast.error(t("delete.failed"));
+      setDeleting(false);
+      return;
+    }
+    await wipeLocalAndRestart();
   }
 
   /**
@@ -427,6 +516,24 @@ export function SettingsDialog({
           </div>
         </section>
 
+        {circleId ? (
+          <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
+            <p className="flex items-center gap-2 text-sm font-medium">
+              <LogOut className="size-4" /> {t("leave.title")}
+            </p>
+            <p className="text-xs text-muted-foreground">{t("leave.desc")}</p>
+            <Button
+              variant="secondary"
+              className="h-10 w-full rounded-2xl text-xs"
+              disabled={leaving}
+              onClick={() => setLeaveOpen(true)}
+            >
+              {leaving ? <Loader2 className="size-4 animate-spin" /> : null}
+              {t("leave.button")}
+            </Button>
+          </section>
+        ) : null}
+
         <section className="space-y-2 rounded-2xl border border-destructive/20 bg-destructive/5 p-3">
           <p className="flex items-center gap-2 text-sm font-medium">
             <RotateCcw className="size-4" /> {t("reset.title")}
@@ -441,9 +548,61 @@ export function SettingsDialog({
           </Button>
         </section>
 
+        <section className="space-y-2 rounded-2xl border border-destructive/20 bg-destructive/5 p-3">
+          <p className="flex items-center gap-2 text-sm font-medium">
+            <Trash2 className="size-4" /> {t("delete.title")}
+          </p>
+          <p className="text-xs text-muted-foreground">{t("delete.desc")}</p>
+          <Button
+            variant="secondary"
+            className="h-10 w-full rounded-2xl text-xs text-destructive"
+            disabled={deleting}
+            onClick={() => setDeleteOpen(true)}
+          >
+            {deleting ? <Loader2 className="size-4 animate-spin" /> : null}
+            {t("delete.button")}
+          </Button>
+        </section>
+
 
       </DialogContent>
     </Dialog>
+      <AlertDialog open={leaveOpen} onOpenChange={setLeaveOpen}>
+        <AlertDialogContent className="rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("leave.confirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("leave.confirmDesc")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-2xl">{t("reset.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => void handleLeave()}
+            >
+              {t("leave.confirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent className="rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("delete.confirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("delete.confirmDesc")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-2xl">{t("reset.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => void handleDeleteAccount()}
+            >
+              {t("delete.confirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
         <AlertDialogContent className="rounded-3xl">
         <AlertDialogHeader>

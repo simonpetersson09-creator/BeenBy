@@ -18,6 +18,8 @@ export type SubscriptionStatus = {
   isPremium: boolean;
   productId?: string;
   expiresAt?: string;
+  /** Apple's signed transaction, handed to the server for verification. */
+  jws?: string;
   /** Where the answer came from — "fallback" is NOT a real verification. */
   source: "storekit" | "fallback";
 };
@@ -26,11 +28,14 @@ export type PurchaseResult = {
   outcome: "success" | "cancelled" | "pending" | "error";
   productId?: string;
   message?: string;
+  /** Apple's signed transaction for the completed purchase. */
+  jws?: string;
 };
 
 export type RestoreResult = {
   restored: boolean;
   message?: string;
+  jws?: string;
 };
 
 export type ProductInfo = {
@@ -42,11 +47,17 @@ export type ProductInfo = {
 
 export interface BeenbyStoreKitPlugin {
   getSubscriptionStatus(): Promise<SubscriptionStatus>;
-  purchasePremium(options?: { productId?: string }): Promise<PurchaseResult>;
+  purchasePremium(options?: {
+    productId?: string;
+    /** BeenBy user id, echoed back by Apple in server notifications. */
+    appAccountToken?: string;
+  }): Promise<PurchaseResult>;
   restorePurchases(): Promise<RestoreResult>;
   manageSubscription(): Promise<void>;
   /** Optional: older builds of the native plugin may not implement this. */
   getProductInfo?(options?: { productId?: string }): Promise<ProductInfo>;
+  /** Keychain-backed device id used to anchor the free trial. */
+  getDeviceAnchor?(): Promise<{ anchor?: string }>;
 }
 
 export const BeenbyStoreKit = registerPlugin<BeenbyStoreKitPlugin>(STOREKIT_PLUGIN_NAME);

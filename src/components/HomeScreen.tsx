@@ -359,6 +359,7 @@ export function HomeScreen({
         onOpenChange={setSettingsOpen}
         person={person}
         userId={userId}
+        circleId={circle.id}
         myName={members.find((m) => m.user_id === userId)?.name ?? ""}
         members={members}
         onPersonUpdated={refresh}
