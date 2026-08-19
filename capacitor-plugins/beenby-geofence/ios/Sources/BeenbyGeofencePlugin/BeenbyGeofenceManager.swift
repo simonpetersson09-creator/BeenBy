@@ -187,11 +187,10 @@ final class BeenbyGeofenceManager: NSObject, CLLocationManagerDelegate {
         if age > Self.maxLocationAge { return }
 
         // Accuracy: invalid (<0) or very poor (>300 m) fixes are not trustworthy.
+        // Keep the pending entries and wait for a better fix instead of dropping
+        // them all — the timeout prune cleans up if no good fix ever arrives.
         let accuracy = location.horizontalAccuracy
-        if accuracy < 0 || accuracy > Self.maxHorizontalAccuracy {
-            pendingVerifications.removeAll()
-            return
-        }
+        if accuracy < 0 || accuracy > Self.maxHorizontalAccuracy { return }
 
         let pending = pendingVerifications
         pendingVerifications.removeAll()

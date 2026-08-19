@@ -126,7 +126,7 @@ function ChatPage() {
   // actually in the foreground, so background updates don't clear the badge.
   // Use the newest message's server timestamp so the badge never depends on
   // the device clock being in sync with the backend.
-  const newestAt = messages.length ? messages[messages.length - 1].created_at : undefined;
+  const newestAt = messages.at(-1)?.created_at;
   useEffect(() => {
     if (!circleId) return;
     const mark = () => {
@@ -136,6 +136,13 @@ function ChatPage() {
     document.addEventListener("visibilitychange", mark);
     return () => document.removeEventListener("visibilitychange", mark);
   }, [circleId, newestAt]);
+
+  // Signed URLs live for an hour – drop them a bit before that so the effect
+  // below re-signs and images never turn into broken links in a long session.
+  useEffect(() => {
+    const id = window.setInterval(() => setImageUrls({}), 50 * 60 * 1000);
+    return () => window.clearInterval(id);
+  }, []);
 
   // Images live in a private bucket – sign the ones we need.
   useEffect(() => {
