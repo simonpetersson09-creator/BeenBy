@@ -430,20 +430,6 @@ export function HomeScreen({
         ) : null}
         <h2 className="mb-3 text-center text-base leading-tight text-primary">{t("home.overview")}</h2>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
-        <div className="mt-3 flex w-full flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-primary/25 pt-3 text-[0.68rem] text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <span className="size-3 rounded-full bg-foreground/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]" />
-            {t("home.legend.done")}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="size-3 rounded-full border-2 border-dashed border-foreground/50" />
-            {t("home.legend.planned")}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="size-3 rounded-full bg-foreground/[0.07]" />
-            {t("home.legend.empty")}
-          </span>
-        </div>
       </section>
 
 
