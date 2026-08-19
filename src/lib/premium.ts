@@ -45,6 +45,7 @@ export async function getSubscriptionStatus(): Promise<SubscriptionStatus> {
 
 export async function purchasePremium(
   productId: string = PREMIUM_PRODUCT_ID,
+  appAccountToken?: string,
 ): Promise<PurchaseResult> {
   if (!isStoreKitAvailable()) {
     console.info(WEB_NOTICE, "purchasePremium -> unavailable");
@@ -52,7 +53,10 @@ export async function purchasePremium(
     return { outcome: "pending", message: "unavailable-on-web" };
   }
   try {
-    const result = await BeenbyStoreKit.purchasePremium({ productId });
+    const result = await BeenbyStoreKit.purchasePremium({
+      productId,
+      ...(appAccountToken ? { appAccountToken } : {}),
+    });
     return result;
   } catch (error) {
     console.error("[premium] purchasePremium failed", error);
@@ -101,6 +105,22 @@ export async function getPremiumPrice(
     return info?.displayPrice;
   } catch (error) {
     console.warn("[premium] getProductInfo unavailable", error);
+    return undefined;
+  }
+}
+
+/**
+ * Keychain-backed device anchor. It survives sign-out, "start over" and a
+ * reinstall, which is what stops the 30 day trial from being restarted.
+ * Returns undefined outside the native app — then no anchor is claimed.
+ */
+export async function getDeviceAnchor(): Promise<string | undefined> {
+  if (!isStoreKitAvailable()) return undefined;
+  try {
+    const result = await BeenbyStoreKit.getDeviceAnchor?.();
+    return result?.anchor;
+  } catch (error) {
+    console.warn("[premium] getDeviceAnchor unavailable", error);
     return undefined;
   }
 }
