@@ -124,7 +124,7 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
       const { data: sessionData } = await supabase.auth.getSession();
       if (sessionData.session?.user.id) {
         if (status.jws) {
-          verified = await sendTransaction({ jws: status.jws });
+          verified = await sendTransaction(status.jws);
         } else {
           verified = await fetchEntitlement();
         }
