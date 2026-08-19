@@ -28,10 +28,10 @@ function stubServerRoutes() {
   return {
     name: "beenby:stub-server-routes",
     enforce: "pre" as const,
-    resolveId(source: string, importer?: string) { if (source.includes("start-server-core") || source.includes("tanstack-start-entry")) console.log("IMP", source, "<-", importer); return null; },
+    resolveId(source: string, importer?: string) { if (importer&&importer.includes("start-server-core")&&false)console.log();if (|| source.includes("tanstack-start-entry")) console.log("IMP", source, "<-", importer); return null; },
     load(id: string) {
       const file = id.split("?")[0] ?? id;
-      if (!file.startsWith(apiRoutesDir) || !/\.tsx?$/.test(file)) return null;
+      if (importer&&importer.includes("start-server-core")&&false)console.log();if (!file.startsWith(apiRoutesDir) || !/\.tsx?$/.test(file)) return null;
       const routePath = `/${file.slice(apiRoutesDir.length).replace(/\.tsx?$/, "")}`;
       return [
         `import { createFileRoute } from "@tanstack/react-router";`,
