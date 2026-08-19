@@ -602,13 +602,13 @@ export function HomeScreen({
       />
 
       <Dialog open={planOpen} onOpenChange={setPlanOpen}>
-        <DialogContent className="rounded-3xl sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-xl">{t("home.planTitle")}</DialogTitle>
-            <DialogDescription>{t("home.planDesc")}</DialogDescription>
+        <DialogContent className="gap-3 rounded-3xl p-4 sm:max-w-md">
+          <DialogHeader className="space-y-0.5">
+            <DialogTitle className="text-lg">{t("home.planTitle")}</DialogTitle>
+            <DialogDescription className="text-xs">{t("home.planDesc")}</DialogDescription>
           </DialogHeader>
-          <ActivityPicker selected={acts} onChange={setActs} note={actNote} onNoteChange={setActNote} />
-          <div className="grid grid-cols-2 gap-2">
+          <ActivityPicker selected={acts} onChange={setActs} note={actNote} onNoteChange={setActNote} compact />
+          <div className="grid grid-cols-2 gap-1.5">
             {planDates.slice(0, 6).map((d) => {
               const selected = d === planDate;
               return (
@@ -617,7 +617,7 @@ export function HomeScreen({
                   type="button"
                   onClick={() => setPlanDate(d)}
                   className={cn(
-                    "min-h-12 rounded-2xl px-3 text-sm transition-colors",
+                    "min-h-10 rounded-2xl px-2.5 text-xs transition-colors",
                     selected ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"
                   )}
                 >
@@ -627,7 +627,7 @@ export function HomeScreen({
             })}
           </div>
           <div className="rounded-2xl border">
-            <p className="px-4 pt-3 text-xs font-medium text-muted-foreground">
+            <p className="px-3 pt-2 text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">
               {t("home.planMore")}
             </p>
             <Calendar
@@ -640,13 +640,13 @@ export function HomeScreen({
                 const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
                 setPlanDate(key);
               }}
-              className="pointer-events-auto p-3"
+              className="pointer-events-auto p-2 pt-1"
             />
           </div>
           <Button
             onClick={() => planDate && planVisit(planDate)}
             disabled={!planDate}
-            className="w-full rounded-2xl bg-primary py-6 text-base font-semibold text-primary-foreground shadow-lift hover:bg-primary/90 disabled:opacity-50"
+            className="w-full rounded-2xl bg-primary py-5 text-sm font-semibold text-primary-foreground shadow-lift hover:bg-primary/90 disabled:opacity-50"
           >
             {t("home.planRegister")}
           </Button>
