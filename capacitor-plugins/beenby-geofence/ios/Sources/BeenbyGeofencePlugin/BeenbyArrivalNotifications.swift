@@ -15,6 +15,45 @@ import UserNotifications
  * notification itself and UserDefaults for the small amount of non-secret
  * metadata native needs when the app is not running.
  */
+/// Notification texts for every language BeenBy supports.
+///
+/// The strings live here instead of in Localizable.strings so the plugin stays
+/// self-contained: iOS picks the language from the phone's own preferred
+/// languages, which is exactly what the web layer does with Device locale.
+enum BeenbyArrivalStrings {
+
+    private static let table: [String: [String: String]] = [
+        "sv": ["yes": "Ja", "no": "Nej", "askName": "Är du hos %@? ❤️", "ask": "Är du framme? ❤️"],
+        "en": ["yes": "Yes", "no": "No", "askName": "Are you at %@'s? ❤️", "ask": "Have you arrived? ❤️"],
+        "de": ["yes": "Ja", "no": "Nein", "askName": "Bist du bei %@? ❤️", "ask": "Bist du angekommen? ❤️"],
+        "da": ["yes": "Ja", "no": "Nej", "askName": "Er du hos %@? ❤️", "ask": "Er du fremme? ❤️"],
+        "fi": ["yes": "Kyllä", "no": "Ei", "askName": "Oletko %@:n luona? ❤️", "ask": "Oletko perillä? ❤️"],
+        "es": ["yes": "Sí", "no": "No", "askName": "¿Estás en casa de %@? ❤️", "ask": "¿Ya has llegado? ❤️"],
+        "fr": ["yes": "Oui", "no": "Non", "askName": "Tu es chez %@ ? ❤️", "ask": "Tu es arrivé ? ❤️"]
+    ]
+
+    /// First supported base language among the phone's preferred languages.
+    /// Regional variants map to the base language: de-DE → de, en-GB → en.
+    static var language: String {
+        for tag in Locale.preferredLanguages {
+            let base = tag.split(whereSeparator: { $0 == "-" || $0 == "_" }).first.map(String.init)?.lowercased()
+            if let base, table[base] != nil { return base }
+        }
+        return "en"
+    }
+
+    static func value(_ key: String) -> String {
+        table[language]?[key] ?? table["en"]![key]!
+    }
+
+    static func arrivalBody(personName: String?) -> String {
+        if let name = personName, !name.isEmpty {
+            return String(format: value("askName"), name)
+        }
+        return value("ask")
+    }
+}
+
 final class BeenbyArrivalNotifications: NSObject, UNUserNotificationCenterDelegate {
 
     static let shared = BeenbyArrivalNotifications()
@@ -72,12 +111,12 @@ final class BeenbyArrivalNotifications: NSObject, UNUserNotificationCenterDelega
     private func registerCategory() {
         let yes = UNNotificationAction(
             identifier: Self.actionYes,
-            title: "Ja",
+            title: BeenbyArrivalStrings.value("yes"),
             options: []  // handled natively, no need to open the app
         )
         let no = UNNotificationAction(
             identifier: Self.actionNo,
-            title: "Nej",
+            title: BeenbyArrivalStrings.value("no"),
             options: []  // must NOT open the app
         )
         let category = UNNotificationCategory(
@@ -210,11 +249,7 @@ final class BeenbyArrivalNotifications: NSObject, UNUserNotificationCenterDelega
 
         let content = UNMutableNotificationContent()
         content.title = "BeenBy"
-        if let name = meta.personName, !name.isEmpty {
-            content.body = "Är du hos \(name)? ❤️"
-        } else {
-            content.body = "Är du framme? ❤️"
-        }
+        content.body = BeenbyArrivalStrings.arrivalBody(personName: meta.personName)
         content.sound = .default
         content.categoryIdentifier = Self.categoryIdentifier
         content.userInfo = [
