@@ -1069,7 +1069,7 @@ const es: AppDict = {
   "home.legend.done": "Relleno = visitado",
   "home.legend.planned": "Discontinuo = planificado",
   "home.legend.empty": "Vacío = sin visita",
-  "home.next": "Próxima visita:",
+  "home.next": "Próxima visita",
   "home.noPlanned": "Aún no hay ninguna visita planificada. Planifica una: los demás la verán al instante.",
   "home.who": "Quién es quién",
   "home.you": "(tú)",
