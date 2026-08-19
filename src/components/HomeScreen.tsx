@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2 } from "lucide-react";
 import { toast } from "sonner";
 
-
+import { cn } from "@/lib/utils";
 
 import { DayDetail } from "@/components/DayDetail";
 import { DotGrid, buildDays } from "@/components/DotGrid";
@@ -30,7 +30,7 @@ import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { supabase } from "@/integrations/supabase/client";
 import { ActivityPicker } from "@/components/ActivityPicker";
 import { activitySummary, type ActivityId } from "@/lib/activities";
-import { addDays, relativeLabel, todayKey } from "@/lib/dates";
+import { addDays, parseKey, relativeLabel, todayKey } from "@/lib/dates";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { getPending, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
@@ -78,6 +78,7 @@ export function HomeScreen({
     setActs([]);
     setActNote("");
   };
+  const [planDate, setPlanDate] = useState<string | null>(null);
   const unread = useUnreadMessages(circle.id, userId);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
@@ -539,6 +540,7 @@ export function HomeScreen({
                 return;
               }
               resetActs();
+              setPlanDate(null);
               setPlanOpen(true);
             }}
             aria-label={locked ? t("access.locked") : undefined}
@@ -609,16 +611,22 @@ export function HomeScreen({
           </DialogHeader>
           <ActivityPicker selected={acts} onChange={setActs} note={actNote} onNoteChange={setActNote} />
           <div className="grid grid-cols-2 gap-2">
-            {planDates.slice(0, 6).map((d) => (
-              <button
-                key={d}
-                type="button"
-                onClick={() => planVisit(d)}
-                className="min-h-12 rounded-2xl bg-secondary px-3 text-sm hover:bg-accent"
-              >
-                {relativeLabel(d, tz)}
-              </button>
-            ))}
+            {planDates.slice(0, 6).map((d) => {
+              const selected = d === planDate;
+              return (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => setPlanDate(d)}
+                  className={cn(
+                    "min-h-12 rounded-2xl px-3 text-sm transition-colors",
+                    selected ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"
+                  )}
+                >
+                  {relativeLabel(d, tz)}
+                </button>
+              );
+            })}
           </div>
           <div className="rounded-2xl border">
             <p className="px-4 pt-3 text-xs font-medium text-muted-foreground">
@@ -628,15 +636,22 @@ export function HomeScreen({
               mode="single"
               weekStartsOn={1}
               disabled={{ before: new Date() }}
+              selected={planDate ? parseKey(planDate) : undefined}
               onSelect={(d) => {
                 if (!d) return;
                 const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-                planVisit(key);
+                setPlanDate(key);
               }}
               className="pointer-events-auto p-3"
             />
           </div>
-
+          <Button
+            onClick={() => planDate && planVisit(planDate)}
+            disabled={!planDate}
+            className="w-full rounded-2xl bg-primary py-6 text-base font-semibold text-primary-foreground shadow-lift hover:bg-primary/90 disabled:opacity-50"
+          >
+            {t("home.planRegister")}
+          </Button>
         </DialogContent>
       </Dialog>
 

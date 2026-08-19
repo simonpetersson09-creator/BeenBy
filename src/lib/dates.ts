@@ -97,3 +97,9 @@ export function shortLabel(key: string): string {
     month: "short",
   }).format(dt);
 }
+
+/** Convert a YYYY-MM-DD key into a UTC Date (no timezone drift). */
+export function parseKey(key: string): Date {
+  const [y, m, d] = key.split("-").map(Number);
+  return new Date(Date.UTC(y!, m! - 1, d!));
+}
