@@ -204,13 +204,17 @@ function ChatPage() {
     const body = text.trim();
     if (!body || !circleId || !user) return;
     setSending(true);
-    const { error } = await supabase
-      .from("messages")
-      .insert({ family_circle_id: circleId, user_id: user.id, body });
-    setSending(false);
-    if (error) {
-      toast.error(t("chat.sendError"));
-      return;
+    try {
+      const { error } = await supabase
+        .from("messages")
+        .insert({ family_circle_id: circleId, user_id: user.id, body });
+      if (error) {
+        toast.error(t("chat.sendError"));
+        return;
+      }
+      setText("");
+    } finally {
+      setSending(false);
     }
     setText("");
   }
@@ -283,27 +287,30 @@ function ChatPage() {
     }
     if (!pending || !circleId || !user) return;
     setUploading(true);
-    const path = `${circleId}/${user.id}/${crypto.randomUUID()}.jpg`;
-    const { error: upErr } = await supabase.storage
-      .from("chat-images")
-      .upload(path, pending.blob, { contentType: "image/jpeg", upsert: false });
-    if (upErr) {
+    try {
+      const path = `${circleId}/${user.id}/${crypto.randomUUID()}.jpg`;
+      const { error: upErr } = await supabase.storage
+        .from("chat-images")
+        .upload(path, pending.blob, { contentType: "image/jpeg", upsert: false });
+      if (upErr) {
+        toast.error(t("chat.imageError"));
+        return;
+      }
+      const { error } = await supabase.from("messages").insert({
+        family_circle_id: circleId,
+        user_id: user.id,
+        body: text.trim().slice(0, 1000),
+        image_path: path,
+      });
+      if (error) {
+        void supabase.storage.from("chat-images").remove([path]);
+        toast.error(t("chat.imageError"));
+        return;
+      }
+      discardPending();
+      setText("");
+    } finally {
       setUploading(false);
-      toast.error(t("chat.imageError"));
-      return;
-    }
-    const { error } = await supabase.from("messages").insert({
-      family_circle_id: circleId,
-      user_id: user.id,
-      body: text.trim().slice(0, 1000),
-      image_path: path,
-    });
-    setUploading(false);
-    if (error) {
-      // Don't leave an orphaned file behind in storage.
-      void supabase.storage.from("chat-images").remove([path]);
-      toast.error(t("chat.imageError"));
-      return;
     }
     discardPending();
     setText("");
