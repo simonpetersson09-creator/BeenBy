@@ -463,7 +463,7 @@ const de: AppDict = {
   "home.legend.done": "Gefüllt = besucht",
   "home.legend.planned": "Gestrichelt = geplant",
   "home.legend.empty": "Leer = kein Besuch",
-  "home.next": "Nächster Besuch:",
+  "home.next": "Nächster Besuch",
   "home.noPlanned": "Noch kein Besuch geplant. Plane gern einen – die anderen sehen es sofort.",
   "home.who": "Wer ist wer",
   "home.you": "(du)",
