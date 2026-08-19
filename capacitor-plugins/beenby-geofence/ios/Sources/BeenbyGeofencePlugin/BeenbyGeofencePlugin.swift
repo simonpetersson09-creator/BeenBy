@@ -103,9 +103,13 @@ public class BeenbyGeofencePlugin: CAPPlugin, CAPBridgedPlugin {
         // can build the notification text without running any JS. Always save —
         // falling back to any previously stored values for missing fields.
         let existing = arrivals.regionMeta(for: identifier)
+        // The identifier itself encodes the circle/person, so regionMeta(for:)
+        // always provides a non-nil fallback for valid BeenBy regions.
+        let familyCircleId = call.getString("familyCircleId") ?? existing?.familyCircleId ?? ""
+        let personId = call.getString("personId") ?? existing?.personId ?? ""
         arrivals.saveRegionMeta(identifier: identifier,
-                                familyCircleId: call.getString("familyCircleId") ?? existing?.familyCircleId,
-                                personId: call.getString("personId") ?? existing?.personId,
+                                familyCircleId: familyCircleId,
+                                personId: personId,
                                 personName: call.getString("personName") ?? existing?.personName)
 
         switch geofence.startMonitoring(identifier: identifier,
