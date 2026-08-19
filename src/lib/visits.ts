@@ -31,6 +31,10 @@ export type RecordVisitInput = {
   visitedAt?: string;
   /** Optional override for the local day. Defaults to today in `timezone`. */
   localDay?: string;
+  /** Optional activity ids (see src/lib/activities.ts). Empty = as before. */
+  activities?: string[];
+  /** Optional short free text when "other" is picked. */
+  activityNote?: string | null;
 };
 
 export type RecordVisitResult =
@@ -46,6 +50,8 @@ function buildPending(input: RecordVisitInput): PendingVisit {
     visitedAt: input.visitedAt ?? new Date().toISOString(),
     localDay: input.localDay ?? todayKey(input.timezone),
     source: input.source,
+    activities: input.activities ?? [],
+    activityNote: input.activityNote ?? null,
   };
 }
 
@@ -60,10 +66,13 @@ async function insertVisit(item: PendingVisit, userId: string) {
       local_day: item.localDay,
       source: item.source,
       client_token: item.clientToken,
+      activities: item.activities ?? [],
+      activity_note: item.activityNote ?? null,
     })
     .select("id")
     .maybeSingle();
 }
+
 
 /**
  * Register a visit. Never throws — the result tells the caller what happened
