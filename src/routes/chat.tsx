@@ -122,10 +122,16 @@ function ChatPage() {
     };
   }, [circleId]);
 
-  // Everything visible here counts as read.
+  // Everything visible here counts as read — but only while the app is
+  // actually in the foreground, so background updates don't clear the badge.
   useEffect(() => {
     if (!circleId) return;
-    markChatRead(circleId);
+    const mark = () => {
+      if (document.visibilityState === "visible") markChatRead(circleId);
+    };
+    mark();
+    document.addEventListener("visibilitychange", mark);
+    return () => document.removeEventListener("visibilitychange", mark);
   }, [circleId, messages.length]);
 
   // Images live in a private bucket – sign the ones we need.
