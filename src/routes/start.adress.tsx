@@ -98,28 +98,6 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
     setMapOpen(true);
   }
 
-  function useCurrentLocation() {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      toast.error(t("adress.geoUnsupported"));
-      return;
-    }
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setLocating(false);
-        toast.success(t("adress.saved"));
-      },
-      () => {
-        setLocating(false);
-        toast.message(t("adress.noLocation"), {
-          description: t("adress.noLocationDesc"),
-        });
-      },
-      { enableHighAccuracy: true, timeout: 10000 },
-    );
-  }
-
   return (
     <>
       <div className="space-y-1">
