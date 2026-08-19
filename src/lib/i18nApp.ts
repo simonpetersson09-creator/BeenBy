@@ -1271,7 +1271,7 @@ const fr: AppDict = {
   "home.legend.done": "Plein = visite faite",
   "home.legend.planned": "Pointillé = prévu",
   "home.legend.empty": "Vide = aucune visite",
-  "home.next": "Prochaine visite :",
+  "home.next": "Prochaine visite",
   "home.noPlanned": "Aucune visite prévue pour l'instant. Prévoyez-en une – les autres la verront aussitôt.",
   "home.who": "Qui est qui",
   "home.you": "(vous)",
