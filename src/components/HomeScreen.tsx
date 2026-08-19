@@ -312,18 +312,16 @@ export function HomeScreen({
         </div>
         <div className="relative flex shrink-0 gap-2">
           <Button
-            variant="ghost"
             onClick={() => setFamilyOpen(true)}
-            className="h-12 rounded-2xl border border-primary/20 bg-primary/10 px-3 text-xs font-medium leading-tight text-primary hover:bg-primary/20"
+            className="h-12 rounded-2xl bg-primary px-3 text-xs font-medium leading-tight text-primary-foreground shadow-soft hover:bg-primary/90"
           >
             <span className="whitespace-pre-line text-center">{t("home.inviteSiblings")}</span>
           </Button>
           <Button
-            variant="ghost"
             size="icon"
             aria-label={t("home.settings")}
             onClick={() => setSettingsOpen(true)}
-            className="size-12 rounded-2xl border border-primary/20 bg-primary/10 text-primary hover:bg-primary/20"
+            className="size-12 rounded-2xl bg-primary text-primary-foreground shadow-soft hover:bg-primary/90"
           >
             <Settings className="size-6" />
           </Button>
