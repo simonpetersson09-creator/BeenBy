@@ -262,6 +262,7 @@ export function HomeScreen({
     } finally {
       setBusy(false);
     }
+  }
 
 
   function handleImHere() {
