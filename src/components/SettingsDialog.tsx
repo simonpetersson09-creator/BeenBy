@@ -290,26 +290,6 @@ export function SettingsDialog({
 
 
         <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-3">
-          <div className="space-y-1">
-            <p className="flex items-center gap-2 text-sm font-medium">
-              <Bell className="size-4" /> {t("settings.pushTitle")}
-            </p>
-            <p className="text-xs text-muted-foreground">{t("settings.pushHint")}</p>
-            <p className="text-xs text-muted-foreground">
-              {pushOn ? t("settings.pushOn") : t("settings.pushOff")}
-            </p>
-          </div>
-          <Switch
-            checked={pushOn}
-            aria-label={t("settings.pushTitle")}
-            onCheckedChange={(next) => {
-              setPushOn(next);
-              void setPushEnabled(next);
-            }}
-          />
-        </section>
-
-        <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-3">
           <div>
             <p className="text-sm font-medium">{t("settings.langTitle")}</p>
             <p className="text-xs text-muted-foreground">{t("settings.langHint")}</p>
@@ -374,6 +354,26 @@ export function SettingsDialog({
             </Button>
           </section>
         ) : null}
+
+        <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-3">
+          <div className="space-y-1">
+            <p className="flex items-center gap-2 text-sm font-medium">
+              <Bell className="size-4" /> {t("settings.pushTitle")}
+            </p>
+            <p className="text-xs text-muted-foreground">{t("settings.pushHint")}</p>
+            <p className="text-xs text-muted-foreground">
+              {pushOn ? t("settings.pushOn") : t("settings.pushOff")}
+            </p>
+          </div>
+          <Switch
+            checked={pushOn}
+            aria-label={t("settings.pushTitle")}
+            onCheckedChange={(next) => {
+              setPushOn(next);
+              void setPushEnabled(next);
+            }}
+          />
+        </section>
 
         {geofence ? (
           <GeofenceSetting
