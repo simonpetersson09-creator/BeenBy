@@ -636,7 +636,7 @@ export function HomeScreen({
               mode="single"
               weekStartsOn={1}
               disabled={{ before: new Date() }}
-              selected={planDate ? parseISO(planDate) : undefined}
+              selected={planDate ? parseKey(planDate) : undefined}
               onSelect={(d) => {
                 if (!d) return;
                 const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
