@@ -82,17 +82,35 @@ export const Route = createFileRoute("/api/public/push")({
         if (request.headers.get("x-push-secret") !== process.env['PUSH_HOOK_SECRET']) {
           return new Response("Unauthorized", { status: 401 });
         }
-        if (!process.env['APNS_PRIVATE_KEY']) {
-          return new Response("Push not configured", { status: 200 });
-        }
 
         const payload = (await request.json()) as Payload;
         const record = payload.record ?? {};
         const circleId = record['family_circle_id'] as string | undefined;
         const actorId = record['user_id'] as string | undefined;
-        if (!circleId || !actorId) return new Response("ignored", { status: 200 });
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const log = async (
+          status: string,
+          detail?: string,
+          counts?: { recipients?: number; devices?: number },
+        ) => {
+          await supabaseAdmin.from("push_log").insert({
+            source_table: payload.table ?? "unknown",
+            status,
+            detail: detail?.slice(0, 500) ?? null,
+            recipients: counts?.recipients ?? 0,
+            devices: counts?.devices ?? 0,
+          });
+        };
+
+        if (!process.env['APNS_PRIVATE_KEY'] || !process.env['APNS_KEY_ID'] || !process.env['APNS_TEAM_ID']) {
+          await log("not_configured", "APNs-nycklar saknas");
+          return new Response("Push not configured", { status: 200 });
+        }
+        if (!circleId || !actorId) {
+          await log("ignored", "saknar family_circle_id eller user_id");
+          return new Response("ignored", { status: 200 });
+        }
 
         const [{ data: members }, { data: profile }] = await Promise.all([
           supabaseAdmin.from("family_members").select("user_id").eq("family_circle_id", circleId),
@@ -102,53 +120,84 @@ export const Route = createFileRoute("/api/public/push")({
         const recipients = (members ?? [])
           .map((m) => m.user_id)
           .filter((id) => id !== actorId);
-        if (recipients.length === 0) return new Response("no recipients", { status: 200 });
+        if (recipients.length === 0) {
+          await log("no_recipients", null, { recipients: 0 });
+          return new Response("no recipients", { status: 200 });
+        }
 
         const { data: devices } = await supabaseAdmin
           .from("device_tokens")
           .select("token, locale")
           .in("user_id", recipients);
-        if (!devices || devices.length === 0) return new Response("no devices", { status: 200 });
+        if (!devices || devices.length === 0) {
+          await log("no_devices", "inga registrerade enheter", { recipients: recipients.length });
+          return new Response("no devices", { status: 200 });
+        }
 
         const name = profile?.name?.trim() || "Någon";
-        const jwt = await apnsToken();
+        let jwt: string;
+        try {
+          jwt = await apnsToken();
+        } catch (err) {
+          await log("jwt_error", String(err), { recipients: recipients.length, devices: devices.length });
+          return new Response("jwt error", { status: 200 });
+        }
         const host =
-          process.env['APNS_ENV'] === "sandbox"
-            ? "https://api.sandbox.push.apple.com"
-            : "https://api.push.apple.com";
+          process.env['APNS_ENV'] === "production"
+            ? "https://api.push.apple.com"
+            : "https://api.sandbox.push.apple.com";
         const topic = process.env['APNS_BUNDLE_ID'] ?? "app.beenbys.mobile";
+
+        const failures: string[] = [];
+        let sent = 0;
 
         await Promise.all(
           devices.map(async (device) => {
             const text = textFor(device.locale ?? "sv", payload.table, name);
             if (!text) return;
-            const res = await fetch(`${host}/3/device/${device.token}`, {
-              method: "POST",
-              headers: {
-                authorization: `bearer ${jwt}`,
-                "apns-topic": topic,
-                "apns-push-type": "alert",
-                "apns-priority": "10",
-                "content-type": "application/json",
-              },
-              body: JSON.stringify({
-                aps: {
-                  alert: { title: text.title, body: text.body },
-                  sound: "default",
-                  badge: 1,
+            try {
+              const res = await fetch(`${host}/3/device/${device.token}`, {
+                method: "POST",
+                headers: {
+                  authorization: `bearer ${jwt}`,
+                  "apns-topic": topic,
+                  "apns-push-type": "alert",
+                  "apns-priority": "10",
+                  "content-type": "application/json",
                 },
-                type: payload.table,
-              }),
-            });
-            // Apple returns 410 for tokens that are no longer valid.
-            if (res.status === 410 || res.status === 400) {
-              await supabaseAdmin.from("device_tokens").delete().eq("token", device.token);
+                body: JSON.stringify({
+                  aps: {
+                    alert: { title: text.title, body: text.body },
+                    sound: "default",
+                    badge: 1,
+                  },
+                  type: payload.table,
+                }),
+              });
+              if (res.ok) {
+                sent += 1;
+                return;
+              }
+              const body = await res.text();
+              failures.push(`${res.status}:${body}`);
+              // Apple returns 410 for tokens that are no longer valid.
+              if (res.status === 410 || (res.status === 400 && body.includes("BadDeviceToken"))) {
+                await supabaseAdmin.from("device_tokens").delete().eq("token", device.token);
+              }
+            } catch (err) {
+              failures.push(String(err));
             }
           }),
         );
 
+        await log(failures.length === 0 ? "sent" : sent > 0 ? "partial" : "failed", failures.join(" | ") || null, {
+          recipients: recipients.length,
+          devices: devices.length,
+        });
+
         return new Response("ok");
       },
+
     },
   },
 });
