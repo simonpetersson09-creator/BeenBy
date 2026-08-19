@@ -76,8 +76,8 @@
   --color-brand-accent: var(--brand-accent);
   --color-brand-accent-foreground: var(--brand-accent-foreground);
 
-  --font-display: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Beenby Digits", "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Beenby Digits", "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
   --shadow-soft: 0 1px 2px oklch(0.32 0.055 245 / 0.08), 0 8px 24px oklch(0.32 0.055 245 / 0.12);
   --shadow-lift: 0 2px 4px oklch(0.32 0.055 245 / 0.1), 0 16px 40px oklch(0.32 0.055 245 / 0.16);
 }
