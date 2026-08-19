@@ -5,6 +5,20 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
+ * Atkinson Hyperlegible draws its zero with a slash through it. It reads as a
+ * crossed-out digit in phrases like "30 dagar kvar", so digits 0-9 are drawn
+ * from Source Sans 3 instead. Everything else stays Atkinson.
+ */
+@font-face {
+  font-family: "Beenby Digits";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/sourcesans3/v19/nwpStKy2OAdR1K-IwhWudF-R3w8aZejf5Hc.woff2) format("woff2");
+  unicode-range: U+0030-0039;
+}
+
+/*
  * Design system definition.
  *
  * The @theme inline block maps CSS custom properties to Tailwind utility
