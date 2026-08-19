@@ -167,17 +167,23 @@ export function DotGrid({
         })}
       </div>
 
-      <div className="mt-3 flex items-center justify-center gap-4 text-[0.6rem] text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <span className="block size-2.5 rounded-full bg-primary" />
+      <div className="mt-3 flex items-center justify-center gap-4 text-[0.7rem] text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <span
+            className="block size-3 rounded-full shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+            style={{ backgroundColor: "#F97316" }}
+          />
           {t("home.legend.done")}
         </span>
-        <span className="flex items-center gap-1">
-          <span className="block size-2.5 rounded-full border border-dashed border-primary bg-primary/10" />
+        <span className="flex items-center gap-1.5">
+          <span
+            className="block size-3 rounded-full border-2 border-dashed"
+            style={{ borderColor: "#F97316", backgroundColor: "#F9731615" }}
+          />
           {t("home.legend.planned")}
         </span>
-        <span className="flex items-center gap-1">
-          <span className="block size-2.5 rounded-full border border-foreground/10 bg-transparent" />
+        <span className="flex items-center gap-1.5">
+          <span className="block size-3 rounded-full border border-foreground/10 bg-transparent" />
           {t("home.legend.empty")}
         </span>
       </div>
