@@ -129,7 +129,7 @@ export function DotGrid({
                           className={cn(
                             "animate-dot-pop block size-6 rounded-full transition",
                             "group-hover:scale-105",
-                            !hasDone && !hasPlanned && "border border-foreground/10 bg-transparent",
+                            !hasDone && !hasPlanned && "border border-foreground/5 bg-foreground/[0.03]",
                             hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.10)]",
                           )}
                           style={{
@@ -167,20 +167,6 @@ export function DotGrid({
         })}
       </div>
 
-      <div className="mt-3 flex items-center justify-center gap-4 text-[0.6rem] text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <span className="block size-2.5 rounded-full bg-primary" />
-          {t("home.legend.done")}
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="block size-2.5 rounded-full border border-dashed border-primary bg-primary/10" />
-          {t("home.legend.planned")}
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="block size-2.5 rounded-full border border-foreground/10 bg-transparent" />
-          {t("home.legend.empty")}
-        </span>
-      </div>
     </div>
   );
 }
