@@ -8,7 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { activitySummary } from "@/lib/activities";
 import { relativeLabel } from "@/lib/dates";
+
 import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import type { Member, PlannedVisit, Visit } from "@/hooks/useCircleData";
@@ -61,8 +63,11 @@ export function DayDetail({
               <span className="size-4 rounded-full" style={{ backgroundColor: hexOf(v.user_id) }} />
               <span className="flex-1 text-sm">
                 <span className="font-medium">{nameOf(v.user_id)}</span> {t("day.wasHere")}
-                <span className="block text-xs text-muted-foreground">{t("day.done")}</span>
+                <span className="block text-xs text-muted-foreground">
+                  {activitySummary(v.activities, t, v.activity_note) || t("day.done")}
+                </span>
               </span>
+
               {v.user_id === currentUserId ? (
                 <Button
                   variant="ghost"
@@ -84,8 +89,11 @@ export function DayDetail({
               />
               <span className="flex-1 text-sm">
                 <span className="font-medium">{nameOf(p.user_id)}</span> {t("day.plansVisit")}
-                <span className="block text-xs text-muted-foreground">{t("day.planned")}</span>
+                <span className="block text-xs text-muted-foreground">
+                  {activitySummary(p.activities, t, p.activity_note) || t("day.planned")}
+                </span>
               </span>
+
               {p.user_id === currentUserId ? (
                 <div className="flex gap-1">
                   <Button size="sm" variant="secondary" onClick={() => onCompletePlanned(p)}>
