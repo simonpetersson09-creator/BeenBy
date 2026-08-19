@@ -121,7 +121,7 @@ export const Route = createFileRoute("/api/public/push")({
           .map((m) => m.user_id)
           .filter((id) => id !== actorId);
         if (recipients.length === 0) {
-          await log("no_recipients", null, { recipients: 0 });
+          await log("no_recipients", undefined, { recipients: 0 });
           return new Response("no recipients", { status: 200 });
         }
 
@@ -190,7 +190,7 @@ export const Route = createFileRoute("/api/public/push")({
           }),
         );
 
-        await log(failures.length === 0 ? "sent" : sent > 0 ? "partial" : "failed", failures.join(" | ") || null, {
+        await log(failures.length === 0 ? "sent" : sent > 0 ? "partial" : "failed", failures.join(" | ") || undefined, {
           recipients: recipients.length,
           devices: devices.length,
         });
