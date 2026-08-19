@@ -52,6 +52,12 @@ export default defineConfig({
   resolve: {
     alias: [
       {
+        // The Start client runtime constructs an AsyncLocalStorage at import
+        // time; without a real implementation the app crashes before render.
+        find: /^(node:)?async_hooks$/,
+        replacement: fileURLToPath(new URL("./capacitor/async-hooks-stub.ts", import.meta.url)),
+      },
+      {
         find: /^@tanstack\/react-start\/server$/,
         replacement: fileURLToPath(new URL("./capacitor/react-start-server-stub.ts", import.meta.url)),
       },
