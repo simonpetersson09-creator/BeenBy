@@ -88,6 +88,18 @@ function ChatPage() {
   const [paywallOpen, setPaywallOpen] = useState(false);
   const locked = !hasAccess;
 
+  useEffect(() => {
+    const resetTransientUi = () => {
+      setSending(false);
+      setUploading(false);
+      setPreparing(false);
+      setSourceOpen(false);
+      setPaywallOpen(false);
+    };
+    window.addEventListener("beenby:resume", resetTransientUi);
+    return () => window.removeEventListener("beenby:resume", resetTransientUi);
+  }, []);
+
   const circleId = data?.circle.id;
 
   useEffect(() => {
@@ -192,13 +204,17 @@ function ChatPage() {
     const body = text.trim();
     if (!body || !circleId || !user) return;
     setSending(true);
-    const { error } = await supabase
-      .from("messages")
-      .insert({ family_circle_id: circleId, user_id: user.id, body });
-    setSending(false);
-    if (error) {
-      toast.error(t("chat.sendError"));
-      return;
+    try {
+      const { error } = await supabase
+        .from("messages")
+        .insert({ family_circle_id: circleId, user_id: user.id, body });
+      if (error) {
+        toast.error(t("chat.sendError"));
+        return;
+      }
+      setText("");
+    } finally {
+      setSending(false);
     }
     setText("");
   }
@@ -271,27 +287,30 @@ function ChatPage() {
     }
     if (!pending || !circleId || !user) return;
     setUploading(true);
-    const path = `${circleId}/${user.id}/${crypto.randomUUID()}.jpg`;
-    const { error: upErr } = await supabase.storage
-      .from("chat-images")
-      .upload(path, pending.blob, { contentType: "image/jpeg", upsert: false });
-    if (upErr) {
+    try {
+      const path = `${circleId}/${user.id}/${crypto.randomUUID()}.jpg`;
+      const { error: upErr } = await supabase.storage
+        .from("chat-images")
+        .upload(path, pending.blob, { contentType: "image/jpeg", upsert: false });
+      if (upErr) {
+        toast.error(t("chat.imageError"));
+        return;
+      }
+      const { error } = await supabase.from("messages").insert({
+        family_circle_id: circleId,
+        user_id: user.id,
+        body: text.trim().slice(0, 1000),
+        image_path: path,
+      });
+      if (error) {
+        void supabase.storage.from("chat-images").remove([path]);
+        toast.error(t("chat.imageError"));
+        return;
+      }
+      discardPending();
+      setText("");
+    } finally {
       setUploading(false);
-      toast.error(t("chat.imageError"));
-      return;
-    }
-    const { error } = await supabase.from("messages").insert({
-      family_circle_id: circleId,
-      user_id: user.id,
-      body: text.trim().slice(0, 1000),
-      image_path: path,
-    });
-    setUploading(false);
-    if (error) {
-      // Don't leave an orphaned file behind in storage.
-      void supabase.storage.from("chat-images").remove([path]);
-      toast.error(t("chat.imageError"));
-      return;
     }
     discardPending();
     setText("");
@@ -394,7 +413,7 @@ function ChatPage() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-5">
+      <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-5">
         {pending ? (
           <div className="mb-3 flex items-center gap-3 rounded-2xl border border-primary/10 bg-card p-2 shadow-soft">
             <img

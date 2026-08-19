@@ -164,15 +164,14 @@ export function SettingsDialog({
       const result = await leaveFamily(circleId);
       if (!result.ok) {
         toast.error(t("leave.failed"));
-        setLeaving(false);
         return;
       }
+      await wipeLocalAndRestart();
     } catch {
       toast.error(t("leave.failed"));
+    } finally {
       setLeaving(false);
-      return;
     }
-    await wipeLocalAndRestart();
   }
 
   /**
@@ -188,15 +187,14 @@ export function SettingsDialog({
       const result = await deleteMyAccount();
       if (!result.ok) {
         toast.error(t("delete.failed"));
-        setDeleting(false);
         return;
       }
+      await wipeLocalAndRestart();
     } catch {
       toast.error(t("delete.failed"));
+    } finally {
       setDeleting(false);
-      return;
     }
-    await wipeLocalAndRestart();
   }
 
   /**
@@ -209,18 +207,18 @@ export function SettingsDialog({
     if (resetting) return;
     setResetting(true);
     setResetOpen(false);
-    clearDraft();
-    clearRecovery();
-    // iOS keeps monitoring regions after the app closes — drop them all, or the
-    // old address would keep sending arrival notifications after a reset.
-    await stopAllBeenbyGeofences();
-    // Stop push to this device so the old phone does not keep getting family
-    // notifications after the app is reset.
-    await unregisterPushNotifications();
     try {
+      clearDraft();
+      clearRecovery();
+      // iOS keeps monitoring regions after the app closes — drop them all, or the
+      // old address would keep sending arrival notifications after a reset.
+      await stopAllBeenbyGeofences();
+      // Stop push to this device so the old phone does not keep getting family
+      // notifications after the app is reset.
+      await unregisterPushNotifications();
       window.localStorage.removeItem("beenby.familyTipSeen");
     } catch {
-      /* storage unavailable */
+      // Continue the reset even if a native cleanup step is unavailable.
     }
     try {
       await supabase.auth.signOut();
@@ -234,6 +232,7 @@ export function SettingsDialog({
     // on to the welcome screen because there is no circle any more.
     const root = `${window.location.origin}/`;
     window.location.replace(root);
+    setResetting(false);
   }
 
 
@@ -247,11 +246,16 @@ export function SettingsDialog({
     const next = name.trim();
     if (next.length < 1 || savingName) return;
     setSavingName(true);
-    const { error } = await supabase.from("profiles").update({ name: next }).eq("id", userId);
-    setSavingName(false);
-    if (error) {
-      toast.error(t("settings.nameFailed"));
-      return;
+    try {
+      const { error } = await supabase.from("profiles").update({ name: next }).eq("id", userId);
+      if (error) {
+        toast.error(t("settings.nameFailed"));
+        return;
+      }
+      toast.success(t("settings.nameSaved"));
+      onPersonUpdated?.();
+    } finally {
+      setSavingName(false);
     }
     toast.success(t("settings.nameSaved"));
     onPersonUpdated?.();
@@ -266,34 +270,41 @@ export function SettingsDialog({
   async function handlePurchase() {
     if (purchasing) return; // prevent double-tap
     setPurchasing(true);
-    const result = await purchasePremium();
-    const snapshot = getPremiumState();
-    if (result.outcome === "success") {
-      // StoreKit succeeded, but Premium only counts once the server verified it.
-      if (!snapshot.isPremium && snapshot.verifyError) {
-        toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+    try {
+      const result = await purchasePremium();
+      const snapshot = getPremiumState();
+      if (result.outcome === "success") {
+        if (!snapshot.isPremium && snapshot.verifyError) {
+          toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+        } else {
+          toast.success(t("settings.restored"));
+        }
+      } else if (result.outcome === "cancelled") {
+        toast.message(t("settings.noPurchase"));
       } else {
-        toast.success(t("settings.restored"));
+        toast.message(t("settings.soon"), { description: t("settings.soonDesc") });
       }
-    } else if (result.outcome === "cancelled") {
-      toast.message(t("settings.noPurchase"));
-    } else {
-      // pending / error / not available outside the native iOS app
-      toast.message(t("settings.soon"), { description: t("settings.soonDesc") });
+    } finally {
+      setPurchasing(false);
     }
-    setPurchasing(false);
   }
 
   async function handleRestore() {
     if (restoring) return;
     setRestoring(true);
-    const result = await restorePurchases();
-    const snapshot = getPremiumState();
-    if (result.restored && !snapshot.isPremium && snapshot.verifyError) {
-      toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
-    } else if (result.restored) toast.success(t("settings.restored"));
-    else toast.message(t("settings.noPurchase"), { description: t("settings.noPurchaseDesc") });
-    setRestoring(false);
+    try {
+      const result = await restorePurchases();
+      const snapshot = getPremiumState();
+      if (result.restored && !snapshot.isPremium && snapshot.verifyError) {
+        toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+      } else if (result.restored) {
+        toast.success(t("settings.restored"));
+      } else {
+        toast.message(t("settings.noPurchase"), { description: t("settings.noPurchaseDesc") });
+      }
+    } finally {
+      setRestoring(false);
+    }
   }
 
   async function handleManage() {
