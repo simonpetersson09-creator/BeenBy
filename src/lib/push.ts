@@ -27,8 +27,18 @@ export async function registerPushNotifications(): Promise<void> {
     await PushNotifications.addListener("registrationError", (err) => {
       console.error("push registration failed", err);
     });
+    // Tapping a chat notification opens the chat directly.
+    await PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
+      const type = (action.notification.data as Record<string, unknown> | undefined)?.["type"];
+      if (type === "messages" && typeof window !== "undefined") {
+        window.location.assign("/chat");
+      }
+    });
 
     await PushNotifications.register();
+    // Clear any badge left from previous notifications.
+    await PushNotifications.removeAllDeliveredNotifications();
+
   } catch (err) {
     console.error("push setup failed", err);
   }
