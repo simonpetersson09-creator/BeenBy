@@ -322,6 +322,24 @@ export type Database = {
         }
         Relationships: []
       }
+      push_dedupe: {
+        Row: {
+          created_at: string
+          record_id: string
+          source_table: string
+        }
+        Insert: {
+          created_at?: string
+          record_id: string
+          source_table: string
+        }
+        Update: {
+          created_at?: string
+          record_id?: string
+          source_table?: string
+        }
+        Relationships: []
+      }
       push_log: {
         Row: {
           created_at: string
@@ -349,6 +367,51 @@ export type Database = {
           recipients?: number
           source_table?: string
           status?: string
+        }
+        Relationships: []
+      }
+      rate_limits: {
+        Row: {
+          bucket: string
+          count: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          bucket: string
+          count?: number
+          user_id: string
+          window_start: string
+        }
+        Update: {
+          bucket?: string
+          count?: number
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
+      security_events: {
+        Row: {
+          created_at: string
+          detail: string | null
+          id: string
+          kind: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          kind: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          kind?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -421,6 +484,19 @@ export type Database = {
           user_id: string
         }[]
       }
+      consume_rate_limit: {
+        Args: {
+          _bucket: string
+          _limit: number
+          _subject?: string
+          _window_seconds: number
+        }
+        Returns: boolean
+      }
+      enforce_rate_limit: {
+        Args: { _bucket: string; _limit: number; _window_seconds: number }
+        Returns: undefined
+      }
       generate_family_code: { Args: never; Returns: string }
       get_trial_status: {
         Args: never
@@ -439,6 +515,16 @@ export type Database = {
         Args: { _code?: string; _color: string; _name: string; _token?: string }
         Returns: string
       }
+      log_security_event: {
+        Args: { _detail?: string; _kind: string; _user?: string }
+        Returns: undefined
+      }
+      orphan_chat_images: {
+        Args: { _limit?: number; _older_than_hours?: number }
+        Returns: {
+          object_name: string
+        }[]
+      }
       preview_invite: {
         Args: { _code?: string; _token?: string }
         Returns: {
@@ -449,6 +535,7 @@ export type Database = {
           taken_colors: string[]
         }[]
       }
+      rate_limit_geocode: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

@@ -163,20 +163,90 @@ async function sendApns(
   }
 }
 
+const MAX_BODY_BYTES = 32 * 1024;
+const MAX_CLOCK_SKEW_SECONDS = 300;
+
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+async function hmacHex(secret: string, message: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(message));
+  return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 export const Route = createFileRoute("/api/public/push")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (request.headers.get("x-push-secret") !== process.env['PUSH_HOOK_SECRET']) {
+        const secret = process.env['PUSH_HOOK_SECRET'] ?? "";
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const reject = async (reason: string) => {
+          // Never log the secret or the received signature itself.
+          await supabaseAdmin.from("push_log").insert({
+            source_table: "unknown",
+            status: "auth_failed",
+            detail: reason,
+          });
           return new Response("Unauthorized", { status: 401 });
+        };
+
+        if (!secret || !timingSafeEqual(request.headers.get("x-push-secret") ?? "", secret)) {
+          return reject("bad shared secret");
         }
 
-        const payload = (await request.json()) as Payload;
+        const declaredLength = Number(request.headers.get("content-length") ?? "0");
+        if (declaredLength > MAX_BODY_BYTES) return reject("payload too large");
+
+        const raw = await request.text();
+        if (raw.length > MAX_BODY_BYTES) return reject("payload too large");
+
+        // HMAC over timestamp + table + record id: independent of JSON
+        // serialisation, so it can never break on formatting differences.
+        const ts = request.headers.get("x-push-ts") ?? "";
+        const recordId = request.headers.get("x-push-id") ?? "";
+        const sig = request.headers.get("x-push-sig") ?? "";
+        if (!ts || !recordId || !sig) return reject("missing signature headers");
+        const age = Math.abs(Math.floor(Date.now() / 1000) - Number(ts));
+        if (!Number.isFinite(age) || age > MAX_CLOCK_SKEW_SECONDS) return reject("stale timestamp");
+
+        let payload: Payload;
+        try {
+          payload = JSON.parse(raw) as Payload;
+        } catch {
+          return reject("invalid json");
+        }
         const record = payload.record ?? {};
+        const expectedSig = await hmacHex(secret, `${ts}.${payload.table}.${recordId}`);
+        if (!timingSafeEqual(sig, expectedSig)) return reject("bad signature");
+        if (record['id'] !== recordId) return reject("record id mismatch");
+
+        // Replay protection: a given row may only fan out once.
+        const { error: dedupeError } = await supabaseAdmin
+          .from("push_dedupe")
+          .insert({ record_id: recordId, source_table: payload.table ?? "unknown" });
+        if (dedupeError) {
+          await supabaseAdmin.from("push_log").insert({
+            source_table: payload.table ?? "unknown",
+            status: "duplicate",
+            detail: "replayed or already delivered",
+          });
+          return new Response("duplicate", { status: 200 });
+        }
+
         const circleId = record['family_circle_id'] as string | undefined;
         const actorId = record['user_id'] as string | undefined;
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const log = async (
           status: string,
           detail?: string,
@@ -238,7 +308,16 @@ export const Route = createFileRoute("/api/public/push")({
         const topic = process.env['APNS_BUNDLE_ID'] ?? "app.beenbys.mobile";
 
         const messageBody = payload.table === "messages" ? (record['body'] as string | undefined) : undefined;
-        const imagePath = payload.table === "messages" ? (record['image_path'] as string | undefined) : undefined;
+        const rawImagePath = payload.table === "messages" ? (record['image_path'] as string | undefined) : undefined;
+        // A signed URL may only ever be minted for an image that lives inside
+        // this message's own family circle AND belongs to its sender.
+        const imagePath =
+          rawImagePath && rawImagePath.startsWith(`${circleId}/${actorId}/`) && !rawImagePath.includes("..")
+            ? rawImagePath
+            : undefined;
+        if (rawImagePath && !imagePath) {
+          await log("blocked_image", "image_path outside the message's own circle");
+        }
         let signedImageUrl: string | undefined;
         if (imagePath) {
           try {
