@@ -23,7 +23,8 @@ public class BeenbyStoreKitPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "purchasePremium", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "restorePurchases", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "manageSubscription", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "getProductInfo", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "getProductInfo", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getDeviceAnchor", returnType: CAPPluginReturnPromise)
     ]
 
     private let store = BeenbyStore.shared
@@ -70,10 +71,21 @@ public class BeenbyStoreKitPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
         let productId = call.getString("productId")
+        let appAccountToken = call.getString("appAccountToken")
         Task {
-            let result = await store.purchase(productId: productId)
+            let result = await store.purchase(productId: productId, appAccountToken: appAccountToken)
             call.resolve(result)
         }
+    }
+
+    // MARK: - getDeviceAnchor
+
+    @objc func getDeviceAnchor(_ call: CAPPluginCall) {
+        guard #available(iOS 15.0, *) else {
+            call.resolve([:])
+            return
+        }
+        call.resolve(["anchor": store.deviceAnchor()])
     }
 
     // MARK: - restorePurchases
