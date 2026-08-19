@@ -199,6 +199,26 @@ export async function syncGeofenceState(options: {
   return result.started ? { active: true } : { active: false, reason: "location-missing" };
 }
 
+/**
+ * Removes every BeenBy region iOS is monitoring, regardless of person/circle.
+ * iOS keeps monitoring regions even when the app is closed, so this must run
+ * when the local identity goes away (reset/sign out) or when the saved address
+ * changes — otherwise the old address keeps triggering arrival notifications.
+ */
+export async function stopAllBeenbyGeofences(): Promise<void> {
+  if (!isNativeGeofenceAvailable()) return;
+  try {
+    const monitored = await getMonitoredGeofences();
+    for (const region of monitored) {
+      if (region.identifier.startsWith("beenby:")) {
+        await stopGeofence(region.identifier);
+      }
+    }
+  } catch {
+    /* never block the caller */
+  }
+}
+
 /** Best-effort deep link into the iOS Settings app. Never throws. */
 export async function openNativeSettings(): Promise<boolean> {
   if (!isNativeGeofenceAvailable()) return false;
