@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, BellRing, CalendarHeart, Hand, History } from "lucide-react";
+import { ArrowRight, BellRing, CalendarHeart, Hand, History, Users } from "lucide-react";
 
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
