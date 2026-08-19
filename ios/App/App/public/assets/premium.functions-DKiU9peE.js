@@ -1,0 +1,1 @@
+var e=e=>{throw Error(`[beenby] src/lib/premium.functions.ts:`+e+` is server-only and is not available in the native app`)},t=(...t)=>e(`getEntitlement`),n=(...t)=>e(`submitTransaction`),r=(...t)=>e(`claimTrialAnchor`);export{r as claimTrialAnchor,t as getEntitlement,n as submitTransaction};
