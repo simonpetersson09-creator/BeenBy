@@ -12,7 +12,9 @@
     "format": "prettier --write .",
     "build:ios": "vite build --config vite.ios.config.ts",
     "icons": "capacitor-assets generate --ios",
-    "ios:plist": "node scripts/patch-ios-plist.mjs"
+    "ios:plist": "node scripts/patch-ios-plist.mjs && node scripts/patch-ios-project.mjs",
+    "ios:project": "node scripts/patch-ios-project.mjs",
+    "ios:sync": "npx cap sync ios && npm run ios:plist"
   },
   "dependencies": {
     "@capacitor/app": "^8",
