@@ -93,7 +93,7 @@ function Index() {
 
   if (error || authFailed) {
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-8 text-center">
+      <div className="flex h-dvh flex-col items-center justify-center gap-4 px-8 text-center">
         <p className="text-sm text-muted-foreground">{t("error.loadCircle")}</p>
         <Button
           onClick={() => {
