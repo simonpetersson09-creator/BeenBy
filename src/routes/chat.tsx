@@ -231,6 +231,13 @@ function ChatPage() {
     });
   }
 
+  function openWebPicker(source: "camera" | "library") {
+    if (!fileRef.current) return;
+    if (source === "camera") fileRef.current.setAttribute("capture", "environment");
+    else fileRef.current.removeAttribute("capture");
+    fileRef.current.click();
+  }
+
   async function choosePhoto(source: "camera" | "library") {
     setSourceOpen(false);
     if (locked) {
@@ -238,16 +245,23 @@ function ChatPage() {
       return;
     }
     if (isNativePhotoAvailable()) {
-      const blob = await pickNativePhoto(source);
-      if (blob) void preparePhoto(blob);
+      const result = await pickNativePhoto(source);
+      if (result.status === "ok") {
+        void preparePhoto(result.blob);
+        return;
+      }
+      if (result.status === "cancelled") return;
+      if (result.status === "denied") {
+        toast.error(t("chat.photoDenied"));
+        return;
+      }
+      // Plugin missing or failed: let the web picker take over rather than
+      // leaving the button looking dead.
+      openWebPicker(source);
       return;
     }
-    // Web preview: the browser picker handles both camera and library.
-    if (fileRef.current) {
-      if (source === "camera") fileRef.current.setAttribute("capture", "environment");
-      else fileRef.current.removeAttribute("capture");
-      fileRef.current.click();
-    }
+    openWebPicker(source);
+
   }
 
   async function sendPending() {

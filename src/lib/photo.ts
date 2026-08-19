@@ -23,9 +23,49 @@ export function isNativePhotoAvailable(): boolean {
   return isNativeRuntime();
 }
 
-/** Picks a photo natively. Returns null if the user cancelled. */
-export async function pickNativePhoto(source: PhotoSource): Promise<Blob | null> {
-  const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
+export type NativePickResult =
+  | { status: "ok"; blob: Blob }
+  | { status: "cancelled" }
+  | { status: "denied" }
+  | { status: "unavailable"; detail: string };
+
+function messageOf(error: unknown): string {
+  if (error && typeof error === "object" && "message" in error) {
+    return String((error as { message?: unknown }).message ?? "");
+  }
+  return String(error ?? "");
+}
+
+/**
+ * Picks a photo natively. Distinguishes cancel, denied permission and a
+ * missing/unregistered plugin so the caller can fall back or explain instead of
+ * doing nothing at all.
+ */
+export async function pickNativePhoto(source: PhotoSource): Promise<NativePickResult> {
+  let Camera: typeof import("@capacitor/camera").Camera;
+  let CameraResultType: typeof import("@capacitor/camera").CameraResultType;
+  let CameraSource: typeof import("@capacitor/camera").CameraSource;
+  try {
+    ({ Camera, CameraResultType, CameraSource } = await import("@capacitor/camera"));
+  } catch (error) {
+    return { status: "unavailable", detail: messageOf(error) };
+  }
+
+  // Ask up front; on iOS a missing Info.plist usage string surfaces here.
+  try {
+    const current = await Camera.checkPermissions();
+    const needed = source === "camera" ? current.camera : current.photos;
+    if (needed !== "granted" && needed !== "limited") {
+      const asked = await Camera.requestPermissions({
+        permissions: [source === "camera" ? "camera" : "photos"],
+      });
+      const after = source === "camera" ? asked.camera : asked.photos;
+      if (after === "denied") return { status: "denied" };
+    }
+  } catch {
+    // checkPermissions is not implemented on every platform — keep going.
+  }
+
   try {
     const photo = await Camera.getPhoto({
       quality: 90,
@@ -33,18 +73,25 @@ export async function pickNativePhoto(source: PhotoSource): Promise<Blob | null>
       correctOrientation: true,
       resultType: CameraResultType.Uri,
       source: source === "camera" ? CameraSource.Camera : CameraSource.Photos,
-      // Ask the plugin for JPEG so HEIC never reaches the web layer.
       presentationStyle: "fullscreen",
     });
     const path = photo.webPath ?? photo.path;
-    if (!path) return null;
+    if (!path) return { status: "cancelled" };
     const res = await fetch(path);
-    return await res.blob();
-  } catch {
-    // The plugin throws on cancel as well as on denied permissions.
-    return null;
+    return { status: "ok", blob: await res.blob() };
+  } catch (error) {
+    const msg = messageOf(error).toLowerCase();
+    if (msg.includes("cancel")) return { status: "cancelled" };
+    if (msg.includes("denied") || msg.includes("permission") || msg.includes("access")) {
+      return { status: "denied" };
+    }
+    if (msg.includes("not implemented") || msg.includes("unavailable") || msg.includes("not available")) {
+      return { status: "unavailable", detail: msg };
+    }
+    return { status: "unavailable", detail: msg };
   }
 }
+
 
 /** Basic guard so we never try to upload a video or a 50 MB raw file. */
 export function validateImage(file: Blob & { name?: string }): string | null {
