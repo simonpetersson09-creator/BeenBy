@@ -9,14 +9,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/integrations/supabase/types";
+import type { EntitlementState } from "@/lib/premiumTypes";
 
-export type EntitlementState = {
-  isPremium: boolean;
-  productId?: string;
-  expiresAt?: string;
-  environment?: string;
-  error?: string;
-};
+export type { EntitlementState };
 
 type UserClient = SupabaseClient<Database>;
 

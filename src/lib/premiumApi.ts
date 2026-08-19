@@ -8,7 +8,7 @@
  * Both paths end up in the exact same server code (`src/lib/premium.server.ts`)
  * and the same `premium_entitlements` row.
  */
-import type { EntitlementState } from "@/lib/premium.server";
+import type { EntitlementState } from "@/lib/premiumTypes";
 import { callNativeApi } from "@/lib/nativeApi";
 import { IS_NATIVE_SPA } from "@/lib/runtime";
 
