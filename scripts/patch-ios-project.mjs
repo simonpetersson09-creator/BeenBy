@@ -21,7 +21,7 @@ const LANGS = ["en", "sv", "de", "da", "fi", "es", "fr"];
 const VARIANT_GROUP_ID = "BEE0B1000000000000000001";
 const BUILD_FILE_ID = "BEE0B1000000000000000002";
 const fileRefId = (lang) =>
-  `BEE0B1${Buffer.from(lang).toString("hex").padEnd(10, "0").slice(0, 10)}0000000`.slice(0, 24);
+  `BEE0B1${Buffer.from(lang).toString("hex").toUpperCase()}`.padEnd(24, "0").slice(0, 24);
 
 if (!existsSync(PBXPROJ)) {
   console.error(`Hittar inte ${PBXPROJ}. Kör "npx cap add ios" först.`);
