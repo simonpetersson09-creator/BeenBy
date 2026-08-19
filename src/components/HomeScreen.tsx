@@ -79,6 +79,7 @@ export function HomeScreen({
     setActNote("");
   };
   const [planDate, setPlanDate] = useState<string | null>(null);
+  const [planCalendarOpen, setPlanCalendarOpen] = useState(false);
   const unread = useUnreadMessages(circle.id, userId);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
