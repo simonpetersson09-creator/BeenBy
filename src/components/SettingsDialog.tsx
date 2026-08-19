@@ -8,7 +8,7 @@ import { ColorPicker } from "@/components/ColorPicker";
 import { GeofenceSetting } from "@/components/GeofenceSetting";
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import { Switch } from "@/components/ui/switch";
-import { isPushEnabled, setPushEnabled } from "@/lib/push";
+import { isPushEnabled, setPushEnabled, unregisterPushNotifications } from "@/lib/push";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -124,6 +124,9 @@ export function SettingsDialog({
     // iOS keeps monitoring regions after the app closes — drop them all, or the
     // old address would keep sending arrival notifications after a reset.
     await stopAllBeenbyGeofences();
+    // Stop push to this device so the old phone does not keep getting family
+    // notifications after the app is reset.
+    await unregisterPushNotifications();
     try {
       window.localStorage.removeItem("beenby.familyTipSeen");
     } catch {
