@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { searchAddress, type GeocodeHit } from "@/lib/geocode";
+import { stopAllBeenbyGeofences } from "@/lib/geofenceSync";
 import { useT, usePersonLabel } from "@/lib/i18n";
 
 export type EditablePerson = {
