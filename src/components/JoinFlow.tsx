@@ -124,7 +124,7 @@ export function JoinFlow({
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-6 px-6 py-10">
+    <div className="app-scroll mx-auto flex h-dvh w-full max-w-md flex-col justify-center gap-6 px-6 py-10">
       <div className="space-y-2">
         <h1 className="text-3xl">
           {t("join.title", { name: preview.person_name ?? preview.circle_name ?? "" })}
