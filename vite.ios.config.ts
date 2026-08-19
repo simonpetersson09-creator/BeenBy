@@ -22,9 +22,26 @@ export default defineConfig({
   publicDir: fileURLToPath(new URL("./public", import.meta.url)),
   envDir: projectRoot,
   plugins: [tsconfigPaths({ root: projectRoot }), react(), tailwindcss()],
+  resolve: {
+    alias: [
+      // The TanStack Start plugin normally supplies these internal subpath
+      // imports. This SPA build runs without that plugin, so provide them
+      // ourselves — otherwise Vite fails with
+      // `Missing "#tanstack-start-entry" specifier in "@tanstack/start-server-core"`.
+      {
+        find: "#tanstack-start-entry",
+        replacement: fileURLToPath(new URL("./src/start.ts", import.meta.url)),
+      },
+      {
+        find: "#tanstack-router-entry",
+        replacement: fileURLToPath(new URL("./src/router.tsx", import.meta.url)),
+      },
+    ],
+  },
   define: {
     "import.meta.env.VITE_IOS_SPA": JSON.stringify("true"),
   },
+
   build: {
     outDir: fileURLToPath(new URL("./dist/client", import.meta.url)),
     emptyOutDir: true,
