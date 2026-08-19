@@ -665,6 +665,7 @@ export function HomeScreen({
                   if (!d) return;
                   const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
                   setPlanDate(key);
+                  setPlanCalendarOpen(false);
                 }}
                 className="pointer-events-auto"
               />
