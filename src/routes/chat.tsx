@@ -379,11 +379,56 @@ function ChatPage() {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-5">
+        {pending ? (
+          <div className="mb-3 flex items-center gap-3 rounded-2xl border border-primary/10 bg-card p-2 shadow-soft">
+            <img
+              src={pending.url}
+              alt={t("chat.photoPreview")}
+              className="size-16 rounded-xl object-cover"
+            />
+            <p className="flex-1 text-xs text-muted-foreground">{t("chat.photoPreview")}</p>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              aria-label={t("chat.discardPhoto")}
+              onClick={discardPending}
+              className="size-9 rounded-xl"
+            >
+              <X className="size-4" />
+            </Button>
+          </div>
+        ) : null}
+
+        {sourceOpen ? (
+          <div className="mb-3 grid gap-2 rounded-2xl border border-primary/10 bg-card p-2 shadow-soft">
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-12 justify-start gap-3 rounded-xl"
+              onClick={() => void choosePhoto("camera")}
+            >
+              <Camera className="size-5" />
+              {t("chat.takePhoto")}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-12 justify-start gap-3 rounded-xl"
+              onClick={() => void choosePhoto("library")}
+            >
+              <ImagePlus className="size-5" />
+              {t("chat.fromLibrary")}
+            </Button>
+          </div>
+        ) : null}
+
         <form
           className="flex items-center gap-2"
           onSubmit={(e) => {
             e.preventDefault();
-            void send();
+            if (pending) void sendPending();
+            else void send();
           }}
         >
           <input
@@ -394,7 +439,7 @@ function ChatPage() {
             onChange={(e) => {
               const file = e.target.files?.[0];
               e.target.value = "";
-              if (file) void sendImage(file);
+              if (file) void preparePhoto(file);
             }}
           />
           <Button
@@ -402,16 +447,17 @@ function ChatPage() {
             size="icon"
             variant="secondary"
             aria-label={t("chat.addPhoto")}
-            disabled={uploading}
-            onClick={() => (locked ? setPaywallOpen(true) : fileRef.current?.click())}
+            disabled={uploading || preparing}
+            onClick={() => (locked ? setPaywallOpen(true) : setSourceOpen((v) => !v))}
             className="size-12 shrink-0 rounded-2xl"
           >
-            {uploading ? (
+            {uploading || preparing ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <ImagePlus className="size-5" />
             )}
           </Button>
+
           <Input
             value={text}
             onChange={(e) => setText(e.target.value)}
