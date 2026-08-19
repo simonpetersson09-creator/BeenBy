@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, BellRing, CalendarHeart, Hand, History } from "lucide-react";
+import { ArrowRight, BellRing, CalendarHeart, Hand, History, Users } from "lucide-react";
 
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,7 @@ const points = [
   { icon: CalendarHeart, key: "welcome.p2" },
   { icon: Hand, key: "welcome.p3" },
   { icon: BellRing, key: "welcome.p4" },
+  { icon: Users, key: "welcome.p4sub" },
 ];
 
 const HINT_KEY = "beenby.langHintSeen";
@@ -64,12 +65,7 @@ function WelcomePage() {
         {points.map(({ icon: Icon, key }) => (
           <li key={key} className="flex items-start gap-3 py-3">
             <Icon className="mt-0.5 size-4.5 shrink-0 text-primary/70" strokeWidth={1.5} />
-            <div className="flex flex-col gap-0.5">
-              <span className="text-sm leading-relaxed text-foreground/90">{t(key)}</span>
-              {key === "welcome.p4" ? (
-                <span className="text-xs text-muted-foreground">{t("welcome.p4sub")}</span>
-              ) : null}
-            </div>
+            <span className="text-sm leading-relaxed text-foreground/90">{t(key)}</span>
           </li>
         ))}
       </ul>
