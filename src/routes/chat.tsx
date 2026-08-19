@@ -269,11 +269,13 @@ function ChatPage() {
     const { error } = await supabase.from("messages").insert({
       family_circle_id: circleId,
       user_id: user.id,
-      body: text.trim(),
+      body: text.trim().slice(0, 1000),
       image_path: path,
     });
     setUploading(false);
     if (error) {
+      // Don't leave an orphaned file behind in storage.
+      void supabase.storage.from("chat-images").remove([path]);
       toast.error(t("chat.imageError"));
       return;
     }

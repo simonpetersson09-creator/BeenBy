@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.generate_family_code() TO authenticated;

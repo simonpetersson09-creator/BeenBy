@@ -82,7 +82,12 @@ export function JoinFlow({
       );
       return;
     }
-    if (joinedId) {
+    // The backend returns null for an unknown code or too many attempts.
+    if (!joinedId) {
+      toast.error(t("join.errGeneric"));
+      return;
+    }
+    {
       const { data: joined } = await supabase
         .from("family_circles")
         .select("family_code")
