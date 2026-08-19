@@ -71,7 +71,11 @@ function ChatPage() {
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
+  const [pending, setPending] = useState<{ blob: Blob; url: string } | null>(null);
+  const [preparing, setPreparing] = useState(false);
+  const [sourceOpen, setSourceOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
+
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const { hasAccess } = useAccess();
   const [paywallOpen, setPaywallOpen] = useState(false);
