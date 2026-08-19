@@ -12,7 +12,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { markChatRead } from "@/lib/chatRead";
 import { localeOf, useT, usePersonLabel } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
+import {
+  compressToJpeg,
+  isNativePhotoAvailable,
+  pickNativePhoto,
+  validateImage,
+} from "@/lib/photo";
 import { useAccess } from "@/lib/premiumStore";
+
 
 type Message = {
   id: string;
