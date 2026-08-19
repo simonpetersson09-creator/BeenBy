@@ -139,6 +139,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  // Swipe from the left edge to go back, like a native iOS app.
+  useEffect(
+    () =>
+      startSwipeBack(() => {
+        if (router.history.canGoBack()) router.history.back();
+      }),
+    [router],
+  );
+
 
   // Verifies Premium with StoreKit at app start and on every foreground resume.
   useEffect(() => startPremiumLifecycle(), []);
