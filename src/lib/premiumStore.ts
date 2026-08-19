@@ -120,22 +120,39 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
     const priceLabel = await getPremiumPrice();
 
     let verified: { isPremium: boolean; productId?: string; expiresAt?: string } | null = null;
+    /** true when we could not reach/complete the server check at all */
+    let unreachable = false;
+    let verifyError: string | undefined;
     try {
       const { data: sessionData } = await supabase.auth.getSession();
-      if (sessionData.session?.user.id) {
-        if (status.jws) {
-          verified = await sendTransaction(status.jws);
-        } else {
-          verified = await fetchEntitlement();
-        }
+      if (!sessionData.session?.user.id) {
+        unreachable = true;
+      } else if (status.jws) {
+        verified = await sendTransaction(status.jws);
+        if (verified.error) verifyError = verified.error;
+      } else {
+        verified = await fetchEntitlement();
       }
     } catch (error) {
-      console.warn("[premium] server verification unavailable", error);
+      // Offline / backend down: do NOT drop a legitimate Premium status.
+      unreachable = true;
+      verifyError = (error as Error).message;
+      console.warn("[premium] server verification unavailable:", verifyError);
     }
 
-    const isPremium = verified ? verified.isPremium : false;
-    const productId = verified?.productId ?? status.productId;
-    const expiresAt = verified?.expiresAt ?? status.expiresAt;
+    // A failed submit still lets us fall back to the stored entitlement.
+    if (verified && verified.error && !verified.isPremium) {
+      try {
+        const stored = await fetchEntitlement();
+        if (stored.isPremium) verified = stored;
+      } catch {
+        unreachable = true;
+      }
+    }
+
+    const isPremium = unreachable && !verified ? state.isPremium : (verified?.isPremium ?? false);
+    const productId = verified?.productId ?? status.productId ?? state.productId;
+    const expiresAt = verified?.expiresAt ?? status.expiresAt ?? state.expiresAt;
 
     setState({
       isPremium,
@@ -144,10 +161,12 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
       ...(priceLabel ? { priceLabel } : {}),
       source: status.source,
       loading: false,
-      checked: true,
+      checked: state.checked || !unreachable,
+      ...(verifyError ? { verifyError } : { verifyError: undefined }),
     });
     return state;
   })();
+
   try {
     return await inFlight;
   } finally {
