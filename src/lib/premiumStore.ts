@@ -104,6 +104,11 @@ function getSnapshot() {
   return state;
 }
 
+/** Current Premium snapshot for imperative call sites (toasts etc.). */
+export function getPremiumState(): PremiumState {
+  return state;
+}
+
 let inFlight: Promise<PremiumState> | null = null;
 
 /**

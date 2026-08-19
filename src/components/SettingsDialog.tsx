@@ -49,6 +49,7 @@ import { clearDraft } from "@/lib/onboardingDraft";
 import { clearRecovery } from "@/lib/recovery";
 import {
   manageSubscription,
+  getPremiumState,
   purchasePremium,
   refreshPremiumStatus,
   refreshTrialStatus,
@@ -266,8 +267,14 @@ export function SettingsDialog({
     if (purchasing) return; // prevent double-tap
     setPurchasing(true);
     const result = await purchasePremium();
+    const snapshot = getPremiumState();
     if (result.outcome === "success") {
-      toast.success(t("settings.restored"));
+      // StoreKit succeeded, but Premium only counts once the server verified it.
+      if (!snapshot.isPremium && snapshot.verifyError) {
+        toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+      } else {
+        toast.success(t("settings.restored"));
+      }
     } else if (result.outcome === "cancelled") {
       toast.message(t("settings.noPurchase"));
     } else {
@@ -281,7 +288,10 @@ export function SettingsDialog({
     if (restoring) return;
     setRestoring(true);
     const result = await restorePurchases();
-    if (result.restored) toast.success(t("settings.restored"));
+    const snapshot = getPremiumState();
+    if (result.restored && !snapshot.isPremium && snapshot.verifyError) {
+      toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+    } else if (result.restored) toast.success(t("settings.restored"));
     else toast.message(t("settings.noPurchase"), { description: t("settings.noPurchaseDesc") });
     setRestoring(false);
   }
