@@ -8,19 +8,20 @@ export type MemberColor = {
 };
 
 /**
- * Muted, warm-leaning tones tuned to sit calmly on the greige background
- * next to the marine blue brand color. Ids are stable (stored in the db).
+ * Clear, saturated tones that stay easy to tell apart on the greige
+ * background — also for older eyes. Ids are stable (stored in the db).
  */
 export const MEMBER_COLORS: MemberColor[] = [
-  { id: "blue", label: "Blå", hex: "#2F5D7C", on: "#ffffff" },
-  { id: "purple", label: "Lila", hex: "#6B5B8A", on: "#ffffff" },
-  { id: "green", label: "Grön", hex: "#4F7A5B", on: "#ffffff" },
-  { id: "orange", label: "Terrakotta", hex: "#B5713F", on: "#ffffff" },
-  { id: "pink", label: "Rosa", hex: "#A85F6B", on: "#ffffff" },
-  { id: "teal", label: "Turkos", hex: "#3F7B78", on: "#ffffff" },
-  { id: "amber", label: "Senap", hex: "#A98A3C", on: "#ffffff" },
-  { id: "slate", label: "Grå", hex: "#6B6A66", on: "#ffffff" },
+  { id: "blue", label: "Blå", hex: "#1D4ED8", on: "#ffffff" },
+  { id: "purple", label: "Lila", hex: "#7C3AED", on: "#ffffff" },
+  { id: "green", label: "Grön", hex: "#15803D", on: "#ffffff" },
+  { id: "orange", label: "Orange", hex: "#EA580C", on: "#ffffff" },
+  { id: "pink", label: "Rosa", hex: "#DB2777", on: "#ffffff" },
+  { id: "teal", label: "Turkos", hex: "#0D9488", on: "#ffffff" },
+  { id: "amber", label: "Senap", hex: "#B45309", on: "#ffffff" },
+  { id: "slate", label: "Grå", hex: "#475569", on: "#ffffff" },
 ];
+
 
 
 export function colorById(id: string | undefined | null): MemberColor {

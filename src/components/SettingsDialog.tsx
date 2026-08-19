@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { KeyRound, Loader2, MapPin, RotateCcw, Sparkles, User, Users } from "lucide-react";
+import { KeyRound, Loader2, MapPin, Palette, RotateCcw, Sparkles, User, Users } from "lucide-react";
 import { toast } from "sonner";
 
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
+import { ColorPicker } from "@/components/ColorPicker";
 import { GeofenceSetting } from "@/components/GeofenceSetting";
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import {
@@ -49,12 +50,14 @@ export function SettingsDialog({
   onOpenPaywall,
   userId,
   myName,
+  members,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   person?: EditablePerson | null;
   userId?: string;
   myName?: string;
+  members?: { user_id: string; personal_color: string }[];
   onPersonUpdated?: () => void;
   geofence?: {
     enabled: boolean;
@@ -83,6 +86,21 @@ export function SettingsDialog({
   const [savingName, setSavingName] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const myColor = members?.find((m) => m.user_id === userId)?.personal_color ?? null;
+
+  async function handleColorChange(next: string) {
+    if (!userId || next === myColor) return;
+    const { error } = await supabase
+      .from("family_members")
+      .update({ personal_color: next })
+      .eq("user_id", userId);
+    if (error) {
+      toast.error(t("settings.colorFailed"));
+      return;
+    }
+    toast.success(t("settings.colorSaved"));
+    onPersonUpdated?.();
+  }
 
   /**
    * Start over on this device: clears the local onboarding draft, the saved
@@ -272,6 +290,20 @@ export function SettingsDialog({
           <LanguageSwitcher />
         </section>
 
+        {userId && members && members.length > 0 ? (
+          <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
+            <p className="flex items-center gap-2 text-sm font-medium">
+              <Palette className="size-4" /> {t("settings.colorTitle")}
+            </p>
+            <p className="text-xs text-muted-foreground">{t("settings.colorHint")}</p>
+            <ColorPicker
+              value={myColor}
+              taken={members.filter((m) => m.user_id !== userId).map((m) => m.personal_color)}
+              onChange={(next) => void handleColorChange(next)}
+            />
+          </section>
+        ) : null}
+
         {userId ? (
           <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
             <p className="flex items-center gap-2 text-sm font-medium">
@@ -296,6 +328,7 @@ export function SettingsDialog({
             </div>
           </section>
         ) : null}
+
 
         {person ? (
           <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
