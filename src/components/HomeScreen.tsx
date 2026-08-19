@@ -404,7 +404,7 @@ export function HomeScreen({
 
 
       {!online || pending.length > 0 ? (
-        <div className="mb-4 flex items-center gap-2 rounded-2xl bg-secondary px-4 py-3 text-sm">
+        <div className="mb-3 flex items-center gap-2 rounded-2xl bg-secondary px-3 py-2 text-xs">
           {online ? <RefreshCw className="size-4" /> : <CloudOff className="size-4" />}
           <span>
             {pending.length > 0
@@ -414,25 +414,23 @@ export function HomeScreen({
         </div>
       ) : null}
 
-      <section className="relative rounded-3xl border border-primary/40 bg-transparent px-3 py-4">
+      <section className="relative rounded-3xl border border-primary/40 bg-transparent px-2.5 py-3">
         {isPremium ? (
-          <span className="absolute -top-2.5 left-3 rounded-full bg-primary px-2.5 py-1 text-[0.62rem] leading-none font-medium text-primary-foreground shadow-soft">
+          <span className="absolute -top-2 left-3 rounded-full bg-primary px-2 py-0.5 text-[0.6rem] leading-none font-medium text-primary-foreground shadow-soft">
             {t("home.premiumBadge")}
           </span>
         ) : isTrialActive ? (
-          <span className="absolute -top-2.5 left-3 rounded-full border border-primary/30 bg-card px-2.5 py-1 text-[0.62rem] leading-none font-medium text-primary shadow-soft">
+          <span className="absolute -top-2 left-3 rounded-full border border-primary/30 bg-card px-2 py-0.5 text-[0.6rem] leading-none font-medium text-primary shadow-soft">
             {trialDaysLeft === 1
               ? t("home.trialLeftOne")
               : t("home.trialLeft", { n: String(trialDaysLeft) })}
           </span>
         ) : null}
-        <h2 className="mb-3 text-center text-base leading-tight text-primary">{t("home.overview")}</h2>
+        <h2 className="mb-2 text-center text-sm leading-tight text-primary">{t("home.overview")}</h2>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
       </section>
 
-
-
-      <section className="mt-3 rounded-2xl bg-card px-3 py-2 shadow-soft">
+      <section className="mt-2 rounded-2xl bg-card px-3 py-1.5 shadow-soft">
         {nextPlanned ? (
           (() => {
             const plannedMember = members.find((m) => m.user_id === nextPlanned.user_id);
@@ -441,10 +439,10 @@ export function HomeScreen({
             return (
               <div className="flex items-center gap-2">
                 <div
-                  className="flex size-7 shrink-0 items-center justify-center rounded-lg text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+                  className="flex size-6 shrink-0 items-center justify-center rounded-lg text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
                   style={{ backgroundColor: hex }}
                 >
-                  <span className="text-xs font-bold leading-none">
+                  <span className="text-[0.65rem] font-bold leading-none">
                     {plannedMember?.name.trim().charAt(0).toUpperCase() ?? "?"}
                   </span>
                 </div>
