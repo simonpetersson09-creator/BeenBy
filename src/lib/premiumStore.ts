@@ -14,6 +14,7 @@ import { useSyncExternalStore } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { fetchEntitlement, sendTransaction, sendTrialAnchor } from "@/lib/premiumApi";
+import type { EntitlementState } from "@/lib/premiumTypes";
 import {
   getSubscriptionStatus,
   getPremiumPrice,
@@ -51,6 +52,8 @@ export type PremiumState = {
   trialChecked: boolean;
   /** Premium OR an active trial. */
   hasAccess: boolean;
+  /** Set when a real server verification failed (shown to the user). */
+  verifyError?: string;
 };
 
 const initial: PremiumState = {
@@ -119,7 +122,7 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
     const status = await getSubscriptionStatus();
     const priceLabel = await getPremiumPrice();
 
-    let verified: { isPremium: boolean; productId?: string; expiresAt?: string } | null = null;
+    let verified: EntitlementState | null = null;
     /** true when we could not reach/complete the server check at all */
     let unreachable = false;
     let verifyError: string | undefined;
