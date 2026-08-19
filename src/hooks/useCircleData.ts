@@ -36,6 +36,8 @@ export type Visit = {
   visited_at: string;
   local_day: string;
   source: string;
+  activities: string[] | null;
+  activity_note: string | null;
 };
 
 export type PlannedVisit = {
@@ -44,6 +46,8 @@ export type PlannedVisit = {
   person_id: string;
   planned_date: string;
   status: string;
+  activities: string[] | null;
+  activity_note: string | null;
 };
 
 export type CircleData = {
@@ -91,12 +95,12 @@ async function loadCircle(userId: string): Promise<CircleData | null> {
     supabase.rpc("circle_member_names", { _circle: circleId }),
     supabase
       .from("visits")
-      .select("id, user_id, person_id, visited_at, local_day, source")
+      .select("id, user_id, person_id, visited_at, local_day, source, activities, activity_note")
       .eq("family_circle_id", circleId)
       .gte("local_day", since),
     supabase
       .from("planned_visits")
-      .select("id, user_id, person_id, planned_date, status")
+      .select("id, user_id, person_id, planned_date, status, activities, activity_note")
       .eq("family_circle_id", circleId)
       .eq("status", "planned")
       .gte("planned_date", since),
