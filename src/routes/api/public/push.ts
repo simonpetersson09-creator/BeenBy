@@ -66,14 +66,34 @@ function textFor(locale: string, table: string, name: string, messageBody?: stri
     if (messageBody && messageBody.trim().length > 0) {
       body = messageBody.trim().slice(0, 120);
     } else if (hasImage) {
-      body = "📎 Bild";
+      body = IMAGE_LABELS[locale] ?? IMAGE_LABELS['en']!;
     }
   }
   return { title: entry.title(name), body };
 }
 
+const FALLBACK_NAMES: Record<string, string> = {
+  sv: "Någon",
+  en: "Someone",
+  de: "Jemand",
+  da: "Nogen",
+  fi: "Joku",
+  es: "Alguien",
+  fr: "Quelqu'un",
+};
+
+const IMAGE_LABELS: Record<string, string> = {
+  sv: "📎 Bild",
+  en: "📎 Photo",
+  de: "📎 Bild",
+  da: "📎 Billede",
+  fi: "📎 Kuva",
+  es: "📎 Foto",
+  fr: "📎 Photo",
+};
+
 function fallbackName(locale: string): string {
-  return locale === "sv" ? "Någon" : "Someone";
+  return FALLBACK_NAMES[locale] ?? FALLBACK_NAMES['en']!;
 }
 
 function base64url(input: ArrayBuffer | string): string {
@@ -237,9 +257,9 @@ export const Route = createFileRoute("/api/public/push")({
         await Promise.all(
           devices.map(async (device) => {
             const text = textFor(
-              device.locale ?? "sv",
+              device.locale ?? "en",
               payload.table,
-              profile?.name?.trim() || fallbackName(device.locale ?? "sv"),
+              profile?.name?.trim() || fallbackName(device.locale ?? "en"),
               messageBody,
               !!signedImageUrl,
             );

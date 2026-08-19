@@ -136,6 +136,6 @@ function safeLang(): string {
   try {
     return getLang();
   } catch {
-    return "sv";
+    return "en";
   }
 }
