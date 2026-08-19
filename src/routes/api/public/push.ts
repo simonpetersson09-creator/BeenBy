@@ -25,13 +25,55 @@ const TEXTS: Record<string, Record<string, { title: (n: string) => string; body?
     visits: { title: (n) => `${n} made a visit` },
     planned_visits: { title: (n) => `${n} planned a visit` },
   },
+  de: {
+    family_members: { title: (n) => `${n} ist der Familie beigetreten 🎉`, body: "Ihr seht ab jetzt eure Besuche direkt." },
+    messages: { title: (n) => `${n} hat im Chat geschrieben` },
+    visits: { title: (n) => `${n} war zu Besuch` },
+    planned_visits: { title: (n) => `${n} plant einen Besuch` },
+  },
+  da: {
+    family_members: { title: (n) => `${n} er kommet med i familien 🎉`, body: "I kan nu se hinandens besøg med det samme." },
+    messages: { title: (n) => `${n} skrev i chatten` },
+    visits: { title: (n) => `${n} har været på besøg` },
+    planned_visits: { title: (n) => `${n} planlægger et besøg` },
+  },
+  fi: {
+    family_members: { title: (n) => `${n} liittyi perheeseen 🎉`, body: "Näette nyt toistenne vierailut heti." },
+    messages: { title: (n) => `${n} kirjoitti chattiin` },
+    visits: { title: (n) => `${n} kävi vierailulla` },
+    planned_visits: { title: (n) => `${n} suunnittelee vierailua` },
+  },
+  es: {
+    family_members: { title: (n) => `${n} se ha unido a la familia 🎉`, body: "Ahora veréis las visitas de todos al instante." },
+    messages: { title: (n) => `${n} escribió en el chat` },
+    visits: { title: (n) => `${n} ha hecho una visita` },
+    planned_visits: { title: (n) => `${n} planea una visita` },
+  },
+  fr: {
+    family_members: { title: (n) => `${n} a rejoint la famille 🎉`, body: "Vous voyez maintenant les visites des uns des autres en direct." },
+    messages: { title: (n) => `${n} a écrit dans le chat` },
+    visits: { title: (n) => `${n} a rendu visite` },
+    planned_visits: { title: (n) => `${n} planifie une visite` },
+  },
 };
 
-function textFor(locale: string, table: string, name: string) {
+function textFor(locale: string, table: string, name: string, messageBody?: string, hasImage?: boolean) {
   const pack = TEXTS[locale] ?? TEXTS['en']!;
   const entry = pack[table] ?? TEXTS['en']![table];
   if (!entry) return null;
-  return { title: entry.title(name), body: entry.body ?? "" };
+  let body = entry.body ?? "";
+  if (table === "messages") {
+    if (messageBody && messageBody.trim().length > 0) {
+      body = messageBody.trim().slice(0, 120);
+    } else if (hasImage) {
+      body = "📎 Bild";
+    }
+  }
+  return { title: entry.title(name), body };
+}
+
+function fallbackName(locale: string): string {
+  return locale === "sv" ? "Någon" : "Someone";
 }
 
 function base64url(input: ArrayBuffer | string): string {
@@ -73,6 +115,32 @@ async function apnsToken(): Promise<string> {
     new TextEncoder().encode(`${header}.${claims}`),
   );
   return `${header}.${claims}.${base64url(sig)}`;
+}
+
+async function sendApns(
+  token: string,
+  host: string,
+  jwt: string,
+  topic: string,
+  body: string,
+): Promise<{ ok: boolean; status: number; body: string }> {
+  try {
+    const res = await fetch(`${host}/3/device/${token}`, {
+      method: "POST",
+      headers: {
+        authorization: `bearer ${jwt}`,
+        "apns-topic": topic,
+        "apns-push-type": "alert",
+        "apns-priority": "10",
+        "content-type": "application/json",
+      },
+      body,
+    });
+    const text = await res.text();
+    return { ok: res.ok, status: res.status, body: text };
+  } catch (err) {
+    return { ok: false, status: 0, body: String(err) };
+  }
 }
 
 export const Route = createFileRoute("/api/public/push")({
@@ -134,7 +202,6 @@ export const Route = createFileRoute("/api/public/push")({
           return new Response("no devices", { status: 200 });
         }
 
-        const name = profile?.name?.trim() || "Någon";
         let jwt: string;
         try {
           jwt = await apnsToken();
@@ -142,50 +209,81 @@ export const Route = createFileRoute("/api/public/push")({
           await log("jwt_error", String(err), { recipients: recipients.length, devices: devices.length });
           return new Response("jwt error", { status: 200 });
         }
-        const host =
-          process.env['APNS_ENV'] === "production"
-            ? "https://api.push.apple.com"
-            : "https://api.sandbox.push.apple.com";
+
+        const productionHost = "https://api.push.apple.com";
+        const sandboxHost = "https://api.sandbox.push.apple.com";
+        const env = process.env['APNS_ENV'];
+        const primaryHost = env === "sandbox" ? sandboxHost : productionHost;
+        const fallbackHost = env === "sandbox" ? productionHost : sandboxHost;
         const topic = process.env['APNS_BUNDLE_ID'] ?? "app.beenbys.mobile";
+
+        const messageBody = payload.table === "messages" ? (record['body'] as string | undefined) : undefined;
+        const imagePath = payload.table === "messages" ? (record['image_path'] as string | undefined) : undefined;
+        let signedImageUrl: string | undefined;
+        if (imagePath) {
+          try {
+            const { data } = await supabaseAdmin.storage
+              .from("chat-images")
+              .createSignedUrl(imagePath, 60 * 60 * 24 * 7);
+            signedImageUrl = data?.signedUrl;
+          } catch {
+            /* ignore image signing errors */
+          }
+        }
 
         const failures: string[] = [];
         let sent = 0;
 
         await Promise.all(
           devices.map(async (device) => {
-            const text = textFor(device.locale ?? "sv", payload.table, name);
+            const text = textFor(
+              device.locale ?? "sv",
+              payload.table,
+              profile?.name?.trim() || fallbackName(device.locale ?? "sv"),
+              messageBody,
+              !!signedImageUrl,
+            );
             if (!text) return;
-            try {
-              const res = await fetch(`${host}/3/device/${device.token}`, {
-                method: "POST",
-                headers: {
-                  authorization: `bearer ${jwt}`,
-                  "apns-topic": topic,
-                  "apns-push-type": "alert",
-                  "apns-priority": "10",
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  aps: {
-                    alert: { title: text.title, body: text.body },
-                    sound: "default",
-                    badge: 1,
-                  },
-                  type: payload.table,
-                }),
-              });
-              if (res.ok) {
+
+            const aps: Record<string, unknown> = {
+              alert: { title: text.title, body: text.body },
+              sound: "default",
+              badge: 1,
+            };
+            if (signedImageUrl) {
+              // Lets a Notification Service Extension on iOS replace the payload with the image.
+              aps["mutable-content"] = 1;
+            }
+
+            const pushBody = JSON.stringify({
+              aps,
+              type: payload.table,
+              circle_id: circleId,
+              ...(signedImageUrl ? { image: signedImageUrl } : {}),
+            });
+
+            const primary = await sendApns(device.token, primaryHost, jwt, topic, pushBody);
+            if (primary.ok) {
+              sent += 1;
+              return;
+            }
+
+            const isBadDevice = primary.status === 400 && primary.body.includes("BadDeviceToken");
+            if (isBadDevice) {
+              // A token is environment-specific; try the other APNs host before giving up.
+              const fallback = await sendApns(device.token, fallbackHost, jwt, topic, pushBody);
+              if (fallback.ok) {
                 sent += 1;
                 return;
               }
-              const body = await res.text();
-              failures.push(`${res.status}:${body}`);
-              // Apple returns 410 for tokens that are no longer valid.
-              if (res.status === 410 || (res.status === 400 && body.includes("BadDeviceToken"))) {
-                await supabaseAdmin.from("device_tokens").delete().eq("token", device.token);
-              }
-            } catch (err) {
-              failures.push(String(err));
+              failures.push(`${fallback.status}:${fallback.body}`);
+              return;
+            }
+
+            failures.push(`${primary.status}:${primary.body}`);
+            // Apple returns 410 for tokens that are no longer valid.
+            if (primary.status === 410) {
+              await supabaseAdmin.from("device_tokens").delete().eq("token", device.token);
             }
           }),
         );
