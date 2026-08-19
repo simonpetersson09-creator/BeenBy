@@ -13,8 +13,15 @@ export function getLastReadAt(circleId: string): string {
   return window.localStorage.getItem(key(circleId)) ?? new Date(0).toISOString();
 }
 
+/**
+ * `when` should be a server timestamp (a message's `created_at`) so the badge
+ * never depends on the device clock. Falls back to the device clock only when
+ * there are no messages at all. The stored value never moves backwards.
+ */
 export function markChatRead(circleId: string, when: string = new Date().toISOString()) {
   if (typeof window === "undefined") return;
+  const prev = window.localStorage.getItem(key(circleId));
+  if (prev && prev >= when) return;
   window.localStorage.setItem(key(circleId), when);
   window.dispatchEvent(new Event(EVENT));
 }

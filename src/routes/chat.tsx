@@ -124,15 +124,18 @@ function ChatPage() {
 
   // Everything visible here counts as read — but only while the app is
   // actually in the foreground, so background updates don't clear the badge.
+  // Use the newest message's server timestamp so the badge never depends on
+  // the device clock being in sync with the backend.
+  const newestAt = messages.length ? messages[messages.length - 1].created_at : undefined;
   useEffect(() => {
     if (!circleId) return;
     const mark = () => {
-      if (document.visibilityState === "visible") markChatRead(circleId);
+      if (document.visibilityState === "visible") markChatRead(circleId, newestAt);
     };
     mark();
     document.addEventListener("visibilitychange", mark);
     return () => document.removeEventListener("visibilitychange", mark);
-  }, [circleId, messages.length]);
+  }, [circleId, newestAt]);
 
   // Images live in a private bucket – sign the ones we need.
   useEffect(() => {
