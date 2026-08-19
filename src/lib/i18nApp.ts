@@ -261,7 +261,7 @@ const en: AppDict = {
   "home.legend.done": "Filled = visited",
   "home.legend.planned": "Dashed = planned",
   "home.legend.empty": "Empty = no visit",
-  "home.next": "Next visit:",
+  "home.next": "Next visit",
   "home.noPlanned": "No visit planned yet. Plan one – the others will see it right away.",
   "home.who": "Who's who",
   "home.you": "(you)",
