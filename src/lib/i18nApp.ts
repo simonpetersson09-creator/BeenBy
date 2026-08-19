@@ -867,7 +867,7 @@ const fi: AppDict = {
   "home.legend.done": "Täytetty = käyty",
   "home.legend.planned": "Katkoviiva = suunniteltu",
   "home.legend.empty": "Tyhjä = ei käyntiä",
-  "home.next": "Seuraava vierailu:",
+  "home.next": "Seuraava vierailu",
   "home.noPlanned": "Vierailua ei ole vielä suunniteltu. Suunnittele yksi – muut näkevät sen heti.",
   "home.who": "Kuka on kuka",
   "home.you": "(sinä)",
