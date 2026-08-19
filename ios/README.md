@@ -21,10 +21,16 @@ körning; iOS cachar launch screen-snapshoten.
 ## Kamera och bilder i chatten
 
 Chatten använder `@capacitor/camera`. Info.plist genereras av `npx cap add ios` och
-ligger inte i git, så kör en gång efter `npx cap sync ios`:
+ligger inte i git, så kör efter varje `npx cap sync ios`:
 
 ```bash
 npm run ios:plist
+```
+
+Eller allt i ett steg:
+
+```bash
+npm run ios:sync
 ```
 
 Det lägger in (idempotent):
@@ -34,8 +40,10 @@ Det lägger in (idempotent):
 - `CFBundleLocalizations` med `en, sv, de, da, fi, es, fr`
 - `ios/App/App/<språk>.lproj/InfoPlist.strings` med översatta behörighetstexter
 
-Första gången: dra in de sju `*.lproj`-mapparna i Xcode (App-target → Copy Bundle
-Resources) så att de översatta behörighetstexterna följer med i bygget.
+Samma kommando kör även `scripts/patch-ios-project.mjs`, som registrerar de sju
+`*.lproj/InfoPlist.strings` som en variantgrupp i `App.xcodeproj` och lägger den i
+App-targetens *Copy Bundle Resources* samt i `knownRegions`. Ingen manuell
+drag-and-drop i Xcode behövs. Skriptet är idempotent och kan köras om efter varje sync.
 
 `NSPhotoLibraryAddUsageDescription` behövs inte – appen sparar aldrig bilder tillbaka
 till telefonens bildbibliotek. Inga nya capabilities krävs i Xcode.
