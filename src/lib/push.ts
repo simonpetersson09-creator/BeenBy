@@ -9,8 +9,48 @@ import { isNativeRuntime } from "@/lib/native";
  *
  * No-op in the web preview — push requires the installed app.
  */
+const PUSH_PREF_KEY = "beenby.push.enabled";
+
+/** User preference for push notifications (defaults to on). */
+export function isPushEnabled(): boolean {
+  if (typeof localStorage === "undefined") return true;
+  return localStorage.getItem(PUSH_PREF_KEY) !== "off";
+}
+
+export async function setPushEnabled(next: boolean): Promise<void> {
+  try {
+    localStorage.setItem(PUSH_PREF_KEY, next ? "on" : "off");
+  } catch {
+    /* ignore */
+  }
+  if (next) {
+    await registerPushNotifications();
+  } else {
+    await unregisterPushNotifications();
+  }
+}
+
+/** Removes this device's tokens so the backend stops sending push. */
+export async function unregisterPushNotifications(): Promise<void> {
+  try {
+    const { data } = await supabase.auth.getUser();
+    const userId = data.user?.id;
+    if (userId) {
+      await supabase.from("device_tokens").delete().eq("user_id", userId);
+    }
+    if (isNativeRuntime()) {
+      const { PushNotifications } = await import("@capacitor/push-notifications");
+      await PushNotifications.removeAllListeners();
+      await PushNotifications.removeAllDeliveredNotifications();
+    }
+  } catch (err) {
+    console.error("push unregister failed", err);
+  }
+}
+
 export async function registerPushNotifications(): Promise<void> {
   if (!isNativeRuntime()) return;
+  if (!isPushEnabled()) return;
   try {
     const { PushNotifications } = await import("@capacitor/push-notifications");
 
