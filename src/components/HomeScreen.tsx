@@ -434,7 +434,7 @@ export function HomeScreen({
               : t("home.trialLeft", { n: String(trialDaysLeft) })}
           </span>
         ) : null}
-        <h2 className="mb-3 text-center text-base leading-tight text-primary">{t("home.overview")}</h2>
+        <h2 className="mb-3 text-center text-lg leading-tight text-primary">{t("home.overview")}</h2>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
       </section>
 
