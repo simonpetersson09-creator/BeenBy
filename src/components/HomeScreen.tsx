@@ -28,6 +28,8 @@ import { useGeofenceSync } from "@/hooks/useGeofenceSync";
 import { useOnlineStatus } from "@/hooks/useSession";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { supabase } from "@/integrations/supabase/client";
+import { ActivityPicker } from "@/components/ActivityPicker";
+import { activitySummary, type ActivityId } from "@/lib/activities";
 import { addDays, relativeLabel, todayKey } from "@/lib/dates";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { getPending, type PendingVisit } from "@/lib/offline";
@@ -69,6 +71,13 @@ export function HomeScreen({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmSecond, setConfirmSecond] = useState(false);
   const [confirmVisit, setConfirmVisit] = useState(false);
+  // Optional activities for the visit being registered / planned.
+  const [acts, setActs] = useState<ActivityId[]>([]);
+  const [actNote, setActNote] = useState("");
+  const resetActs = () => {
+    setActs([]);
+    setActNote("");
+  };
   const unread = useUnreadMessages(circle.id, userId);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
@@ -193,8 +202,11 @@ export function HomeScreen({
       userId,
       timezone: tz,
       source,
+      activities: acts,
+      activityNote: acts.includes("other") ? actNote.trim() || null : null,
     });
     setBusy(false);
+    resetActs();
 
     if (result.status === "queued") {
       if (result.reason === "offline") {
@@ -232,10 +244,12 @@ export function HomeScreen({
       return;
     }
     if (myVisitToday) {
+      resetActs();
       setConfirmSecond(true);
       return;
     }
     // Always ask once more so a visit is never registered by mistake.
+    resetActs();
     setConfirmVisit(true);
   }
 
@@ -247,11 +261,14 @@ export function HomeScreen({
       person_id: person.id,
       user_id: userId,
       planned_date: date,
+      activities: acts,
+      activity_note: acts.includes("other") ? actNote.trim() || null : null,
     });
     if (error) {
       toast.error(t("toast.planError"));
       return;
     }
+    resetActs();
     refresh();
     toast.success(t("toast.planned", { when: relativeLabel(date, tz).toLowerCase() }));
   }
@@ -264,6 +281,8 @@ export function HomeScreen({
       timezone: tz,
       source: "confirmed_planned_visit",
       localDay: p.planned_date,
+      activities: p.activities ?? [],
+      activityNote: p.activity_note ?? null,
     });
     await supabase.from("planned_visits").update({ status: "completed" }).eq("id", p.id);
     setSelectedDay(null);
@@ -447,6 +466,11 @@ export function HomeScreen({
                 {members.find((m) => m.user_id === nextPlanned.user_id)?.name ?? t("member.fallback")}
               </span>{" "}
               {relativeLabel(nextPlanned.planned_date, tz).toLowerCase()}
+              {activitySummary(nextPlanned.activities, t, nextPlanned.activity_note) ? (
+                <span className="block text-[0.68rem] text-muted-foreground">
+                  {activitySummary(nextPlanned.activities, t, nextPlanned.activity_note)}
+                </span>
+              ) : null}
             </span>
           </p>
         ) : (
@@ -511,7 +535,14 @@ export function HomeScreen({
         <div className="mt-2 flex gap-2">
           <Button
             className="h-12 flex-1 rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
-            onClick={() => (locked ? setPaywallOpen(true) : setPlanOpen(true))}
+            onClick={() => {
+              if (locked) {
+                setPaywallOpen(true);
+                return;
+              }
+              resetActs();
+              setPlanOpen(true);
+            }}
             aria-label={locked ? t("access.locked") : undefined}
           >
             {locked ? <Lock className="size-4" /> : <Plus className="size-4" />} {t("home.plan")}
@@ -578,6 +609,7 @@ export function HomeScreen({
             <DialogTitle className="text-xl">{t("home.planTitle")}</DialogTitle>
             <DialogDescription>{t("home.planDesc")}</DialogDescription>
           </DialogHeader>
+          <ActivityPicker selected={acts} onChange={setActs} note={actNote} onNoteChange={setActNote} />
           <div className="grid grid-cols-2 gap-2">
             {planDates.slice(0, 6).map((d) => (
               <button
@@ -676,6 +708,7 @@ export function HomeScreen({
               {t("home.confirmDesc", { name: pl(person?.name) || circle.name })}
             </DialogDescription>
           </DialogHeader>
+          <ActivityPicker selected={acts} onChange={setActs} note={actNote} onNoteChange={setActNote} />
           <div className="flex gap-2">
             <Button
               variant="secondary"
