@@ -56,12 +56,7 @@ function WelcomePage() {
   return (
     <main className="mx-auto flex h-dvh w-full max-w-md flex-col justify-center gap-5 overflow-hidden px-6 pt-8 pb-12">
       <div className="animate-rise-in space-y-3">
-        <div className="flex flex-wrap items-baseline gap-2">
-          <h1 className="text-3xl leading-tight text-primary">{t("welcome.title")}</h1>
-          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            {t("welcome.trial")}
-          </span>
-        </div>
+        <h1 className="text-3xl leading-tight text-primary">{t("welcome.title")}</h1>
         <p className="text-base text-muted-foreground">{t("welcome.sub")}</p>
       </div>
 
@@ -74,7 +69,7 @@ function WelcomePage() {
         ))}
       </ul>
 
-      <div className="relative mt-6 flex items-center gap-2 pt-4">
+      <div className="relative mt-6 flex flex-col gap-3 pt-4">
         {showHint ? (
           <button
             type="button"
@@ -85,15 +80,20 @@ function WelcomePage() {
             <span className="absolute top-full right-5 -mt-1 size-2.5 rotate-45 rounded-[2px] bg-primary" />
           </button>
         ) : null}
-        <Button
-          className="h-12 flex-1 rounded-2xl text-sm"
-          onClick={() => void navigate({ to: "/start/vem" })}
-        >
-          {t("welcome.cta")} <ArrowRight className="size-4" />
-        </Button>
-        <span onClick={dismissHint}>
-          <LanguageSwitcher round />
+        <span className="self-center rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
+          {t("welcome.trial")}
         </span>
+        <div className="flex items-center gap-2">
+          <Button
+            className="h-12 flex-1 rounded-2xl text-sm"
+            onClick={() => void navigate({ to: "/start/vem" })}
+          >
+            {t("welcome.cta")} <ArrowRight className="size-4" />
+          </Button>
+          <span onClick={dismissHint}>
+            <LanguageSwitcher round />
+          </span>
+        </div>
       </div>
     </main>
   );
