@@ -15,6 +15,7 @@
  * the build fails with:
  *   Missing "#tanstack-start-entry" specifier in "@tanstack/start-server-core"
  */
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
@@ -90,7 +91,7 @@ export default defineConfig({
   base: "./",
   publicDir: fileURLToPath(new URL("./public", import.meta.url)),
   envDir: projectRoot,
-  plugins: [stubServerRoutes(), tsconfigPaths({ root: projectRoot }), react(), tailwindcss()],
+  plugins: [stubServerRoutes(), stubServerModules(), tsconfigPaths({ root: projectRoot }), react(), tailwindcss()],
   resolve: {
     alias: [
       {
