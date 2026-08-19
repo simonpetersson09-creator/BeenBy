@@ -13,7 +13,7 @@
 import { useSyncExternalStore } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
-import { claimTrialAnchor, getEntitlement, submitTransaction } from "@/lib/premium.functions";
+import { fetchEntitlement, sendTransaction, sendTrialAnchor } from "@/lib/premiumApi";
 import {
   getSubscriptionStatus,
   getPremiumPrice,
@@ -124,9 +124,9 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
       const { data: sessionData } = await supabase.auth.getSession();
       if (sessionData.session?.user.id) {
         if (status.jws) {
-          verified = await submitTransaction({ data: { jws: status.jws } });
+          verified = await sendTransaction({ jws: status.jws });
         } else {
-          verified = await getEntitlement();
+          verified = await fetchEntitlement();
         }
       }
     } catch (error) {
@@ -189,7 +189,7 @@ export async function refreshTrialStatus(): Promise<PremiumState> {
       const anchor = await getDeviceAnchor();
       if (anchor) {
         try {
-          await claimTrialAnchor({ data: { anchor } });
+          await sendTrialAnchor(anchor);
         } catch (err) {
           console.warn("[premium] trial anchor failed", err);
         }
@@ -233,7 +233,7 @@ export async function purchasePremium(): Promise<PurchaseResult> {
   // verified state. The purchase result alone never unlocks anything.
   if (result.jws && userId) {
     try {
-      await submitTransaction({ data: { jws: result.jws } });
+      await sendTransaction(result.jws);
     } catch (error) {
       console.warn("[premium] could not submit transaction", error);
     }

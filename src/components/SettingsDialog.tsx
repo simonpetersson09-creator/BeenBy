@@ -41,7 +41,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { deleteAccount, leaveFamilyCircle } from "@/lib/account.functions";
+import { deleteMyAccount, leaveFamily } from "@/lib/accountApi";
 import { stopAllBeenbyGeofences, type GeofenceBlockReason } from "@/lib/geofenceSync";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { PRIVACY_POLICY_URL, TERMS_URL, openExternal } from "@/lib/legal";
@@ -160,7 +160,7 @@ export function SettingsDialog({
     setLeaving(true);
     setLeaveOpen(false);
     try {
-      const result = await leaveFamilyCircle({ data: { circleId } });
+      const result = await leaveFamily(circleId);
       if (!result.ok) {
         toast.error(t("leave.failed"));
         setLeaving(false);
@@ -184,7 +184,7 @@ export function SettingsDialog({
     setDeleting(true);
     setDeleteOpen(false);
     try {
-      const result = await deleteAccount();
+      const result = await deleteMyAccount();
       if (!result.ok) {
         toast.error(t("delete.failed"));
         setDeleting(false);
