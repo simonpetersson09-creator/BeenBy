@@ -566,11 +566,11 @@ export const LOCALES: Record<Lang, string> = {
 };
 
 export function localeOf(lang: Lang = getLang()): string {
-  return LOCALES[lang] ?? "sv-SE";
+  return LOCALES[lang] ?? "en-GB";
 }
 
 export function translate(lang: Lang, key: string, vars?: Record<string, string>): string {
-  const raw = dicts[lang]?.[key] ?? sv[key] ?? key;
+  const raw = dicts[lang]?.[key] ?? en[key] ?? sv[key] ?? key;
   if (!vars) return raw;
   return Object.entries(vars).reduce((acc, [k, v]) => acc.replaceAll(`{${k}}`, v), raw);
 }
