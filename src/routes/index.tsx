@@ -118,7 +118,7 @@ function Index() {
 
   if (loading || !user || isLoading || recovering || !data) {
     return (
-      <div className="flex min-h-dvh items-center justify-center">
+      <div className="flex h-dvh items-center justify-center">
         <Loader2 className="size-6 animate-spin text-muted-foreground" />
       </div>
     );
