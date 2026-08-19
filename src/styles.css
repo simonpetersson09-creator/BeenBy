@@ -161,7 +161,19 @@
 
   body > div:first-child {
     background-color: transparent;
-    min-height: 100dvh;
+    min-height: var(--app-height, 100dvh);
+  }
+
+  /*
+   * iOS resume kan ge en felaktig dvh-mätning. --app-height sätts från
+   * visualViewport (se lib/viewportStability.ts) och vinner när den finns.
+   */
+  .h-dvh {
+    height: var(--app-height, 100dvh);
+  }
+
+  .min-h-dvh {
+    min-height: var(--app-height, 100dvh);
   }
 
 

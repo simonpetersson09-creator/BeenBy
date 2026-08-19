@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { startPremiumLifecycle } from "../lib/premiumStore";
 import { IS_NATIVE_SPA } from "../lib/runtime";
 import { initLanguageDetection, useT } from "../lib/i18n";
+import { startViewportStability } from "../lib/viewportStability";
 
 function NotFoundComponent() {
   const t = useT();
@@ -141,6 +142,10 @@ function RootComponent() {
 
   // Verifies Premium with StoreKit at app start and on every foreground resume.
   useEffect(() => startPremiumLifecycle(), []);
+
+  // iOS can restore the webview with a stale scroll offset after a resume,
+  // which pushes every page (and the back buttons) up under the status bar.
+  useEffect(() => startViewportStability(), []);
 
   // Native iOS reports the real system locale only through Capacitor Device.
   useEffect(() => {
