@@ -1,0 +1,1 @@
+var e=e=>{throw Error(`[beenby] src/lib/account.functions.ts:`+e+` is server-only and is not available in the native app`)},t=(...t)=>e(`deleteAccount`);export{t as deleteAccount};
