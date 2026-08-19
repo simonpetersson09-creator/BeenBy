@@ -472,27 +472,27 @@ export function HomeScreen({
         )}
       </section>
 
-      <section className="mt-3 rounded-2xl border border-primary/30 px-4 py-3">
-        <p className="mb-2.5 text-[0.62rem] font-medium uppercase tracking-[0.2em] text-primary/60">
+      <section className="mt-2 rounded-2xl border border-primary/30 px-3 py-2">
+        <p className="mb-1.5 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-primary/60">
           {t("home.who")}
         </p>
-        <ul className="flex flex-wrap gap-2">
+        <ul className="flex flex-wrap gap-1.5">
           {members.map((m) => {
             const hex = colorById(m.personal_color).hex;
             const isMe = m.user_id === userId;
             return (
               <li
                 key={m.id}
-                className="flex items-center gap-2 rounded-full border py-1 pl-1 pr-3"
+                className="flex items-center gap-1.5 rounded-full border py-0.5 pl-0.5 pr-2.5"
                 style={{ borderColor: hex, backgroundColor: `${hex}1f` }}
               >
                 <span
-                  className="flex size-6 items-center justify-center rounded-full text-[0.62rem] font-semibold text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+                  className="flex size-5 items-center justify-center rounded-full text-[0.55rem] font-semibold text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
                   style={{ backgroundColor: hex }}
                 >
                   {m.name.trim().charAt(0).toUpperCase()}
                 </span>
-                <span className="text-xs font-medium leading-tight">
+                <span className="text-[0.7rem] font-medium leading-tight">
                   {m.name}
                   {isMe ? (
                     <span className="ml-1 font-normal text-muted-foreground">{t("home.you")}</span>
@@ -504,16 +504,11 @@ export function HomeScreen({
         </ul>
       </section>
 
-
-
-
-
-
-      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-6">
+      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-4 pb-6 pt-4">
         <Button
           onClick={handleImHere}
           disabled={busy || !person}
-          className="h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
+          className="h-11 w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
         >
           {busy ? (
             <Loader2 className="size-4 animate-spin" />
@@ -526,7 +521,7 @@ export function HomeScreen({
         </Button>
         <div className="mt-2 flex gap-2">
           <Button
-            className="h-12 flex-1 rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
+            className="h-11 flex-1 rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
             onClick={() => {
               if (locked) {
                 setPaywallOpen(true);
@@ -544,7 +539,7 @@ export function HomeScreen({
             <Button
               aria-label={t("access.locked")}
               onClick={() => setPaywallOpen(true)}
-              className="relative size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+              className="relative size-11 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
             >
               <MessageCircle className="size-5" />
               <Lock className="absolute -right-0.5 -top-0.5 size-3.5 rounded-full bg-primary p-0.5 text-primary-foreground" />
@@ -557,7 +552,7 @@ export function HomeScreen({
                   ? `${t("home.chatAria")} – ${t("home.unread", { n: String(unread) })}`
                   : t("home.chatAria")
               }
-              className="relative size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+              className="relative size-11 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
             >
               <Link to="/chat">
                 <MessageCircle className="size-5" />
@@ -569,10 +564,7 @@ export function HomeScreen({
               </Link>
             </Button>
           )}
-
         </div>
-
-
       </div>
 
       <DayDetail
