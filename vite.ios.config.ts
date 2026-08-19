@@ -30,7 +30,7 @@ function stubServerRoutes() {
     enforce: "pre" as const,
     load(id: string) {
       const file = id.split("?")[0] ?? id;
-      if (!file.startsWith(apiRoutesDir) || !/\.tsx?$/.test(file)) return null;
+      console.log("LOAD", file); if (!file.startsWith(apiRoutesDir) || !/\.tsx?$/.test(file)) return null;
       const routePath = `/${file.slice(apiRoutesDir.length).replace(/\.tsx?$/, "")}`;
       return [
         `import { createFileRoute } from "@tanstack/react-router";`,
