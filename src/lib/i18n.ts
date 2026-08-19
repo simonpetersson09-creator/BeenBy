@@ -18,13 +18,36 @@ const STORAGE_KEY = "beenby.lang";
 const listeners = new Set<() => void>();
 let current: Lang | null = null;
 
+/** "de-DE" / "en_GB" / "DE" → base language when it is supported. */
+function normalizeTag(tag: string | null | undefined): Lang | null {
+  const code = tag?.split(/[-_]/)[0]?.trim().toLowerCase();
+  if (!code) return null;
+  return LANGUAGES.find((l) => l.code === code)?.code ?? null;
+}
+
+/** A manual choice always wins over any automatic detection. */
+function storedLang(): Lang | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return normalizeTag(window.localStorage.getItem(STORAGE_KEY));
+  } catch {
+    return null;
+  }
+}
+
+/** Browser/WKWebView preference list, most-preferred first. */
+function navigatorLang(): Lang | null {
+  if (typeof navigator === "undefined") return null;
+  const tags = [...(navigator.languages ?? []), navigator.language];
+  for (const tag of tags) {
+    const match = normalizeTag(tag);
+    if (match) return match;
+  }
+  return null;
+}
+
 function detect(): Lang {
-  if (typeof window === "undefined") return "sv";
-  const stored = window.localStorage.getItem(STORAGE_KEY) as Lang | null;
-  if (stored && LANGUAGES.some((l) => l.code === stored)) return stored;
-  const nav = window.navigator.language?.slice(0, 2).toLowerCase();
-  const match = LANGUAGES.find((l) => l.code === nav);
-  return match ? match.code : "sv";
+  return storedLang() ?? navigatorLang() ?? "en";
 }
 
 export function getLang(): Lang {
@@ -41,6 +64,28 @@ export function setLang(next: Lang) {
   listeners.forEach((l) => l());
 }
 
+/**
+ * Native iOS: WKWebView's navigator.language reports the app bundle's
+ * localization, not the phone's. Capacitor Device.getLanguageTag() reads the
+ * real system locale, so we re-detect once at startup — but never override a
+ * language the user picked manually.
+ */
+export async function initLanguageDetection(): Promise<void> {
+  if (typeof window === "undefined") return;
+  if (storedLang()) return;
+  try {
+    const { Device } = await import("@capacitor/device");
+    const { value } = await Device.getLanguageTag();
+    const match = normalizeTag(value);
+    if (!match || storedLang() || match === getLang()) return;
+    current = match;
+    document.documentElement.lang = match;
+    listeners.forEach((l) => l());
+  } catch {
+    /* Device plugin unavailable (web): navigator detection already applied. */
+  }
+}
+
 function subscribe(cb: () => void) {
   listeners.add(cb);
   return () => listeners.delete(cb);
@@ -50,7 +95,7 @@ export function useLang(): Lang {
   return useSyncExternalStore(
     subscribe,
     () => getLang(),
-    () => "sv" as Lang,
+    () => "en" as Lang,
   );
 }
 
