@@ -51,18 +51,14 @@ function recalledToken(): string | null {
   }
 }
 
-/** Removes this device's token so the backend stops sending push here. */
+/** Removes THIS device's token so the backend stops sending push here. */
 export async function unregisterPushNotifications(): Promise<void> {
   try {
     const token = recalledToken();
     if (token) {
+      // Only ever this device. Deleting by user_id would silently turn off
+      // notifications on the user's other phones and tablets too.
       await supabase.from("device_tokens").delete().eq("token", token);
-    } else {
-      const { data } = await supabase.auth.getUser();
-      const userId = data.user?.id;
-      if (userId) {
-        await supabase.from("device_tokens").delete().eq("user_id", userId);
-      }
     }
     rememberToken(null);
     if (isNativeRuntime()) {
@@ -74,6 +70,7 @@ export async function unregisterPushNotifications(): Promise<void> {
     console.error("push unregister failed", err);
   }
 }
+
 
 export async function registerPushNotifications(): Promise<void> {
   if (!isNativeRuntime()) return;
