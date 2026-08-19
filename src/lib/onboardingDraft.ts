@@ -9,6 +9,7 @@ export type OnboardingDraft = {
   resolvedAddress: string | null;
   lat: number | null;
   lng: number | null;
+  visitNotifications: boolean;
   color: string;
   familyCode: string;
 };
@@ -22,6 +23,7 @@ export const emptyDraft: OnboardingDraft = {
   resolvedAddress: null,
   lat: null,
   lng: null,
+  visitNotifications: false,
   color: "blue",
   familyCode: "",
 };
