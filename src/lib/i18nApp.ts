@@ -73,7 +73,7 @@ const sv: AppDict = {
   "home.familyCode": "Familjekod: {code}",
   "home.visitsCount": "{n} besök",
   "home.inviteBtn": "Bjud in någon",
-  "home.inviteSiblings": "Bjud in syskon",
+  "home.inviteSiblings": "Bjud in\nsyskon",
   "home.dupTitle": "Du har redan registrerat idag",
   "home.dupDesc": "Vill du registrera ytterligare ett besök hos {name} idag?",
   "home.dupYes": "Ja, registrera",
