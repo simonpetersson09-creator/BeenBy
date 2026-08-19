@@ -540,6 +540,7 @@ export function HomeScreen({
                 return;
               }
               resetActs();
+              setPlanDate(null);
               setPlanOpen(true);
             }}
             aria-label={locked ? t("access.locked") : undefined}
