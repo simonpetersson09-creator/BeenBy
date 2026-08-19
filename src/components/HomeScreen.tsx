@@ -268,9 +268,12 @@ export function HomeScreen({
     });
     if (error) {
       toast.error(t("toast.planError"));
+      resetActs();
+      setPlanDate(null);
       return;
     }
     resetActs();
+    setPlanDate(null);
     refresh();
     toast.success(t("toast.planned", { when: relativeLabel(date, tz).toLowerCase() }));
   }
@@ -606,7 +609,11 @@ export function HomeScreen({
         open={planOpen}
         onOpenChange={(o) => {
           setPlanOpen(o);
-          if (!o) setPlanCalendarOpen(false);
+          if (!o) {
+            setPlanCalendarOpen(false);
+            setPlanDate(null);
+            resetActs();
+          }
         }}
       >
         <DialogContent className="gap-3 rounded-3xl p-4 sm:max-w-md">

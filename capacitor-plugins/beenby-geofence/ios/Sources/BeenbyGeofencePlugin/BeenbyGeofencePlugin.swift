@@ -100,13 +100,13 @@ public class BeenbyGeofencePlugin: CAPPlugin, CAPBridgedPlugin {
         let radius = call.getDouble("radius") ?? 200
 
         // Persist non-secret region metadata so a background/terminated launch
-        // can build the notification text without running any JS.
-        if let parsed = BeenbyArrivalNotifications.shared.regionMeta(for: identifier) {
-            arrivals.saveRegionMeta(identifier: identifier,
-                                    familyCircleId: call.getString("familyCircleId") ?? parsed.familyCircleId,
-                                    personId: call.getString("personId") ?? parsed.personId,
-                                    personName: call.getString("personName") ?? parsed.personName)
-        }
+        // can build the notification text without running any JS. Always save —
+        // falling back to any previously stored values for missing fields.
+        let existing = arrivals.regionMeta(for: identifier)
+        arrivals.saveRegionMeta(identifier: identifier,
+                                familyCircleId: call.getString("familyCircleId") ?? existing?.familyCircleId,
+                                personId: call.getString("personId") ?? existing?.personId,
+                                personName: call.getString("personName") ?? existing?.personName)
 
         switch geofence.startMonitoring(identifier: identifier,
                                         latitude: latitude,
