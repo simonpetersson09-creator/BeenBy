@@ -87,6 +87,26 @@ export function HomeScreen({
   const { hasAccess, isPremium, isTrialActive, trialDaysLeft } = useAccess();
   const locked = !hasAccess;
 
+  // iOS may suspend while a modal is closing or an action is awaiting the
+  // network. Clear transient UI on resume so no invisible layer or stale busy
+  // state can keep intercepting taps.
+  useEffect(() => {
+    const resetTransientUi = () => {
+      setSelectedDay(null);
+      setPlanOpen(false);
+      setFamilyOpen(false);
+      setSettingsOpen(false);
+      setConfirmSecond(false);
+      setConfirmVisit(false);
+      setPlanCalendarOpen(false);
+      setInviteOpen(false);
+      setPaywallOpen(false);
+      setBusy(false);
+    };
+    window.addEventListener("beenby:resume", resetTransientUi);
+    return () => window.removeEventListener("beenby:resume", resetTransientUi);
+  }, []);
+
   // Arrival reminder (geofence): keeps the native region in sync with the
   // saved preference, access and the person's coordinates.
   const geofence = useGeofenceSync({ circleId: circle.id, userId, person, hasAccess });
@@ -198,46 +218,50 @@ export function HomeScreen({
     if (!person) return;
     if (busy) return;
     setBusy(true);
-    const result = await recordVisit({
-      familyCircleId: circle.id,
-      personId: person.id,
-      userId,
-      timezone: tz,
-      source,
-      activities: acts,
-      activityNote: acts.includes("other") ? actNote.trim() || null : null,
-    });
-    setBusy(false);
-    resetActs();
+    try {
+      const result = await recordVisit({
+        familyCircleId: circle.id,
+        personId: person.id,
+        userId,
+        timezone: tz,
+        source,
+        activities: acts,
+        activityNote: acts.includes("other") ? actNote.trim() || null : null,
+      });
+      resetActs();
 
-    if (result.status === "queued") {
-      if (result.reason === "offline") {
-        toast.message(t("toast.savedLocal"), {
-          description: t("toast.savedLocalDesc"),
-        });
-      } else {
-        toast.message(t("toast.offline"), { description: t("toast.offlineDesc") });
+      if (result.status === "queued") {
+        if (result.reason === "offline") {
+          toast.message(t("toast.savedLocal"), {
+            description: t("toast.savedLocalDesc"),
+          });
+        } else {
+          toast.message(t("toast.offline"), {
+            description: t("toast.offlineDesc") },
+          );
+        }
+        return;
       }
-      return;
+
+      if (result.status === "duplicate") return;
+
+      const visitId = result.visitId;
+      refresh();
+      toast.success(t("toast.visitSaved"), {
+        duration: 6000,
+        action: visitId
+          ? {
+              label: t("toast.undo"),
+              onClick: async () => {
+                await deleteVisit(visitId);
+                refresh();
+              },
+            }
+          : undefined,
+      });
+    } finally {
+      setBusy(false);
     }
-
-    if (result.status === "duplicate") return; // duplicate double-tap, nothing to do
-
-    const visitId = result.visitId;
-    refresh();
-    toast.success(t("toast.visitSaved"), {
-      duration: 6000,
-      action: visitId
-        ? {
-            label: t("toast.undo"),
-            onClick: async () => {
-              await deleteVisit(visitId);
-              refresh();
-            },
-          }
-        : undefined,
-    });
-  }
 
 
   function handleImHere() {
@@ -519,7 +543,7 @@ export function HomeScreen({
 
 
 
-      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-6">
+      <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-6">
         <Button
           onClick={handleImHere}
           disabled={busy || !person}

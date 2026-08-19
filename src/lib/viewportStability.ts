@@ -32,17 +32,35 @@ function syncHeight() {
   if (h > 0) document.documentElement.style.setProperty("--app-height", `${Math.round(h)}px`);
 }
 
+/**
+ * Radix locks body interaction while a modal is open. WKWebView can suspend in
+ * the middle of its close animation and preserve that inline lock even though
+ * the portal is gone, making the whole app look tappable while swallowing taps.
+ */
+function repairInteractionLock() {
+  const modalOpen = document.querySelector(
+    '[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"]',
+  );
+  if (modalOpen) return;
+  document.body.style.removeProperty("pointer-events");
+  document.body.removeAttribute("data-scroll-locked");
+}
+
 function stabilise() {
   resetViewport();
   syncHeight();
+  repairInteractionLock();
   // A second pass after the browser has settled its own restore work.
   requestAnimationFrame(() => {
     resetViewport();
     syncHeight();
+    repairInteractionLock();
   });
   window.setTimeout(() => {
     resetViewport();
     syncHeight();
+    repairInteractionLock();
+    window.dispatchEvent(new Event("beenby:resume"));
   }, 250);
 }
 

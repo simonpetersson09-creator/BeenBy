@@ -149,6 +149,12 @@
     overscroll-behavior: none;
   }
 
+  button,
+  a,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+
   /* Täcker hela viewporten (inkl. safe areas och överscroll) med appens färg */
   html::before {
     content: "";

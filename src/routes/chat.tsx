@@ -88,6 +88,18 @@ function ChatPage() {
   const [paywallOpen, setPaywallOpen] = useState(false);
   const locked = !hasAccess;
 
+  useEffect(() => {
+    const resetTransientUi = () => {
+      setSending(false);
+      setUploading(false);
+      setPreparing(false);
+      setSourceOpen(false);
+      setPaywallOpen(false);
+    };
+    window.addEventListener("beenby:resume", resetTransientUi);
+    return () => window.removeEventListener("beenby:resume", resetTransientUi);
+  }, []);
+
   const circleId = data?.circle.id;
 
   useEffect(() => {
@@ -394,7 +406,7 @@ function ChatPage() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-5">
+      <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-5">
         {pending ? (
           <div className="mb-3 flex items-center gap-3 rounded-2xl border border-primary/10 bg-card p-2 shadow-soft">
             <img

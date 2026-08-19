@@ -32,35 +32,41 @@ export function Paywall({
   async function handlePurchase() {
     if (purchasing) return;
     setPurchasing(true);
-    const result = await purchasePremium();
-    const snapshot = getPremiumState();
-    if (result.outcome === "success" && !snapshot.isPremium && snapshot.verifyError) {
-      toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
-    } else if (result.outcome === "success") {
-      toast.success(t("settings.restored"));
-      onOpenChange(false);
-    } else if (result.outcome === "cancelled") {
-      toast.message(t("settings.noPurchase"));
-    } else {
-      toast.message(t("settings.soon"), { description: t("settings.soonDesc") });
+    try {
+      const result = await purchasePremium();
+      const snapshot = getPremiumState();
+      if (result.outcome === "success" && !snapshot.isPremium && snapshot.verifyError) {
+        toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+      } else if (result.outcome === "success") {
+        toast.success(t("settings.restored"));
+        onOpenChange(false);
+      } else if (result.outcome === "cancelled") {
+        toast.message(t("settings.noPurchase"));
+      } else {
+        toast.message(t("settings.soon"), { description: t("settings.soonDesc") });
+      }
+    } finally {
+      setPurchasing(false);
     }
-    setPurchasing(false);
   }
 
   async function handleRestore() {
     if (restoring) return;
     setRestoring(true);
-    const result = await restorePurchases();
-    const snapshot = getPremiumState();
-    if (result.restored && !snapshot.isPremium && snapshot.verifyError) {
-      toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
-    } else if (result.restored) {
-      toast.success(t("settings.restored"));
-      onOpenChange(false);
-    } else {
-      toast.message(t("settings.noPurchase"), { description: t("settings.noPurchaseDesc") });
+    try {
+      const result = await restorePurchases();
+      const snapshot = getPremiumState();
+      if (result.restored && !snapshot.isPremium && snapshot.verifyError) {
+        toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+      } else if (result.restored) {
+        toast.success(t("settings.restored"));
+        onOpenChange(false);
+      } else {
+        toast.message(t("settings.noPurchase"), { description: t("settings.noPurchaseDesc") });
+      }
+    } finally {
+      setRestoring(false);
     }
-    setRestoring(false);
   }
 
   return (
