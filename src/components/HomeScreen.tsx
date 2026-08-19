@@ -30,7 +30,7 @@ import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { supabase } from "@/integrations/supabase/client";
 import { ActivityPicker } from "@/components/ActivityPicker";
 import { activitySummary, type ActivityId } from "@/lib/activities";
-import { addDays, relativeLabel, todayKey } from "@/lib/dates";
+import { addDays, parseKey, relativeLabel, todayKey } from "@/lib/dates";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { getPending, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
