@@ -32,7 +32,7 @@ export function StartShell({
 
   if (loading || !user || !draft) {
     return (
-      <div className="flex min-h-dvh items-center justify-center">
+      <div className="flex h-dvh items-center justify-center">
         <Loader2 className="size-6 animate-spin text-muted-foreground" />
       </div>
     );
@@ -40,7 +40,7 @@ export function StartShell({
 
   return (
     <main
-      className="mx-auto flex h-dvh w-full max-w-md flex-col overflow-y-auto px-6 pb-8"
+      className="app-scroll mx-auto flex h-dvh w-full max-w-md flex-col px-6 pb-8"
       style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)" }}
     >
       {onBack ? (
