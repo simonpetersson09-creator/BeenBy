@@ -271,3 +271,9 @@
     display: none;
   }
 }
+
+/* Scrollbar endast när innehållet faktiskt inte får plats. */
+@utility app-scroll {
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
