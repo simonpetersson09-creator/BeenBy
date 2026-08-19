@@ -13,11 +13,13 @@ export function ActivityPicker({
   onChange,
   note,
   onNoteChange,
+  compact,
 }: {
   selected: ActivityId[];
   onChange: (next: ActivityId[]) => void;
   note: string;
   onNoteChange: (next: string) => void;
+  compact?: boolean;
 }) {
   const t = useT();
 
