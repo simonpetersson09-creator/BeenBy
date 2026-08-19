@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { KeyRound, Loader2, MapPin, Palette, RotateCcw, Sparkles, User, Users } from "lucide-react";
+import { Bell, KeyRound, Loader2, MapPin, Palette, RotateCcw, Sparkles, User, Users } from "lucide-react";
 import { toast } from "sonner";
 
 import { AddressEditor, type EditablePerson } from "@/components/AddressEditor";
 import { ColorPicker } from "@/components/ColorPicker";
 import { GeofenceSetting } from "@/components/GeofenceSetting";
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
+import { Switch } from "@/components/ui/switch";
+import { isPushEnabled, setPushEnabled } from "@/lib/push";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -281,6 +283,26 @@ export function SettingsDialog({
         </section>
 
 
+
+        <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-3">
+          <div className="space-y-1">
+            <p className="flex items-center gap-2 text-sm font-medium">
+              <Bell className="size-4" /> {t("settings.pushTitle")}
+            </p>
+            <p className="text-xs text-muted-foreground">{t("settings.pushHint")}</p>
+            <p className="text-xs text-muted-foreground">
+              {pushOn ? t("settings.pushOn") : t("settings.pushOff")}
+            </p>
+          </div>
+          <Switch
+            checked={pushOn}
+            aria-label={t("settings.pushTitle")}
+            onCheckedChange={(next) => {
+              setPushOn(next);
+              void setPushEnabled(next);
+            }}
+          />
+        </section>
 
         <section className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/60 p-3">
           <div>
