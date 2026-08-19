@@ -602,7 +602,13 @@ export function HomeScreen({
         onCompletePlanned={completePlanned}
       />
 
-      <Dialog open={planOpen} onOpenChange={setPlanOpen}>
+      <Dialog
+        open={planOpen}
+        onOpenChange={(o) => {
+          setPlanOpen(o);
+          if (!o) setPlanCalendarOpen(false);
+        }}
+      >
         <DialogContent className="gap-3 rounded-3xl p-4 sm:max-w-md">
           <DialogHeader className="space-y-0.5">
             <DialogTitle className="text-lg">{t("home.planTitle")}</DialogTitle>
@@ -616,7 +622,10 @@ export function HomeScreen({
                 <button
                   key={d}
                   type="button"
-                  onClick={() => setPlanDate(d)}
+                  onClick={() => {
+                    setPlanDate(d);
+                    setPlanCalendarOpen(false);
+                  }}
                   className={cn(
                     "min-h-10 rounded-2xl px-2.5 text-xs transition-colors",
                     selected ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"
@@ -627,23 +636,55 @@ export function HomeScreen({
               );
             })}
           </div>
-          <div className="rounded-2xl border">
-            <p className="px-3 pt-2 text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">
-              {t("home.planMore")}
-            </p>
-            <Calendar
-              mode="single"
-              weekStartsOn={1}
-              disabled={{ before: new Date() }}
-              selected={planDate ? parseKey(planDate) : undefined}
-              onSelect={(d) => {
-                if (!d) return;
-                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-                setPlanDate(key);
-              }}
-              className="pointer-events-auto p-2 pt-1"
+          <button
+            type="button"
+            onClick={() => setPlanCalendarOpen((s) => !s)}
+            className={cn(
+              "flex items-center justify-between rounded-2xl border px-3 py-2.5 text-left text-xs transition-colors",
+              planCalendarOpen ? "bg-secondary" : "bg-transparent hover:bg-secondary/50"
+            )}
+          >
+            <span className="font-medium text-foreground">
+              {planCalendarOpen ? t("home.planLess") : t("home.planMore")}
+            </span>
+            <ChevronDown
+              className={cn(
+                "size-4 shrink-0 text-muted-foreground transition-transform",
+                planCalendarOpen && "rotate-180"
+              )}
             />
-          </div>
+          </button>
+          {planCalendarOpen ? (
+            <div className="rounded-2xl border p-2">
+              <Calendar
+                mode="single"
+                weekStartsOn={1}
+                disabled={{ before: new Date() }}
+                selected={planDate ? parseKey(planDate) : undefined}
+                onSelect={(d) => {
+                  if (!d) return;
+                  const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                  setPlanDate(key);
+                }}
+                className="pointer-events-auto"
+              />
+            </div>
+          ) : null}
+          {planDate ? (
+            <div className="flex items-center gap-2 rounded-2xl bg-secondary/70 px-3 py-2 text-xs">
+              <CalendarDays className="size-3.5 text-muted-foreground" />
+              <span className="text-foreground">
+                {relativeLabel(planDate, tz)}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPlanDate(null)}
+                className="ml-auto text-[0.65rem] text-muted-foreground underline underline-offset-2"
+              >
+                {t("common.cancel")}
+              </button>
+            </div>
+          ) : null}
           <Button
             onClick={() => planDate && planVisit(planDate)}
             disabled={!planDate}
