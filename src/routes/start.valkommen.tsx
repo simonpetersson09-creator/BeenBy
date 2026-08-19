@@ -56,12 +56,7 @@ function WelcomePage() {
   return (
     <main className="mx-auto flex h-dvh w-full max-w-md flex-col justify-center gap-5 overflow-hidden px-6 pt-8 pb-12">
       <div className="animate-rise-in space-y-3">
-        <div className="flex flex-wrap items-baseline gap-2">
-          <h1 className="text-3xl leading-tight text-primary">{t("welcome.title")}</h1>
-          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            {t("welcome.trial")}
-          </span>
-        </div>
+        <h1 className="text-3xl leading-tight text-primary">{t("welcome.title")}</h1>
         <p className="text-base text-muted-foreground">{t("welcome.sub")}</p>
       </div>
 
