@@ -96,6 +96,9 @@ export function SettingsDialog({
     setResetOpen(false);
     clearDraft();
     clearRecovery();
+    // iOS keeps monitoring regions after the app closes — drop them all, or the
+    // old address would keep sending arrival notifications after a reset.
+    await stopAllBeenbyGeofences();
     try {
       window.localStorage.removeItem("beenby.familyTipSeen");
     } catch {
