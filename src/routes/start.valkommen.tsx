@@ -81,15 +81,15 @@ function WelcomePage() {
           </button>
         ) : null}
         <div className="flex flex-1 flex-col items-center gap-2">
-          <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
-            {t("welcome.trial")}
-          </span>
           <Button
             className="h-12 w-full rounded-2xl text-sm"
             onClick={() => void navigate({ to: "/start/vem" })}
           >
             {t("welcome.cta")} <ArrowRight className="size-4" />
           </Button>
+          <span className="rounded-full bg-primary/10 px-3 py-1 text-[0.7rem] font-normal text-primary">
+            {t("welcome.trial")}
+          </span>
         </div>
         <span onClick={dismissHint} className="pb-0">
           <LanguageSwitcher round />
