@@ -196,18 +196,64 @@ function ChatPage() {
     setText("");
   }
 
-  async function sendImage(file: File) {
+  /** Validate + compress, then show a preview instead of sending right away. */
+  async function preparePhoto(input: Blob) {
+    const problem = validateImage(input);
+    if (problem) {
+      toast.error(problem === "size" ? t("chat.photoTooLarge") : t("chat.photoType"));
+      return;
+    }
+    setPreparing(true);
+    try {
+      const jpeg = await compressToJpeg(input);
+      setPending((prev) => {
+        if (prev) URL.revokeObjectURL(prev.url);
+        return { blob: jpeg, url: URL.createObjectURL(jpeg) };
+      });
+    } catch {
+      toast.error(t("chat.imageError"));
+    } finally {
+      setPreparing(false);
+    }
+  }
+
+  function discardPending() {
+    setPending((prev) => {
+      if (prev) URL.revokeObjectURL(prev.url);
+      return null;
+    });
+  }
+
+  async function choosePhoto(source: "camera" | "library") {
+    setSourceOpen(false);
     if (locked) {
       setPaywallOpen(true);
       return;
     }
-    if (!circleId || !user) return;
+    if (isNativePhotoAvailable()) {
+      const blob = await pickNativePhoto(source);
+      if (blob) void preparePhoto(blob);
+      return;
+    }
+    // Web preview: the browser picker handles both camera and library.
+    if (fileRef.current) {
+      if (source === "camera") fileRef.current.setAttribute("capture", "environment");
+      else fileRef.current.removeAttribute("capture");
+      fileRef.current.click();
+    }
+  }
+
+  async function sendPending() {
+    if (locked) {
+      setPaywallOpen(true);
+      return;
+    }
+    if (!pending || !circleId || !user) return;
     setUploading(true);
-    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-    const path = `${circleId}/${user.id}/${crypto.randomUUID()}.${ext}`;
+    const path = `${circleId}/${user.id}/${crypto.randomUUID()}.jpg`;
     const { error: upErr } = await supabase.storage
       .from("chat-images")
-      .upload(path, file, { contentType: file.type || "image/jpeg", upsert: false });
+      .upload(path, pending.blob, { contentType: "image/jpeg", upsert: false });
     if (upErr) {
       setUploading(false);
       toast.error(t("chat.imageError"));
@@ -224,8 +270,10 @@ function ChatPage() {
       toast.error(t("chat.imageError"));
       return;
     }
+    discardPending();
     setText("");
   }
+
 
   if (loading || isLoading) {
     return (
