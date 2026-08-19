@@ -73,8 +73,8 @@ export function startViewportStability(): () => void {
 
   // The Capacitor entry starts this before React mounts. RootComponent also
   // starts it for the web build, so guard against duplicated listeners.
-  if (document.documentElement.dataset.viewportStability === "active") return () => {};
-  document.documentElement.dataset.viewportStability = "active";
+  if (document.documentElement.dataset["viewportStability"] === "active") return () => {};
+  document.documentElement.dataset["viewportStability"] = "active";
 
   if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
 
@@ -109,6 +109,6 @@ export function startViewportStability(): () => void {
     window.removeEventListener("orientationchange", stabilise);
     window.visualViewport?.removeEventListener("resize", syncHeight);
     removeNativeListener?.();
-    delete document.documentElement.dataset.viewportStability;
+    delete document.documentElement.dataset["viewportStability"];
   };
 }
