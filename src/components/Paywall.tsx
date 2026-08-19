@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useT } from "@/lib/i18n";
-import { purchasePremium, restorePurchases, usePremium } from "@/lib/premiumStore";
+import { getPremiumState, purchasePremium, restorePurchases, usePremium } from "@/lib/premiumStore";
 
 /**
  * Shown when a user without access (trial over, no Premium) taps a locked
@@ -33,7 +33,10 @@ export function Paywall({
     if (purchasing) return;
     setPurchasing(true);
     const result = await purchasePremium();
-    if (result.outcome === "success") {
+    const snapshot = getPremiumState();
+    if (result.outcome === "success" && !snapshot.isPremium && snapshot.verifyError) {
+      toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+    } else if (result.outcome === "success") {
       toast.success(t("settings.restored"));
       onOpenChange(false);
     } else if (result.outcome === "cancelled") {
@@ -48,7 +51,10 @@ export function Paywall({
     if (restoring) return;
     setRestoring(true);
     const result = await restorePurchases();
-    if (result.restored) {
+    const snapshot = getPremiumState();
+    if (result.restored && !snapshot.isPremium && snapshot.verifyError) {
+      toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+    } else if (result.restored) {
       toast.success(t("settings.restored"));
       onOpenChange(false);
     } else {

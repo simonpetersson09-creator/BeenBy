@@ -13,7 +13,8 @@
 import { useSyncExternalStore } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
-import { claimTrialAnchor, getEntitlement, submitTransaction } from "@/lib/premium.functions";
+import { fetchEntitlement, sendTransaction, sendTrialAnchor } from "@/lib/premiumApi";
+import type { EntitlementState } from "@/lib/premiumTypes";
 import {
   getSubscriptionStatus,
   getPremiumPrice,
@@ -51,6 +52,8 @@ export type PremiumState = {
   trialChecked: boolean;
   /** Premium OR an active trial. */
   hasAccess: boolean;
+  /** Set when a real server verification failed (shown to the user). */
+  verifyError?: string | undefined;
 };
 
 const initial: PremiumState = {
@@ -101,6 +104,11 @@ function getSnapshot() {
   return state;
 }
 
+/** Current Premium snapshot for imperative call sites (toasts etc.). */
+export function getPremiumState(): PremiumState {
+  return state;
+}
+
 let inFlight: Promise<PremiumState> | null = null;
 
 /**
@@ -119,23 +127,40 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
     const status = await getSubscriptionStatus();
     const priceLabel = await getPremiumPrice();
 
-    let verified: { isPremium: boolean; productId?: string; expiresAt?: string } | null = null;
+    let verified: EntitlementState | null = null;
+    /** true when we could not reach/complete the server check at all */
+    let unreachable = false;
+    let verifyError: string | undefined;
     try {
       const { data: sessionData } = await supabase.auth.getSession();
-      if (sessionData.session?.user.id) {
-        if (status.jws) {
-          verified = await submitTransaction({ data: { jws: status.jws } });
-        } else {
-          verified = await getEntitlement();
-        }
+      if (!sessionData.session?.user.id) {
+        unreachable = true;
+      } else if (status.jws) {
+        verified = await sendTransaction(status.jws);
+        if (verified.error) verifyError = verified.error;
+      } else {
+        verified = await fetchEntitlement();
       }
     } catch (error) {
-      console.warn("[premium] server verification unavailable", error);
+      // Offline / backend down: do NOT drop a legitimate Premium status.
+      unreachable = true;
+      verifyError = (error as Error).message;
+      console.warn("[premium] server verification unavailable:", verifyError);
     }
 
-    const isPremium = verified ? verified.isPremium : false;
-    const productId = verified?.productId ?? status.productId;
-    const expiresAt = verified?.expiresAt ?? status.expiresAt;
+    // A failed submit still lets us fall back to the stored entitlement.
+    if (verified && verified.error && !verified.isPremium) {
+      try {
+        const stored = await fetchEntitlement();
+        if (stored.isPremium) verified = stored;
+      } catch {
+        unreachable = true;
+      }
+    }
+
+    const isPremium = unreachable && !verified ? state.isPremium : (verified?.isPremium ?? false);
+    const productId = verified?.productId ?? status.productId ?? state.productId;
+    const expiresAt = verified?.expiresAt ?? status.expiresAt ?? state.expiresAt;
 
     setState({
       isPremium,
@@ -144,10 +169,12 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
       ...(priceLabel ? { priceLabel } : {}),
       source: status.source,
       loading: false,
-      checked: true,
+      checked: state.checked || !unreachable,
+      ...(verifyError ? { verifyError } : { verifyError: undefined }),
     });
     return state;
   })();
+
   try {
     return await inFlight;
   } finally {
@@ -189,7 +216,7 @@ export async function refreshTrialStatus(): Promise<PremiumState> {
       const anchor = await getDeviceAnchor();
       if (anchor) {
         try {
-          await claimTrialAnchor({ data: { anchor } });
+          await sendTrialAnchor(anchor);
         } catch (err) {
           console.warn("[premium] trial anchor failed", err);
         }
@@ -233,7 +260,7 @@ export async function purchasePremium(): Promise<PurchaseResult> {
   // verified state. The purchase result alone never unlocks anything.
   if (result.jws && userId) {
     try {
-      await submitTransaction({ data: { jws: result.jws } });
+      await sendTransaction(result.jws);
     } catch (error) {
       console.warn("[premium] could not submit transaction", error);
     }

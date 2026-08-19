@@ -15,6 +15,7 @@
  * the build fails with:
  *   Missing "#tanstack-start-entry" specifier in "@tanstack/start-server-core"
  */
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
@@ -42,13 +43,55 @@ function stubServerRoutes() {
   };
 }
 
+/**
+ * Keep every server-only module out of the app bundle.
+ *
+ * `*.server.ts` and `*.functions.ts` only ever run on BeenBy's backend. In the
+ * native build the same work happens over authenticated HTTPS
+ * (`src/lib/nativeApi.ts`), so the real modules are replaced by stubs that
+ * throw if anything ever reaches them. This also stops the service-role
+ * Supabase client from being emitted into a chunk the app ships.
+ */
+function stubServerModules() {
+  return {
+    name: "beenby:stub-server-modules",
+    enforce: "pre" as const,
+    load(id: string) {
+      const file = id.split("?")[0] ?? id;
+      if (!file.startsWith(projectRoot) || !/\.(server|functions)\.tsx?$/.test(file)) return null;
+
+      const source = readFileSync(file, "utf8");
+      const names = new Set<string>();
+      const patterns = [
+        /export\s+(?:async\s+)?function\s+([A-Za-z0-9_$]+)/g,
+        /export\s+(?:const|let|var)\s+([A-Za-z0-9_$]+)/g,
+        /export\s+class\s+([A-Za-z0-9_$]+)/g,
+      ];
+      for (const pattern of patterns) {
+        for (const match of source.matchAll(pattern)) {
+          if (match[1]) names.add(match[1]);
+        }
+      }
+
+      const relative = file.slice(projectRoot.length);
+      const lines = [
+        `const unavailable = (name) => { throw new Error("[beenby] ${relative}:" + name + " is server-only and is not available in the native app"); };`,
+        ...[...names].map((name) => `export const ${name} = (...args) => unavailable("${name}");`),
+        `export default {};`,
+      ];
+      return lines.join("\n");
+    },
+  };
+}
+
+
 export default defineConfig({
   root: fileURLToPath(new URL("./capacitor", import.meta.url)),
   // Relative asset URLs so the bundle works under capacitor:// / file:// origins.
   base: "./",
   publicDir: fileURLToPath(new URL("./public", import.meta.url)),
   envDir: projectRoot,
-  plugins: [stubServerRoutes(), tsconfigPaths({ root: projectRoot }), react(), tailwindcss()],
+  plugins: [stubServerRoutes(), stubServerModules(), tsconfigPaths({ root: projectRoot }), react(), tailwindcss()],
   resolve: {
     alias: [
       {

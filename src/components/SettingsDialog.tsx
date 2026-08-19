@@ -41,7 +41,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { deleteAccount, leaveFamilyCircle } from "@/lib/account.functions";
+import { deleteMyAccount, leaveFamily } from "@/lib/accountApi";
 import { stopAllBeenbyGeofences, type GeofenceBlockReason } from "@/lib/geofenceSync";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { PRIVACY_POLICY_URL, TERMS_URL, openExternal } from "@/lib/legal";
@@ -49,6 +49,7 @@ import { clearDraft } from "@/lib/onboardingDraft";
 import { clearRecovery } from "@/lib/recovery";
 import {
   manageSubscription,
+  getPremiumState,
   purchasePremium,
   refreshPremiumStatus,
   refreshTrialStatus,
@@ -160,7 +161,7 @@ export function SettingsDialog({
     setLeaving(true);
     setLeaveOpen(false);
     try {
-      const result = await leaveFamilyCircle({ data: { circleId } });
+      const result = await leaveFamily(circleId);
       if (!result.ok) {
         toast.error(t("leave.failed"));
         setLeaving(false);
@@ -184,7 +185,7 @@ export function SettingsDialog({
     setDeleting(true);
     setDeleteOpen(false);
     try {
-      const result = await deleteAccount();
+      const result = await deleteMyAccount();
       if (!result.ok) {
         toast.error(t("delete.failed"));
         setDeleting(false);
@@ -266,8 +267,14 @@ export function SettingsDialog({
     if (purchasing) return; // prevent double-tap
     setPurchasing(true);
     const result = await purchasePremium();
+    const snapshot = getPremiumState();
     if (result.outcome === "success") {
-      toast.success(t("settings.restored"));
+      // StoreKit succeeded, but Premium only counts once the server verified it.
+      if (!snapshot.isPremium && snapshot.verifyError) {
+        toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+      } else {
+        toast.success(t("settings.restored"));
+      }
     } else if (result.outcome === "cancelled") {
       toast.message(t("settings.noPurchase"));
     } else {
@@ -281,7 +288,10 @@ export function SettingsDialog({
     if (restoring) return;
     setRestoring(true);
     const result = await restorePurchases();
-    if (result.restored) toast.success(t("settings.restored"));
+    const snapshot = getPremiumState();
+    if (result.restored && !snapshot.isPremium && snapshot.verifyError) {
+      toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
+    } else if (result.restored) toast.success(t("settings.restored"));
     else toast.message(t("settings.noPurchase"), { description: t("settings.noPurchaseDesc") });
     setRestoring(false);
   }

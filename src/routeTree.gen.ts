@@ -20,6 +20,8 @@ import { Route as StartVemRouteImport } from './routes/start.vem'
 import { Route as ApiPublicAppstoreNotificationsRouteImport } from './routes/api/public/appstore-notifications'
 import { Route as ApiPublicCleanupChatImagesRouteImport } from './routes/api/public/cleanup-chat-images'
 import { Route as ApiPublicPushRouteImport } from './routes/api/public/push'
+import { Route as ApiPublicNativeAccountRouteImport } from './routes/api/public/native/account'
+import { Route as ApiPublicNativePremiumRouteImport } from './routes/api/public/native/premium'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -78,6 +80,16 @@ const ApiPublicPushRoute = ApiPublicPushRouteImport.update({
   path: '/api/public/push',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicNativeAccountRoute = ApiPublicNativeAccountRouteImport.update({
+  id: '/api/public/native/account',
+  path: '/api/public/native/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicNativePremiumRoute = ApiPublicNativePremiumRouteImport.update({
+  id: '/api/public/native/premium',
+  path: '/api/public/native/premium',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -91,6 +103,8 @@ export interface FileRoutesByFullPath {
   '/api/public/appstore-notifications': typeof ApiPublicAppstoreNotificationsRoute
   '/api/public/cleanup-chat-images': typeof ApiPublicCleanupChatImagesRoute
   '/api/public/push': typeof ApiPublicPushRoute
+  '/api/public/native/account': typeof ApiPublicNativeAccountRoute
+  '/api/public/native/premium': typeof ApiPublicNativePremiumRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -104,6 +118,8 @@ export interface FileRoutesByTo {
   '/api/public/appstore-notifications': typeof ApiPublicAppstoreNotificationsRoute
   '/api/public/cleanup-chat-images': typeof ApiPublicCleanupChatImagesRoute
   '/api/public/push': typeof ApiPublicPushRoute
+  '/api/public/native/account': typeof ApiPublicNativeAccountRoute
+  '/api/public/native/premium': typeof ApiPublicNativePremiumRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -118,6 +134,8 @@ export interface FileRoutesById {
   '/api/public/appstore-notifications': typeof ApiPublicAppstoreNotificationsRoute
   '/api/public/cleanup-chat-images': typeof ApiPublicCleanupChatImagesRoute
   '/api/public/push': typeof ApiPublicPushRoute
+  '/api/public/native/account': typeof ApiPublicNativeAccountRoute
+  '/api/public/native/premium': typeof ApiPublicNativePremiumRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -133,6 +151,8 @@ export interface FileRouteTypes {
     | '/api/public/appstore-notifications'
     | '/api/public/cleanup-chat-images'
     | '/api/public/push'
+    | '/api/public/native/account'
+    | '/api/public/native/premium'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -146,6 +166,8 @@ export interface FileRouteTypes {
     | '/api/public/appstore-notifications'
     | '/api/public/cleanup-chat-images'
     | '/api/public/push'
+    | '/api/public/native/account'
+    | '/api/public/native/premium'
   id:
     | '__root__'
     | '/'
@@ -159,6 +181,8 @@ export interface FileRouteTypes {
     | '/api/public/appstore-notifications'
     | '/api/public/cleanup-chat-images'
     | '/api/public/push'
+    | '/api/public/native/account'
+    | '/api/public/native/premium'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -173,6 +197,8 @@ export interface RootRouteChildren {
   ApiPublicAppstoreNotificationsRoute: typeof ApiPublicAppstoreNotificationsRoute
   ApiPublicCleanupChatImagesRoute: typeof ApiPublicCleanupChatImagesRoute
   ApiPublicPushRoute: typeof ApiPublicPushRoute
+  ApiPublicNativeAccountRoute: typeof ApiPublicNativeAccountRoute
+  ApiPublicNativePremiumRoute: typeof ApiPublicNativePremiumRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -254,6 +280,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPushRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/native/account': {
+      id: '/api/public/native/account'
+      path: '/api/public/native/account'
+      fullPath: '/api/public/native/account'
+      preLoaderRoute: typeof ApiPublicNativeAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/native/premium': {
+      id: '/api/public/native/premium'
+      path: '/api/public/native/premium'
+      fullPath: '/api/public/native/premium'
+      preLoaderRoute: typeof ApiPublicNativePremiumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -269,6 +309,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicAppstoreNotificationsRoute: ApiPublicAppstoreNotificationsRoute,
   ApiPublicCleanupChatImagesRoute: ApiPublicCleanupChatImagesRoute,
   ApiPublicPushRoute: ApiPublicPushRoute,
+  ApiPublicNativeAccountRoute: ApiPublicNativeAccountRoute,
+  ApiPublicNativePremiumRoute: ApiPublicNativePremiumRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
