@@ -16,6 +16,7 @@ import { startPremiumLifecycle } from "../lib/premiumStore";
 import { IS_NATIVE_SPA } from "../lib/runtime";
 import { initLanguageDetection, useT } from "../lib/i18n";
 import { startViewportStability } from "../lib/viewportStability";
+import { startSwipeBack } from "../lib/swipeBack";
 
 function NotFoundComponent() {
   const t = useT();
