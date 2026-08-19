@@ -11,10 +11,12 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "build:ios": "vite build --config vite.ios.config.ts",
-    "icons": "capacitor-assets generate --ios"
+    "icons": "capacitor-assets generate --ios",
+    "ios:plist": "node scripts/patch-ios-plist.mjs"
   },
   "dependencies": {
     "@capacitor/app": "^8",
+    "@capacitor/camera": "^8",
     "@capacitor/clipboard": "^8.0.1",
     "@capacitor/core": "^8.5.0",
     "@capacitor/ios": "^8.5.0",

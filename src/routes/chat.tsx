@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ImagePlus, Loader2, Lock, Send } from "lucide-react";
+import { ArrowLeft, Camera, ImagePlus, Loader2, Lock, Send, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Paywall } from "@/components/Paywall";
@@ -12,7 +12,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { markChatRead } from "@/lib/chatRead";
 import { localeOf, useT, usePersonLabel } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
+import {
+  compressToJpeg,
+  isNativePhotoAvailable,
+  pickNativePhoto,
+  validateImage,
+} from "@/lib/photo";
 import { useAccess } from "@/lib/premiumStore";
+
 
 type Message = {
   id: string;
@@ -71,7 +78,11 @@ function ChatPage() {
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
+  const [pending, setPending] = useState<{ blob: Blob; url: string } | null>(null);
+  const [preparing, setPreparing] = useState(false);
+  const [sourceOpen, setSourceOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
+
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const { hasAccess } = useAccess();
   const [paywallOpen, setPaywallOpen] = useState(false);
@@ -192,18 +203,64 @@ function ChatPage() {
     setText("");
   }
 
-  async function sendImage(file: File) {
+  /** Validate + compress, then show a preview instead of sending right away. */
+  async function preparePhoto(input: Blob) {
+    const problem = validateImage(input);
+    if (problem) {
+      toast.error(problem === "size" ? t("chat.photoTooLarge") : t("chat.photoType"));
+      return;
+    }
+    setPreparing(true);
+    try {
+      const jpeg = await compressToJpeg(input);
+      setPending((prev) => {
+        if (prev) URL.revokeObjectURL(prev.url);
+        return { blob: jpeg, url: URL.createObjectURL(jpeg) };
+      });
+    } catch {
+      toast.error(t("chat.imageError"));
+    } finally {
+      setPreparing(false);
+    }
+  }
+
+  function discardPending() {
+    setPending((prev) => {
+      if (prev) URL.revokeObjectURL(prev.url);
+      return null;
+    });
+  }
+
+  async function choosePhoto(source: "camera" | "library") {
+    setSourceOpen(false);
     if (locked) {
       setPaywallOpen(true);
       return;
     }
-    if (!circleId || !user) return;
+    if (isNativePhotoAvailable()) {
+      const blob = await pickNativePhoto(source);
+      if (blob) void preparePhoto(blob);
+      return;
+    }
+    // Web preview: the browser picker handles both camera and library.
+    if (fileRef.current) {
+      if (source === "camera") fileRef.current.setAttribute("capture", "environment");
+      else fileRef.current.removeAttribute("capture");
+      fileRef.current.click();
+    }
+  }
+
+  async function sendPending() {
+    if (locked) {
+      setPaywallOpen(true);
+      return;
+    }
+    if (!pending || !circleId || !user) return;
     setUploading(true);
-    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-    const path = `${circleId}/${user.id}/${crypto.randomUUID()}.${ext}`;
+    const path = `${circleId}/${user.id}/${crypto.randomUUID()}.jpg`;
     const { error: upErr } = await supabase.storage
       .from("chat-images")
-      .upload(path, file, { contentType: file.type || "image/jpeg", upsert: false });
+      .upload(path, pending.blob, { contentType: "image/jpeg", upsert: false });
     if (upErr) {
       setUploading(false);
       toast.error(t("chat.imageError"));
@@ -220,8 +277,10 @@ function ChatPage() {
       toast.error(t("chat.imageError"));
       return;
     }
+    discardPending();
     setText("");
   }
+
 
   if (loading || isLoading) {
     return (
@@ -320,11 +379,56 @@ function ChatPage() {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-5">
+        {pending ? (
+          <div className="mb-3 flex items-center gap-3 rounded-2xl border border-primary/10 bg-card p-2 shadow-soft">
+            <img
+              src={pending.url}
+              alt={t("chat.photoPreview")}
+              className="size-16 rounded-xl object-cover"
+            />
+            <p className="flex-1 text-xs text-muted-foreground">{t("chat.photoPreview")}</p>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              aria-label={t("chat.discardPhoto")}
+              onClick={discardPending}
+              className="size-9 rounded-xl"
+            >
+              <X className="size-4" />
+            </Button>
+          </div>
+        ) : null}
+
+        {sourceOpen ? (
+          <div className="mb-3 grid gap-2 rounded-2xl border border-primary/10 bg-card p-2 shadow-soft">
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-12 justify-start gap-3 rounded-xl"
+              onClick={() => void choosePhoto("camera")}
+            >
+              <Camera className="size-5" />
+              {t("chat.takePhoto")}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-12 justify-start gap-3 rounded-xl"
+              onClick={() => void choosePhoto("library")}
+            >
+              <ImagePlus className="size-5" />
+              {t("chat.fromLibrary")}
+            </Button>
+          </div>
+        ) : null}
+
         <form
           className="flex items-center gap-2"
           onSubmit={(e) => {
             e.preventDefault();
-            void send();
+            if (pending) void sendPending();
+            else void send();
           }}
         >
           <input
@@ -335,7 +439,7 @@ function ChatPage() {
             onChange={(e) => {
               const file = e.target.files?.[0];
               e.target.value = "";
-              if (file) void sendImage(file);
+              if (file) void preparePhoto(file);
             }}
           />
           <Button
@@ -343,16 +447,17 @@ function ChatPage() {
             size="icon"
             variant="secondary"
             aria-label={t("chat.addPhoto")}
-            disabled={uploading}
-            onClick={() => (locked ? setPaywallOpen(true) : fileRef.current?.click())}
+            disabled={uploading || preparing}
+            onClick={() => (locked ? setPaywallOpen(true) : setSourceOpen((v) => !v))}
             className="size-12 shrink-0 rounded-2xl"
           >
-            {uploading ? (
+            {uploading || preparing ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <ImagePlus className="size-5" />
             )}
           </Button>
+
           <Input
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -364,8 +469,8 @@ function ChatPage() {
           <Button
             type="submit"
             size="icon"
-            aria-label={locked ? t("access.locked") : t("chat.send")}
-            disabled={sending || (!locked && text.trim().length === 0)}
+            aria-label={locked ? t("access.locked") : pending ? t("chat.sendPhoto") : t("chat.send")}
+            disabled={sending || uploading || (!locked && !pending && text.trim().length === 0)}
             className="size-12 shrink-0 rounded-2xl"
           >
             {sending ? (

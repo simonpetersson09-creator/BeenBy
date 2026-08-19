@@ -17,3 +17,20 @@ npx cap sync ios
 Kontrollera en gång i Xcode: target **App** → *General* → *App Icons and Launch Screen*
 → **Launch Screen File** = `LaunchScreen`. Avinstallera appen från enheten innan ny
 körning; iOS cachar launch screen-snapshoten.
+
+## Kamera och bilder i chatten
+
+Chatten använder `@capacitor/camera`. Info.plist genereras av `npx cap add ios` och
+ligger inte i git, så kör en gång efter `npx cap sync ios`:
+
+```bash
+npm run ios:plist
+```
+
+Det lägger in (idempotent):
+
+- `NSCameraUsageDescription`
+- `NSPhotoLibraryUsageDescription`
+
+`NSPhotoLibraryAddUsageDescription` behövs inte – appen sparar aldrig bilder tillbaka
+till telefonens bildbibliotek. Inga nya capabilities krävs i Xcode.
