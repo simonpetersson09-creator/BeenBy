@@ -71,9 +71,28 @@ function stabilise() {
 export function startViewportStability(): () => void {
   if (typeof window === "undefined") return () => {};
 
+  // The Capacitor entry starts this before React mounts. RootComponent also
+  // starts it for the web build, so guard against duplicated listeners.
+  if (document.documentElement.dataset.viewportStability === "active") return () => {};
+  document.documentElement.dataset.viewportStability = "active";
+
+  if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+
   const onVisibility = () => {
     if (document.visibilityState === "visible") stabilise();
   };
+
+  let removeNativeListener: (() => void) | undefined;
+  void import("@capacitor/app")
+    .then(({ App }) => App.addListener("appStateChange", ({ isActive }) => {
+      if (isActive) stabilise();
+    }))
+    .then((handle) => {
+      removeNativeListener = () => void handle.remove();
+    })
+    .catch(() => {
+      // Browser builds do not need the native lifecycle event.
+    });
 
   stabilise();
 
@@ -89,5 +108,7 @@ export function startViewportStability(): () => void {
     window.removeEventListener("focus", stabilise);
     window.removeEventListener("orientationchange", stabilise);
     window.visualViewport?.removeEventListener("resize", syncHeight);
+    removeNativeListener?.();
+    delete document.documentElement.dataset.viewportStability;
   };
 }
