@@ -448,34 +448,34 @@ export function HomeScreen({
 
 
 
-      <section className="mt-4 rounded-2xl bg-card p-4 shadow-soft">
+      <section className="mt-4 rounded-2xl bg-card px-3.5 py-2.5 shadow-soft">
         {nextPlanned ? (
           (() => {
             const plannedMember = members.find((m) => m.user_id === nextPlanned.user_id);
             const hex = colorById(plannedMember?.personal_color).hex;
             const summary = activitySummary(nextPlanned.activities, t, nextPlanned.activity_note);
             return (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5">
                 <div
-                  className="flex size-12 shrink-0 flex-col items-center justify-center rounded-2xl text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+                  className="flex size-9 shrink-0 items-center justify-center rounded-xl text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
                   style={{ backgroundColor: hex }}
                 >
-                  <span className="text-lg font-bold leading-none">
+                  <span className="text-sm font-bold leading-none">
                     {plannedMember?.name.trim().charAt(0).toUpperCase() ?? "?"}
                   </span>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-1.5 text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">
+                  <p className="flex items-center gap-1 text-[0.6rem] font-medium uppercase tracking-wider text-muted-foreground">
                     <CalendarDays className="size-3" />
                     {t("home.next")}
                   </p>
-                  <p className="truncate text-sm font-semibold text-foreground">
+                  <p className="truncate text-xs font-semibold text-foreground">
                     {plannedMember?.name ?? t("member.fallback")}
-                    <span className="mx-1.5 text-muted-foreground">·</span>
+                    <span className="mx-1 text-muted-foreground">·</span>
                     {relativeLabel(nextPlanned.planned_date, tz)}
                   </p>
                   {summary ? (
-                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                    <p className="mt-0.5 truncate text-[0.65rem] text-muted-foreground">
                       {summary}
                     </p>
                   ) : null}
