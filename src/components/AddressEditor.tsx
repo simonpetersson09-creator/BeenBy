@@ -96,6 +96,9 @@ export function AddressEditor({
       toast.error(t("address.saveFailed"));
       return;
     }
+    // Drop the region for the previous address immediately; the geofence sync
+    // then re-creates one for the new coordinates.
+    await stopAllBeenbyGeofences();
     toast.success(t("address.saved"));
     onSaved?.();
     onOpenChange(false);
