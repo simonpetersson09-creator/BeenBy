@@ -356,6 +356,7 @@ export function HomeScreen({
         person={person}
         userId={userId}
         myName={members.find((m) => m.user_id === userId)?.name ?? ""}
+        members={members}
         onPersonUpdated={refresh}
         geofence={{
           enabled: geofence.enabled,
