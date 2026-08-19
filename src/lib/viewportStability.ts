@@ -12,7 +12,14 @@
  * full-height layouts always match the real visible area.
  */
 
+function keyboardOpen() {
+  const el = document.activeElement as HTMLElement | null;
+  if (!el) return false;
+  return el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable;
+}
+
 function resetViewport() {
+  if (keyboardOpen()) return;
   const doc = document.scrollingElement ?? document.documentElement;
   if (doc.scrollTop !== 0) doc.scrollTop = 0;
   if (doc.scrollLeft !== 0) doc.scrollLeft = 0;
@@ -54,7 +61,6 @@ export function startViewportStability(): () => void {
   window.addEventListener("focus", stabilise);
   window.addEventListener("orientationchange", stabilise);
   window.visualViewport?.addEventListener("resize", syncHeight);
-  window.visualViewport?.addEventListener("scroll", resetViewport);
 
   return () => {
     document.removeEventListener("visibilitychange", onVisibility);
@@ -62,6 +68,5 @@ export function startViewportStability(): () => void {
     window.removeEventListener("focus", stabilise);
     window.removeEventListener("orientationchange", stabilise);
     window.visualViewport?.removeEventListener("resize", syncHeight);
-    window.visualViewport?.removeEventListener("scroll", resetViewport);
   };
 }
