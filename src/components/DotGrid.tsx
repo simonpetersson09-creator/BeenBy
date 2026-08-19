@@ -55,14 +55,13 @@ export function DotGrid({
 
   return (
     <div>
-      <div className="mb-1 flex items-center gap-1">
-        <div className="w-6 shrink-0" />
-
-        <div className="grid flex-1 grid-cols-7 gap-x-1">
+      <div className="mb-0.5 flex items-center gap-1">
+        <div className="w-5 shrink-0" />
+        <div className="grid flex-1 grid-cols-7 gap-x-0.5">
           {weekdayLabels().map((label, i) => (
             <div
               key={i}
-              className="text-center text-[0.65rem] font-bold uppercase tracking-[0.18em] text-muted-foreground/70"
+              className="text-center text-[0.6rem] font-bold uppercase tracking-[0.16em] text-muted-foreground/70"
             >
               {label}
             </div>
@@ -70,28 +69,27 @@ export function DotGrid({
         </div>
       </div>
 
-      <div className="space-y-0.5">
+      <div className="space-y-0">
         {weeks.map((week, wi) => {
           const isCurrentWeek = week.some((d) => d.day === today);
           return (
             <div
               key={week[0]!.day}
               className={cn(
-                "flex items-center gap-1 rounded-xl pr-0.5 transition",
+                "flex items-center gap-0.5 rounded-xl pr-0.5 transition",
                 isCurrentWeek && "bg-primary/10 ring-1 ring-primary/25",
               )}
             >
               <span
                 className={cn(
-                  "w-6 shrink-0 text-center text-[0.55rem] font-semibold uppercase tracking-[0.04em]",
+                  "w-5 shrink-0 text-center text-[0.5rem] font-semibold uppercase tracking-[0.04em]",
                   isCurrentWeek ? "text-primary" : "text-muted-foreground/70",
                 )}
               >
                 {t("grid.weekPrefix")}
                 {weekNumber(week[0]!.day)}
               </span>
-              <div className="grid flex-1 grid-cols-7 gap-x-0.5">
-
+              <div className="grid flex-1 grid-cols-7 gap-x-0">
                 {week.map((d, di) => {
                   const index = wi * 7 + di;
                   const isToday = d.day === today;
@@ -116,18 +114,18 @@ export function DotGrid({
                       aria-label={label}
                       aria-current={isToday ? "date" : undefined}
                       className={cn(
-                        "group flex min-h-8 items-center justify-center rounded-xl transition",
+                        "group flex min-h-7 items-center justify-center rounded-lg transition",
                         "active:scale-90",
                       )}
                     >
-                      <span className="relative flex size-7 items-center justify-center">
+                      <span className="relative flex size-6 items-center justify-center">
                         {isToday ? (
                           <span className="pointer-events-none absolute inset-0 animate-breathe rounded-full border border-primary/50" />
                         ) : null}
 
                         <span
                           className={cn(
-                            "animate-dot-pop block size-6 rounded-full transition",
+                            "animate-dot-pop block size-5 rounded-full transition",
                             "group-hover:scale-105",
                             !hasDone && !hasPlanned && "border border-foreground/10 bg-card/55",
                             hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.10)]",
@@ -153,7 +151,7 @@ export function DotGrid({
                         ) : null}
 
                         {d.done.length + d.planned.length > 3 ? (
-                          <span className="absolute -right-0.5 -top-0.5 rounded-full bg-card px-1 text-[0.55rem] font-semibold leading-[0.9rem] text-muted-foreground shadow-soft">
+                          <span className="absolute -right-0.5 -top-0.5 rounded-full bg-card px-1 text-[0.5rem] font-semibold leading-[0.85rem] text-muted-foreground shadow-soft">
                             {d.done.length + d.planned.length}
                           </span>
                         ) : null}
@@ -167,7 +165,7 @@ export function DotGrid({
         })}
       </div>
 
-      <div className="mt-3 flex items-center justify-center gap-3 text-[0.6rem] text-foreground">
+      <div className="mt-2 flex items-center justify-center gap-3 text-[0.6rem] text-foreground">
         <span className="flex items-center gap-1.5 whitespace-nowrap">
           <span
             className="block size-3.5 rounded-full shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
