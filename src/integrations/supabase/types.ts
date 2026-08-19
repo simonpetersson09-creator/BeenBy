@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      apple_notifications: {
+        Row: {
+          created_at: string
+          detail: string | null
+          id: string
+          notification_type: string | null
+          notification_uuid: string | null
+          original_transaction_id: string | null
+          status: string
+          subtype: string | null
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          notification_type?: string | null
+          notification_uuid?: string | null
+          original_transaction_id?: string | null
+          status: string
+          subtype?: string | null
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          notification_type?: string | null
+          notification_uuid?: string | null
+          original_transaction_id?: string | null
+          status?: string
+          subtype?: string | null
+        }
+        Relationships: []
+      }
+      circle_bans: {
+        Row: {
+          family_circle_id: string
+          removed_at: string
+          removed_by: string | null
+          user_id: string
+        }
+        Insert: {
+          family_circle_id: string
+          removed_at?: string
+          removed_by?: string | null
+          user_id: string
+        }
+        Update: {
+          family_circle_id?: string
+          removed_at?: string
+          removed_by?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_bans_family_circle_id_fkey"
+            columns: ["family_circle_id"]
+            isOneToOne: false
+            referencedRelation: "family_circles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       device_tokens: {
         Row: {
           locale: string
@@ -271,31 +333,43 @@ export type Database = {
       premium_entitlements: {
         Row: {
           created_at: string
+          environment: string | null
           expires_at: string | null
           is_active: boolean
+          last_verified_at: string | null
           original_transaction_id: string | null
           platform: string | null
           product_id: string | null
+          revoked_at: string | null
+          transaction_id: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          environment?: string | null
           expires_at?: string | null
           is_active?: boolean
+          last_verified_at?: string | null
           original_transaction_id?: string | null
           platform?: string | null
           product_id?: string | null
+          revoked_at?: string | null
+          transaction_id?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          environment?: string | null
           expires_at?: string | null
           is_active?: boolean
+          last_verified_at?: string | null
           original_transaction_id?: string | null
           platform?: string | null
           product_id?: string | null
+          revoked_at?: string | null
+          transaction_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -306,18 +380,21 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          trial_anchor_hash: string | null
           trial_started_at: string | null
         }
         Insert: {
           created_at?: string
           id: string
           name?: string
+          trial_anchor_hash?: string | null
           trial_started_at?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          trial_anchor_hash?: string | null
           trial_started_at?: string | null
         }
         Relationships: []
@@ -415,6 +492,27 @@ export type Database = {
         }
         Relationships: []
       }
+      trial_anchors: {
+        Row: {
+          anchor_hash: string
+          first_seen_at: string
+          last_seen_at: string
+          trial_started_at: string
+        }
+        Insert: {
+          anchor_hash: string
+          first_seen_at?: string
+          last_seen_at?: string
+          trial_started_at?: string
+        }
+        Update: {
+          anchor_hash?: string
+          first_seen_at?: string
+          last_seen_at?: string
+          trial_started_at?: string
+        }
+        Relationships: []
+      }
       visits: {
         Row: {
           activities: string[]
@@ -484,6 +582,16 @@ export type Database = {
           user_id: string
         }[]
       }
+      claim_trial_anchor: {
+        Args: { _anchor: string }
+        Returns: {
+          is_trial_active: boolean
+          server_now: string
+          trial_days_left: number
+          trial_ends_at: string
+          trial_started_at: string
+        }[]
+      }
       consume_rate_limit: {
         Args: {
           _bucket: string
@@ -492,6 +600,12 @@ export type Database = {
           _window_seconds: number
         }
         Returns: boolean
+      }
+      delete_my_account_for: {
+        Args: { _user: string }
+        Returns: {
+          image_path: string
+        }[]
       }
       enforce_rate_limit: {
         Args: { _bucket: string; _limit: number; _window_seconds: number }
@@ -515,6 +629,7 @@ export type Database = {
         Args: { _code?: string; _color: string; _name: string; _token?: string }
         Returns: string
       }
+      leave_family_circle: { Args: { _circle: string }; Returns: boolean }
       log_security_event: {
         Args: { _detail?: string; _kind: string; _user?: string }
         Returns: undefined
@@ -536,6 +651,11 @@ export type Database = {
         }[]
       }
       rate_limit_geocode: { Args: never; Returns: boolean }
+      remove_family_member: {
+        Args: { _circle: string; _user: string }
+        Returns: boolean
+      }
+      revoke_circle_access: { Args: { _circle: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never

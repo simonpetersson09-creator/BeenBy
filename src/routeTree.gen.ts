@@ -17,6 +17,7 @@ import { Route as StartFargRouteImport } from './routes/start.farg'
 import { Route as StartKodRouteImport } from './routes/start.kod'
 import { Route as StartValkommenRouteImport } from './routes/start.valkommen'
 import { Route as StartVemRouteImport } from './routes/start.vem'
+import { Route as ApiPublicAppstoreNotificationsRouteImport } from './routes/api/public/appstore-notifications'
 import { Route as ApiPublicCleanupChatImagesRouteImport } from './routes/api/public/cleanup-chat-images'
 import { Route as ApiPublicPushRouteImport } from './routes/api/public/push'
 
@@ -60,6 +61,12 @@ const StartVemRoute = StartVemRouteImport.update({
   path: '/start/vem',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAppstoreNotificationsRoute =
+  ApiPublicAppstoreNotificationsRouteImport.update({
+    id: '/api/public/appstore-notifications',
+    path: '/api/public/appstore-notifications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCleanupChatImagesRoute =
   ApiPublicCleanupChatImagesRouteImport.update({
     id: '/api/public/cleanup-chat-images',
@@ -81,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/start/kod': typeof StartKodRoute
   '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
+  '/api/public/appstore-notifications': typeof ApiPublicAppstoreNotificationsRoute
   '/api/public/cleanup-chat-images': typeof ApiPublicCleanupChatImagesRoute
   '/api/public/push': typeof ApiPublicPushRoute
 }
@@ -93,6 +101,7 @@ export interface FileRoutesByTo {
   '/start/kod': typeof StartKodRoute
   '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
+  '/api/public/appstore-notifications': typeof ApiPublicAppstoreNotificationsRoute
   '/api/public/cleanup-chat-images': typeof ApiPublicCleanupChatImagesRoute
   '/api/public/push': typeof ApiPublicPushRoute
 }
@@ -106,6 +115,7 @@ export interface FileRoutesById {
   '/start/kod': typeof StartKodRoute
   '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
+  '/api/public/appstore-notifications': typeof ApiPublicAppstoreNotificationsRoute
   '/api/public/cleanup-chat-images': typeof ApiPublicCleanupChatImagesRoute
   '/api/public/push': typeof ApiPublicPushRoute
 }
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/start/kod'
     | '/start/valkommen'
     | '/start/vem'
+    | '/api/public/appstore-notifications'
     | '/api/public/cleanup-chat-images'
     | '/api/public/push'
   fileRoutesByTo: FileRoutesByTo
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/start/kod'
     | '/start/valkommen'
     | '/start/vem'
+    | '/api/public/appstore-notifications'
     | '/api/public/cleanup-chat-images'
     | '/api/public/push'
   id:
@@ -144,6 +156,7 @@ export interface FileRouteTypes {
     | '/start/kod'
     | '/start/valkommen'
     | '/start/vem'
+    | '/api/public/appstore-notifications'
     | '/api/public/cleanup-chat-images'
     | '/api/public/push'
   fileRoutesById: FileRoutesById
@@ -157,6 +170,7 @@ export interface RootRouteChildren {
   StartKodRoute: typeof StartKodRoute
   StartValkommenRoute: typeof StartValkommenRoute
   StartVemRoute: typeof StartVemRoute
+  ApiPublicAppstoreNotificationsRoute: typeof ApiPublicAppstoreNotificationsRoute
   ApiPublicCleanupChatImagesRoute: typeof ApiPublicCleanupChatImagesRoute
   ApiPublicPushRoute: typeof ApiPublicPushRoute
 }
@@ -219,6 +233,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StartVemRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/appstore-notifications': {
+      id: '/api/public/appstore-notifications'
+      path: '/api/public/appstore-notifications'
+      fullPath: '/api/public/appstore-notifications'
+      preLoaderRoute: typeof ApiPublicAppstoreNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cleanup-chat-images': {
       id: '/api/public/cleanup-chat-images'
       path: '/api/public/cleanup-chat-images'
@@ -245,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   StartKodRoute: StartKodRoute,
   StartValkommenRoute: StartValkommenRoute,
   StartVemRoute: StartVemRoute,
+  ApiPublicAppstoreNotificationsRoute: ApiPublicAppstoreNotificationsRoute,
   ApiPublicCleanupChatImagesRoute: ApiPublicCleanupChatImagesRoute,
   ApiPublicPushRoute: ApiPublicPushRoute,
 }
