@@ -272,6 +272,20 @@ export function SettingsDialog({
           <LanguageSwitcher />
         </section>
 
+        {userId && members && members.length > 0 ? (
+          <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
+            <p className="flex items-center gap-2 text-sm font-medium">
+              <Palette className="size-4" /> {t("settings.colorTitle")}
+            </p>
+            <p className="text-xs text-muted-foreground">{t("settings.colorHint")}</p>
+            <ColorPicker
+              value={myColor}
+              taken={members.filter((m) => m.user_id !== userId).map((m) => m.personal_color)}
+              onChange={(next) => void handleColorChange(next)}
+            />
+          </section>
+        ) : null}
+
         {userId ? (
           <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
             <p className="flex items-center gap-2 text-sm font-medium">
@@ -296,6 +310,7 @@ export function SettingsDialog({
             </div>
           </section>
         ) : null}
+
 
         {person ? (
           <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
