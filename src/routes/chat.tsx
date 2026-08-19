@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ImagePlus, Loader2, Lock, Send } from "lucide-react";
+import { ArrowLeft, Camera, ImagePlus, Loader2, Lock, Send, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Paywall } from "@/components/Paywall";
@@ -469,8 +469,8 @@ function ChatPage() {
           <Button
             type="submit"
             size="icon"
-            aria-label={locked ? t("access.locked") : t("chat.send")}
-            disabled={sending || (!locked && text.trim().length === 0)}
+            aria-label={locked ? t("access.locked") : pending ? t("chat.sendPhoto") : t("chat.send")}
+            disabled={sending || uploading || (!locked && !pending && text.trim().length === 0)}
             className="size-12 shrink-0 rounded-2xl"
           >
             {sending ? (
