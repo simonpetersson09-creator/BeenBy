@@ -109,9 +109,13 @@ export function SettingsDialog({
     } catch {
       /* ignore */
     }
-    // Hard navigation: rebuilds the whole app state from scratch and avoids the
-    // blank screen you get when the router re-renders while the session is gone.
-    window.location.replace("/start/valkommen");
+    // Hard navigation rebuilds the whole app state from scratch. We always go
+    // to the app root: inside the packaged iOS app only index.html exists on
+    // disk, so replacing straight to a deep path such as /start/valkommen
+    // loads nothing and leaves a white screen. From "/" the start page routes
+    // on to the welcome screen because there is no circle any more.
+    const root = `${window.location.origin}/`;
+    window.location.replace(root);
   }
 
 
