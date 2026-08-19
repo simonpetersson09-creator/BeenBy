@@ -40,7 +40,15 @@ function stubServerRoutes() {
   };
 }
 
+export default defineConfig({
+  root: fileURLToPath(new URL("./capacitor", import.meta.url)),
+  // Relative asset URLs so the bundle works under capacitor:// / file:// origins.
+  base: "./",
+  publicDir: fileURLToPath(new URL("./public", import.meta.url)),
+  envDir: projectRoot,
+  plugins: [stubServerRoutes(), tsconfigPaths({ root: projectRoot }), react(), tailwindcss()],
   define: {
+
     "import.meta.env.VITE_IOS_SPA": JSON.stringify("true"),
   },
 
