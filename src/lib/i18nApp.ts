@@ -665,7 +665,7 @@ const da: AppDict = {
   "home.legend.done": "Udfyldt = besøgt",
   "home.legend.planned": "Stiplet = planlagt",
   "home.legend.empty": "Tom = intet besøg",
-  "home.next": "Næste besøg:",
+  "home.next": "Næste besøg",
   "home.noPlanned": "Der er ikke planlagt et besøg endnu. Planlæg gerne et – de andre ser det med det samme.",
   "home.who": "Hvem er hvem",
   "home.you": "(dig)",
