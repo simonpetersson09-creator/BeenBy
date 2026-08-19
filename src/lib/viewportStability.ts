@@ -28,7 +28,10 @@ function resetViewport() {
 }
 
 function syncHeight() {
-  const h = window.visualViewport?.height ?? window.innerHeight;
+  // innerHeight is the stable layout viewport. visualViewport.height can be
+  // restored with a stale offset/keyboard value by WKWebView after resume,
+  // which previously made every h-dvh screen too short and appear shifted.
+  const h = window.innerHeight;
   if (h > 0) document.documentElement.style.setProperty("--app-height", `${Math.round(h)}px`);
 }
 

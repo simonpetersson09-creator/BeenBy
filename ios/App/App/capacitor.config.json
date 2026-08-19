@@ -4,7 +4,7 @@
 	"webDir": "dist/client",
 	"backgroundColor": "#AFA9A6",
 	"ios": {
-		"contentInset": "always",
+		"contentInset": "never",
 		"backgroundColor": "#AFA9A6",
 		"scrollEnabled": true
 	},
