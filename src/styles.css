@@ -122,7 +122,12 @@
   --brand-accent: oklch(0.605 0.115 52);
   --brand-accent-foreground: oklch(0.985 0.004 80);
 
+  /* iOS safe areas (statusrad/hemindikator). Definieras här, utanför @layer,
+     så att värdena alltid finns oavsett lagerordning. */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
+
 
 
 @layer base {
