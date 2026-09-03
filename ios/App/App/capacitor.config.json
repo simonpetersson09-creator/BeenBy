@@ -11,6 +11,13 @@
 	"android": {
 		"backgroundColor": "#AFA9A6"
 	},
+	"plugins": {
+		"StatusBar": {
+			"overlaysWebView": false,
+			"style": "DEFAULT",
+			"backgroundColor": "#AFA9A6"
+		}
+	},
 	"packageClassList": [
 		"AppPlugin",
 		"CAPCameraPlugin",
@@ -18,6 +25,7 @@
 		"DevicePlugin",
 		"PushNotificationsPlugin",
 		"SharePlugin",
+		"StatusBarPlugin",
 		"BeenbyGeofencePlugin",
 		"BeenbyStoreKitPlugin"
 	]
