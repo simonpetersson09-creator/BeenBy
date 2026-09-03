@@ -174,17 +174,6 @@
     pointer-events: none;
   }
 
-  /*
-   * iOS safe areas: WKWebView är fullskärm (viewport-fit=cover +
-   * contentInset: never), så webben måste själv hålla innehåll klart av
-   * statusraden (klocka/batteri) och hemdindikatorn. Padding läggs på
-   * app-roten; fullhöjdslayouter kompenserar via .h-dvh nedan.
-   */
-  :root {
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-  }
-
   /* Osynliga scrollbars i hela appen – scrollen finns kvar men syns inte. */
   * {
     scrollbar-width: none; /* Firefox */
@@ -196,14 +185,22 @@
     display: none;
   }
 
+  /*
+   * iOS safe areas: WKWebView är fullskärm (viewport-fit=cover +
+   * contentInset: never), så webben måste själv hålla innehåll klart av
+   * statusraden (klocka/batteri) och hemindikatorn. Padding läggs på
+   * app-roten; fullhöjdslayouter kompenserar via .h-dvh nedan.
+   */
+  #root,
   body > div:first-child {
     background-color: transparent;
     height: 100%;
     overflow: hidden;
     box-sizing: border-box;
-    padding-top: var(--safe-top);
-    padding-bottom: var(--safe-bottom);
+    padding-top: var(--safe-top, 0px);
+    padding-bottom: var(--safe-bottom, 0px);
   }
+
 
   /* Toast-notiser (sonner) ska aldrig hamna under statusraden. */
   [data-sonner-toaster][data-position^="top"] {
