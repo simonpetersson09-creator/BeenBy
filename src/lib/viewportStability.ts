@@ -67,6 +67,24 @@ function stabilise() {
   }, 250);
 }
 
+/**
+ * Watches for a stale Radix interaction lock (`pointer-events: none` on body
+ * while no dialog is open). It lingers when a tap lands during a dialog's
+ * close animation or when WKWebView suspends mid-close – the first tap on the
+ * next button is then swallowed. A MutationObserver repairs it immediately,
+ * not just on app resume.
+ */
+function startInteractionLockGuard(): () => void {
+  const observer = new MutationObserver(() => repairInteractionLock());
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ["style", "data-scroll-locked"],
+  });
+  // Also react when dialogs enter/leave the DOM.
+  observer.observe(document.body, { childList: true, subtree: true });
+  return () => observer.disconnect();
+}
+
 /** Starts the listeners. Returns a cleanup function. */
 export function startViewportStability(): () => void {
   if (typeof window === "undefined") return () => {};
@@ -77,6 +95,8 @@ export function startViewportStability(): () => void {
   document.documentElement.dataset["viewportStability"] = "active";
 
   if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+
+  const stopLockGuard = startInteractionLockGuard();
 
   const onVisibility = () => {
     if (document.visibilityState === "visible") stabilise();
@@ -109,6 +129,7 @@ export function startViewportStability(): () => void {
     window.removeEventListener("orientationchange", stabilise);
     window.visualViewport?.removeEventListener("resize", syncHeight);
     removeNativeListener?.();
+    stopLockGuard();
     delete document.documentElement.dataset["viewportStability"];
   };
 }
