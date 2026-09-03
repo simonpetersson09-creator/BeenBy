@@ -180,6 +180,17 @@
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
 
+  /* Osynliga scrollbars i hela appen – scrollen finns kvar men syns inte. */
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* äldre Edge/IE */
+  }
+  *::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
   body > div:first-child {
     background-color: transparent;
     height: 100%;
