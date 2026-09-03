@@ -17,7 +17,12 @@ export type NativeCapability =
 
 export function isNativeRuntime(): boolean {
   if (typeof window === "undefined") return false;
-  return Boolean((window as unknown as { Capacitor?: unknown }).Capacitor);
+  const cap = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
+  if (!cap) return false;
+  // window.Capacitor finns även i webben (Capacitor-JS buntas alltid med).
+  // isNativePlatform() skiljer äkta iOS/Android från webbläsare/webview-preview.
+  if (typeof cap.isNativePlatform === "function") return cap.isNativePlatform();
+  return false;
 }
 
 export function isCapabilityAvailable(capability: NativeCapability): boolean {
