@@ -21,6 +21,7 @@ const router = getRouter();
 
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("Root element #root not found");
+const nativeRoot = rootEl;
 
 async function mountNativeApp() {
   // Enforce the same value at runtime as in capacitor.config.ts. Awaiting this
@@ -32,7 +33,7 @@ async function mountNativeApp() {
     // The static bundle can still be previewed outside the native bridge.
   }
 
-  createRoot(rootEl).render(
+  createRoot(nativeRoot).render(
     <StrictMode>
       <RouterProvider router={router} />
     </StrictMode>,
