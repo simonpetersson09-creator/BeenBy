@@ -257,8 +257,6 @@ export function SettingsDialog({
     } finally {
       setSavingName(false);
     }
-    toast.success(t("settings.nameSaved"));
-    onPersonUpdated?.();
   }
 
   useEffect(() => {
