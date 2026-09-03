@@ -170,8 +170,7 @@ function RootComponent() {
       <Outlet />
       <Toaster
         position="top-center"
-        offset="calc(var(--safe-top, 0px) + 12px)"
-        style={{ top: "calc(var(--safe-top, 0px) + 12px)" }}
+        offset="calc(var(--safe-top, 0px) + 8px)"
       />
     </QueryClientProvider>
   );

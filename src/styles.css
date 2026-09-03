@@ -128,6 +128,16 @@
   --safe-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px);
 }
 
+/*
+ * WKWebView can return 0 for env(safe-area-inset-top) when contentInset is
+ * managed by the web layer. Modern iPhones need up to 59px for the status bar
+ * and Dynamic Island, so the packaged app has a native-only fallback.
+ */
+html[data-native-app="true"] {
+  --safe-top: calc(max(env(safe-area-inset-top, 0px), 49px) + 10px);
+  --safe-bottom: calc(max(env(safe-area-inset-bottom, 0px), 20px) + 4px);
+}
+
 
 
 @layer base {
@@ -203,7 +213,7 @@
 
 
   /* Toast-notiser (sonner) ska aldrig hamna under statusraden. */
-  [data-sonner-toaster][data-position^="top"] {
+  [data-sonner-toaster][data-y-position="top"] {
     top: calc(var(--safe-top) + 8px) !important;
   }
 
