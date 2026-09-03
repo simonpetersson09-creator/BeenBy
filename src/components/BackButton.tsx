@@ -18,7 +18,7 @@ export function BackButton({ onClick, inline }: { onClick: () => void; inline?: 
           ? "flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
           : "fixed left-4 z-40 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
       }
-      {...(inline ? {} : { style: { top: "calc(env(safe-area-inset-top, 0px) + 1rem)" } })}
+      {...(inline ? {} : { style: { top: "calc(var(--safe-top, 0px) + 1rem)" } })}
     >
       <ArrowLeft className="size-5" />
     </button>
