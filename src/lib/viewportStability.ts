@@ -129,6 +129,7 @@ export function startViewportStability(): () => void {
     window.removeEventListener("orientationchange", stabilise);
     window.visualViewport?.removeEventListener("resize", syncHeight);
     removeNativeListener?.();
+    stopLockGuard();
     delete document.documentElement.dataset["viewportStability"];
   };
 }
