@@ -124,8 +124,8 @@
 
   /* iOS safe areas (statusrad/hemindikator). Definieras här, utanför @layer,
      så att värdena alltid finns oavsett lagerordning. */
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: calc(env(safe-area-inset-top, 0px) + 10px);
+  --safe-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px);
 }
 
 
