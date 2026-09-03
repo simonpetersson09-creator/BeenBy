@@ -7,15 +7,23 @@ const config: CapacitorConfig = {
   // Samma bakgrund som appen, så överscroll aldrig visar vitt/svart
   backgroundColor: '#AFA9A6',
   ios: {
-    // The web UI handles safe areas with env(safe-area-inset-*). Letting
-    // WKWebView add another native inset can restore a negative contentOffset
-    // after resume and move the entire app behind the status bar.
+    // Scrolling remains web-controlled. The StatusBar plugin below owns the
+    // top system inset by placing WKWebView below the iOS status bar.
     contentInset: 'never',
     backgroundColor: '#AFA9A6',
     scrollEnabled: true,
   },
   android: {
     backgroundColor: '#AFA9A6',
+  },
+  plugins: {
+    StatusBar: {
+      // One central strategy: iOS reserves the status-bar/Dynamic-Island area.
+      // Web content must therefore not add a second native top inset.
+      overlaysWebView: false,
+      style: 'DEFAULT',
+      backgroundColor: '#AFA9A6',
+    },
   },
 };
 

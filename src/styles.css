@@ -122,10 +122,15 @@
   --brand-accent: oklch(0.605 0.115 52);
   --brand-accent-foreground: oklch(0.985 0.004 80);
 
-  /* iOS safe areas (statusrad/hemindikator). Definieras här, utanför @layer,
-     så att värdena alltid finns oavsett lagerordning. */
-  --safe-top: calc(env(safe-area-inset-top, 0px) + 10px);
-  --safe-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px);
+  /* Browser/PWA safe areas. Native iOS overrides --safe-top to zero because
+     Capacitor reserves the status-bar area outside WKWebView. */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --overlay-top-offset: calc(var(--safe-top) + 0.75rem);
+}
+
+html[data-native-app="true"] {
+  --safe-top: 0px;
 }
 
 
@@ -186,13 +191,11 @@
   }
 
   /*
-   * iOS safe areas: WKWebView är fullskärm (viewport-fit=cover +
-   * contentInset: never), så webben måste själv hålla innehåll klart av
-   * statusraden (klocka/batteri) och hemindikatorn. Padding läggs på
-   * app-roten; fullhöjdslayouter kompenserar via .h-dvh nedan.
+   * Browser/PWA safe areas live on the single app root. In native iOS the
+   * StatusBar plugin resizes WKWebView below the status bar, so --safe-top is
+   * intentionally zero and cannot be applied twice by individual screens.
    */
-  #root,
-  body > div:first-child {
+  #root {
     background-color: transparent;
     height: 100%;
     overflow: hidden;
@@ -202,24 +205,9 @@
   }
 
 
-  /* Toast-notiser (sonner) ska aldrig hamna under statusraden. */
+  /* Portalled top overlays use the same central safe-area calculation. */
   [data-sonner-toaster][data-y-position="top"] {
-    top: calc(var(--safe-top) + 8px) !important;
-  }
-
-  /*
-   * WKWebView may report a zero CSS safe-area even though it draws below the
-   * iPhone status bar. This native-only minimum targets Sonner directly; the
-   * old selector used data-position, an attribute Sonner never renders.
-   */
-  html[data-native-app="true"] [data-sonner-toaster][data-y-position="top"] {
-    top: calc(max(env(safe-area-inset-top, 0px), 49px) + 10px) !important;
-  }
-
-  /* Dialoger/sheets (Inställningar m.fl.) – toppinnehåll klart av klockan. */
-  [role="dialog"],
-  [role="alertdialog"] {
-    padding-top: max(var(--safe-top), 1rem);
+    top: var(--overlay-top-offset) !important;
   }
 
   /*
