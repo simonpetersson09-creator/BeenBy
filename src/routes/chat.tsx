@@ -378,7 +378,7 @@ function ChatPage() {
   return (
     <main className="app-scroll mx-auto flex h-dvh w-full max-w-md flex-col px-5">
       {/* Sticky so the title and back button follow along while scrolling. */}
-      <header className="sticky top-0 z-20 -mx-5 mb-4 flex items-center gap-2 border-b border-primary/10 bg-background/95 px-5 pb-3 pt-[max(1rem,env(safe-area-inset-top))] backdrop-blur">
+      <header className="sticky top-0 z-20 -mx-5 mb-4 flex items-center gap-2 border-b border-primary/10 bg-background/95 px-5 pb-3 pt-4 backdrop-blur">
         <Button variant="ghost" size="icon" aria-label={t("common.back")} asChild>
           <Link to="/">
             <ArrowLeft className="size-5" />
