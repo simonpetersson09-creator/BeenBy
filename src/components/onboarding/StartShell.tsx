@@ -41,7 +41,7 @@ export function StartShell({
   return (
     <main
       className="app-scroll mx-auto flex h-dvh w-full max-w-md flex-col px-6 pb-8"
-      style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)" }}
+      style={{ paddingTop: "1rem" }}
     >
       {onBack ? (
         <div className="mb-4 shrink-0">
