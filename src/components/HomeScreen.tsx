@@ -87,24 +87,14 @@ export function HomeScreen({
   const { hasAccess, isPremium, isTrialActive, trialDaysLeft } = useAccess();
   const locked = !hasAccess;
 
-  // iOS may suspend while a modal is closing or an action is awaiting the
-  // network. Clear transient UI on resume so no invisible layer or stale busy
-  // state can keep intercepting taps.
+  // A native resume can happen immediately after the user taps a control.
+  // Never close visible UI here: the delayed resume event would otherwise open
+  // Settings and then close it again, making the button appear to need two taps.
+  // The global viewport guard repairs stale overlays and interaction locks.
   useEffect(() => {
-    const resetTransientUi = () => {
-      setSelectedDay(null);
-      setPlanOpen(false);
-      setFamilyOpen(false);
-      setSettingsOpen(false);
-      setConfirmSecond(false);
-      setConfirmVisit(false);
-      setPlanCalendarOpen(false);
-      setInviteOpen(false);
-      setPaywallOpen(false);
-      setBusy(false);
-    };
-    window.addEventListener("beenby:resume", resetTransientUi);
-    return () => window.removeEventListener("beenby:resume", resetTransientUi);
+    const clearStaleBusyState = () => setBusy(false);
+    window.addEventListener("beenby:resume", clearStaleBusyState);
+    return () => window.removeEventListener("beenby:resume", clearStaleBusyState);
   }, []);
 
   // Arrival reminder (geofence): keeps the native region in sync with the
