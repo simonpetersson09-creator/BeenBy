@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import {
   Bell,
@@ -113,7 +113,21 @@ export function SettingsDialog({
   const [leaving, setLeaving] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const openedAt = useRef(0);
   const myColor = members?.find((m) => m.user_id === userId)?.personal_color ?? null;
+
+  useEffect(() => {
+    if (open) openedAt.current = Date.now();
+  }, [open]);
+
+  function handleOpenChange(next: boolean) {
+    // In WKWebView the pointer-up from the settings button can occasionally be
+    // delivered to the newly mounted overlay. Radix interprets it as an outside
+    // press and immediately requests a close. Ignore only that same gesture;
+    // normal close-button and backdrop presses continue to work afterwards.
+    if (!next && Date.now() - openedAt.current < 450) return;
+    onOpenChange(next);
+  }
 
   async function handleColorChange(next: string) {
     if (!userId || next === myColor) return;
@@ -314,7 +328,7 @@ export function SettingsDialog({
 
   return (
     <>
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
         className="max-h-[88dvh] gap-2.5 overflow-y-auto rounded-3xl p-5 sm:max-w-md"
