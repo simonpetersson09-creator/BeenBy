@@ -170,7 +170,7 @@ function RootComponent() {
       <Outlet />
       <Toaster
         position="top-center"
-        offset="calc(var(--safe-top, 0px) + 8px)"
+        offset="var(--overlay-top-offset)"
       />
     </QueryClientProvider>
   );

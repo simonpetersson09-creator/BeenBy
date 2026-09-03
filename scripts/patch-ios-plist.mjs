@@ -75,6 +75,17 @@ if (!existsSync(PLIST)) {
 let xml = readFileSync(PLIST, "utf8");
 const added = [];
 
+// Capacitor's StatusBar plugin must be allowed to control the status bar from
+// the bridge view controller. It resizes WKWebView below the status bar when
+// overlaysWebView is false.
+if (!xml.includes("<key>UIViewControllerBasedStatusBarAppearance</key>")) {
+  xml = xml.replace(
+    /<dict>/,
+    "<dict>\n\t<key>UIViewControllerBasedStatusBarAppearance</key>\n\t<true/>",
+  );
+  added.push("UIViewControllerBasedStatusBarAppearance");
+}
+
 for (const [key, value] of Object.entries(USAGE.en)) {
   if (xml.includes(`<key>${key}</key>`)) continue;
   xml = xml.replace(/<dict>/, `<dict>\n\t<key>${key}</key>\n\t<string>${value}</string>`);
