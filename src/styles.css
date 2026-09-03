@@ -203,8 +203,17 @@
 
 
   /* Toast-notiser (sonner) ska aldrig hamna under statusraden. */
-  [data-sonner-toaster][data-position^="top"] {
+  [data-sonner-toaster][data-y-position="top"] {
     top: calc(var(--safe-top) + 8px) !important;
+  }
+
+  /*
+   * WKWebView may report a zero CSS safe-area even though it draws below the
+   * iPhone status bar. This native-only minimum targets Sonner directly; the
+   * old selector used data-position, an attribute Sonner never renders.
+   */
+  html[data-native-app="true"] [data-sonner-toaster][data-y-position="top"] {
+    top: calc(max(env(safe-area-inset-top, 0px), 49px) + 10px) !important;
   }
 
   /* Dialoger/sheets (Inställningar m.fl.) – toppinnehåll klart av klockan. */
