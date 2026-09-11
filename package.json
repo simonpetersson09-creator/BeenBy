@@ -14,7 +14,8 @@
     "icons": "capacitor-assets generate --ios",
     "ios:plist": "node scripts/patch-ios-plist.mjs && node scripts/patch-ios-capabilities.mjs && node scripts/patch-ios-project.mjs",
     "ios:project": "node scripts/patch-ios-project.mjs",
-    "ios:sync": "npm run build:ios && npx cap sync ios && npm run ios:plist",
+    "ios:sync": "npm run build:ios && npx cap sync ios && npm run ios:plist && npm run ios:icon",
+    "ios:icon": "node scripts/generate-ios-icon.mjs",
     "ios:init": "npx cap add ios || true",
     "ios:caps": "node scripts/patch-ios-capabilities.mjs"
   },
