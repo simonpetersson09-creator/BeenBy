@@ -581,7 +581,6 @@ export function HomeScreen({
             )}
             <span className="text-sm font-semibold leading-tight">{t("home.imHere")}</span>
           </Button>
-        </div>
       </div>
 
       <DayDetail
