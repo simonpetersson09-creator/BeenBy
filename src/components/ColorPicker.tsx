@@ -15,7 +15,7 @@ export function ColorPicker({
 }) {
   const t = useT();
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-4 gap-2">
       {MEMBER_COLORS.map((c) => {
         const isTaken = taken.includes(c.id) && c.id !== value;
         const selected = value === c.id;
@@ -28,14 +28,14 @@ export function ColorPicker({
             aria-pressed={selected}
             aria-label={`${t(`color.${c.id}`)}${isTaken ? ` (${t("color.taken")})` : ""}`}
             className={cn(
-              "flex flex-col items-center gap-1.5 rounded-2xl p-2 transition",
+              "flex flex-col items-center gap-1 rounded-2xl p-1.5 transition",
               isTaken ? "cursor-not-allowed opacity-35" : "hover:bg-secondary",
               selected && "bg-secondary",
             )}
           >
             <span
               className={cn(
-                "flex size-11 items-center justify-center rounded-full transition",
+                "flex size-10 items-center justify-center rounded-full transition",
                 selected && "ring-2 ring-foreground ring-offset-2 ring-offset-background",
               )}
               style={{ backgroundColor: c.hex }}
