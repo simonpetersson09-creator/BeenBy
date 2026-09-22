@@ -83,7 +83,6 @@ export function HomeScreen({
   const unread = useUnreadMessages(circle.id, userId);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
   const { hasAccess, isPremium, isTrialActive, trialDaysLeft } = useAccess();
   const locked = !hasAccess;
 
@@ -143,17 +142,7 @@ export function HomeScreen({
 
 
 
-  // The family tooltip is shown once, briefly, the first time.
-  useEffect(() => {
-    if (members.length !== 1) return;
-    if (window.localStorage.getItem("beenby.familyTipSeen")) return;
-    setShowTooltip(true);
-    const timer = window.setTimeout(() => {
-      window.localStorage.setItem("beenby.familyTipSeen", "1");
-      setShowTooltip(false);
-    }, 8000);
-    return () => window.clearTimeout(timer);
-  }, [members.length]);
+  // The invitation card on the home screen carries this message now.
 
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState<PendingVisit[]>([]);
@@ -346,24 +335,6 @@ export function HomeScreen({
           </Button>
 
 
-          {showTooltip ? (
-            <button
-              type="button"
-              onClick={() => {
-                window.localStorage.setItem("beenby.familyTipSeen", "1");
-                setShowTooltip(false);
-                setFamilyOpen(true);
-              }}
-              className="absolute right-0 top-full z-20 mt-2 w-56 animate-in fade-in slide-in-from-top-1 rounded-2xl bg-primary px-3 py-2 text-left text-[0.7rem] leading-snug text-primary-foreground shadow-lift"
-            >
-              <span
-                aria-hidden
-                className="absolute -top-1.5 right-[7.5rem] size-3 rotate-45 rounded-[2px] bg-primary"
-              />
-
-              {t("home.tooltip")}
-            </button>
-          ) : null}
         </div>
 
       </header>
@@ -425,6 +396,21 @@ export function HomeScreen({
         code={circle.family_code}
       />
 
+
+      {members.length === 1 ? (
+        <section className="mb-4 rounded-3xl bg-primary px-4 py-4 text-primary-foreground shadow-lift">
+          <h2 className="text-base font-semibold leading-tight">{t("home.aloneTitle")}</h2>
+          <p className="mt-1 text-sm leading-snug text-primary-foreground/85">
+            {t("home.aloneBody")}
+          </p>
+          <Button
+            onClick={invite}
+            className="mt-3 h-12 w-full rounded-2xl bg-primary-foreground text-sm font-semibold text-primary hover:bg-primary-foreground/90"
+          >
+            <Share2 className="size-4" /> {t("home.aloneCta")}
+          </Button>
+        </section>
+      ) : null}
 
       {!online || pending.length > 0 ? (
         <div className="mb-4 flex items-center gap-2 rounded-2xl bg-secondary px-4 py-3 text-sm">
