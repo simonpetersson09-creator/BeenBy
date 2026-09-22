@@ -123,8 +123,8 @@
   /* Warm terracotta accent – used for the chat action */
   --brand-accent: oklch(0.605 0.115 52);
   --brand-accent-foreground: oklch(0.985 0.004 80);
-  /* Calm green – "Jag är här" arrival action */
-  --positive: oklch(0.585 0.115 155);
+  /* Deep plum – "Jag är här" arrival action */
+  --positive: oklch(0.47 0.105 315);
   --positive-foreground: oklch(0.985 0.004 80);
 
   /* Browser/PWA safe areas. Native iOS overrides --safe-top to zero because
