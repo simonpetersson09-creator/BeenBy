@@ -99,7 +99,7 @@ function ColorStep({ userId, draft }: { userId: string; draft: OnboardingDraft }
 
   return (
     <>
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         <h1 className="text-2xl leading-snug">{t("farg.title")}</h1>
         <p className="text-sm text-muted-foreground">{t("farg.sub")}</p>
       </div>
@@ -111,7 +111,7 @@ function ColorStep({ userId, draft }: { userId: string; draft: OnboardingDraft }
         }}
       />
       <Button
-        className="h-12 w-full rounded-2xl text-sm"
+        className="h-11 w-full rounded-2xl text-sm"
         disabled={!color || saving}
         onClick={() => void create()}
       >

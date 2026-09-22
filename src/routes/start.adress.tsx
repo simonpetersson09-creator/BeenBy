@@ -100,7 +100,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
 
   return (
     <>
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         <h1 className="text-2xl leading-snug">
           {t("adress.title", { name: pl(draft.personName) || t("adress.person") })}
         </h1>
@@ -108,7 +108,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           {t("adress.sub")}
         </p>
       </div>
-      <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
+      <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
         <SectionHeader
           step={1}
           title={t("adress.s1.title")}
@@ -132,11 +132,11 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
                 if (e.key === "Enter") void lookupAddress();
               }}
               placeholder={t("adress.placeholder")}
-              className="h-12 rounded-2xl text-base"
+              className="h-11 rounded-2xl text-base"
             />
             <Button
               variant="secondary"
-              className="h-12 shrink-0 rounded-2xl px-4"
+              className="h-11 shrink-0 rounded-2xl px-4"
               onClick={() => void lookupAddress()}
               disabled={searching || address.trim().length < 3}
               aria-label={t("adress.search")}
@@ -215,7 +215,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
         ) : null}
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
+      <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
         <SectionHeader
           step={2}
           title={t("adress.s2.title")}
@@ -237,10 +237,10 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
         </div>
       </section>
 
-      <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-3">
+      <section className="space-y-1.5 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
         <SectionHeader step={3} title={t("adress.s3.title")} hint={t("adress.s3.hint")} />
         <Button
-          className="h-12 w-full rounded-2xl text-sm"
+          className="h-11 w-full rounded-2xl text-sm"
           onClick={() => {
             patchDraft({
               address,
@@ -279,7 +279,7 @@ function SectionHeader({
 }) {
   return (
     <div className="flex items-start gap-2.5">
-      <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+      <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
         {step}
       </span>
       <div className="min-w-0 space-y-0.5">
