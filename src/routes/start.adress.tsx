@@ -105,7 +105,7 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
           {t("adress.title", { name: pl(draft.personName) || t("adress.person") })}
         </h1>
         <p className="text-sm text-muted-foreground">
-          {t("adress.sub")}
+          {t("adress.sub", { name: pl(draft.personName) || t("adress.person") })}
         </p>
       </div>
       <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
