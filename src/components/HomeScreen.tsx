@@ -238,6 +238,7 @@ export function HomeScreen({
             }
           : undefined,
       });
+      void maybeAskForReview();
     } finally {
       setBusy(false);
     }
