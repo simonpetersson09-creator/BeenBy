@@ -521,69 +521,68 @@ export function HomeScreen({
 
 
       <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-6">
-        <Button
-          onClick={handleImHere}
-          disabled={busy || !person}
-          className="h-12 w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
-        >
-          {busy ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : locked ? (
-            <Lock className="size-4" />
-          ) : (
-            <MapPinCheckInside className="size-5" />
-          )}
-          {t("home.imHere")}
-        </Button>
-        <div className="mt-2 flex gap-2">
+        <div className="flex items-center gap-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <Button
+              className="h-[60px] w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
+              onClick={() => {
+                if (locked) {
+                  setPaywallOpen(true);
+                  return;
+                }
+                resetActs();
+                setPlanDate(null);
+                setPlanOpen(true);
+              }}
+              aria-label={locked ? t("access.locked") : undefined}
+            >
+              {locked ? <Lock className="size-4" /> : <Plus className="size-4" />} {t("home.plan")}
+            </Button>
+            {locked ? (
+              <Button
+                aria-label={t("access.locked")}
+                onClick={() => setPaywallOpen(true)}
+                className="relative h-[60px] w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
+              >
+                <MessageCircle className="size-5" /> {t("home.chat")}
+                <Lock className="absolute right-2 top-2 size-3.5 rounded-full bg-primary p-0.5 text-primary-foreground ring-2 ring-primary-foreground/80" />
+              </Button>
+            ) : (
+              <Button
+                asChild
+                aria-label={
+                  unread > 0
+                    ? `${t("home.chatAria")} – ${t("home.unread", { n: String(unread) })}`
+                    : t("home.chatAria")
+                }
+                className="relative h-[60px] w-full rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
+              >
+                <Link to="/chat">
+                  <MessageCircle className="size-5" /> {t("home.chat")}
+                  {unread > 0 ? (
+                    <span className="absolute -right-1 -top-1 flex min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 py-0.5 text-[0.65rem] font-semibold leading-none text-destructive-foreground shadow-soft">
+                      {unread > 99 ? "99+" : unread}
+                    </span>
+                  ) : null}
+                </Link>
+              </Button>
+            )}
+          </div>
           <Button
-            className="h-12 flex-1 rounded-2xl bg-primary text-base text-primary-foreground shadow-lift hover:bg-primary/90"
-            onClick={() => {
-              if (locked) {
-                setPaywallOpen(true);
-                return;
-              }
-              resetActs();
-              setPlanDate(null);
-              setPlanOpen(true);
-            }}
-            aria-label={locked ? t("access.locked") : undefined}
+            onClick={handleImHere}
+            disabled={busy || !person}
+            className="flex size-32 shrink-0 flex-col items-center justify-center gap-1 rounded-full bg-primary text-primary-foreground shadow-lift hover:bg-primary/90"
           >
-            {locked ? <Lock className="size-4" /> : <Plus className="size-4" />} {t("home.plan")}
+            {busy ? (
+              <Loader2 className="size-6 animate-spin" />
+            ) : locked ? (
+              <Lock className="size-6" />
+            ) : (
+              <MapPinCheckInside className="size-7" />
+            )}
+            <span className="text-sm font-semibold leading-tight">{t("home.imHere")}</span>
           </Button>
-          {locked ? (
-            <Button
-              aria-label={t("access.locked")}
-              onClick={() => setPaywallOpen(true)}
-              className="relative size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
-            >
-              <MessageCircle className="size-5" />
-              <Lock className="absolute -right-0.5 -top-0.5 size-3.5 rounded-full bg-primary p-0.5 text-primary-foreground" />
-            </Button>
-          ) : (
-            <Button
-              asChild
-              aria-label={
-                unread > 0
-                  ? `${t("home.chatAria")} – ${t("home.unread", { n: String(unread) })}`
-                  : t("home.chatAria")
-              }
-              className="relative size-12 shrink-0 rounded-2xl bg-brand-accent text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
-            >
-              <Link to="/chat">
-                <MessageCircle className="size-5" />
-                {unread > 0 ? (
-                  <span className="absolute -right-1 -top-1 flex min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 py-0.5 text-[0.65rem] font-semibold leading-none text-destructive-foreground shadow-soft">
-                    {unread > 99 ? "99+" : unread}
-                  </span>
-                ) : null}
-              </Link>
-            </Button>
-          )}
-
         </div>
-
-
       </div>
 
       <DayDetail
