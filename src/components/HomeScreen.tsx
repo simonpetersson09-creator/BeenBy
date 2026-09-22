@@ -336,24 +336,6 @@ export function HomeScreen({
           </Button>
 
 
-          {showTooltip ? (
-            <button
-              type="button"
-              onClick={() => {
-                window.localStorage.setItem("beenby.familyTipSeen", "1");
-                setShowTooltip(false);
-                setFamilyOpen(true);
-              }}
-              className="absolute right-0 top-full z-20 mt-2 w-56 animate-in fade-in slide-in-from-top-1 rounded-2xl bg-primary px-3 py-2 text-left text-[0.7rem] leading-snug text-primary-foreground shadow-lift"
-            >
-              <span
-                aria-hidden
-                className="absolute -top-1.5 right-[7.5rem] size-3 rotate-45 rounded-[2px] bg-primary"
-              />
-
-              {t("home.tooltip")}
-            </button>
-          ) : null}
         </div>
 
       </header>
