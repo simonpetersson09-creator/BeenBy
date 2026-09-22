@@ -143,17 +143,7 @@ export function HomeScreen({
 
 
 
-  // The family tooltip is shown once, briefly, the first time.
-  useEffect(() => {
-    if (members.length !== 1) return;
-    if (window.localStorage.getItem("beenby.familyTipSeen")) return;
-    setShowTooltip(true);
-    const timer = window.setTimeout(() => {
-      window.localStorage.setItem("beenby.familyTipSeen", "1");
-      setShowTooltip(false);
-    }, 8000);
-    return () => window.clearTimeout(timer);
-  }, [members.length]);
+  // The invitation card on the home screen carries this message now.
 
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState<PendingVisit[]>([]);
