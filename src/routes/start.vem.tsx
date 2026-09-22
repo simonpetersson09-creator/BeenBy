@@ -135,6 +135,7 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
         </Button>
       </section>
 
+      <h2 className="text-2xl leading-snug">{t("vem.joinTitle")}</h2>
       <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
         <SectionHeader step={3} title={t("vem.s3.title")} hint={t("vem.s3.hint")} />
         <button
