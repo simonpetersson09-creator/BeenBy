@@ -69,10 +69,10 @@ function CodePage() {
             }}
             placeholder="ABC123"
             maxLength={10}
-            className="h-14 rounded-2xl text-center text-2xl tracking-widest"
+            className="h-12 rounded-2xl text-center text-2xl tracking-widest"
           />
           <Button
-            className="h-12 w-full rounded-2xl text-sm"
+            className="h-11 w-full rounded-2xl text-sm"
             disabled={code.trim().length < 4}
             onClick={() => setActiveCode(code.trim())}
           >

@@ -55,19 +55,19 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
 
   return (
     <>
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         <h1 className="text-2xl leading-snug">{t("vem.title")}</h1>
         <p className="text-sm text-muted-foreground">{t("vem.sub")}</p>
       </div>
 
-      <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
+      <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
         <SectionHeader step={1} title={t("vem.s1.title")} hint={t("vem.s1.hint")} />
         <div className="grid grid-cols-2 gap-2">
           {presets.map((p) => (
             <Button
               key={p.value}
               variant={personName === p.value && !customMode ? "default" : "secondary"}
-              className="h-12 rounded-2xl text-sm"
+              className="h-11 rounded-2xl text-sm"
               onClick={() => {
                 setPersonName(p.value);
                 setCustomMode(false);
@@ -79,7 +79,7 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
           ))}
           <Button
             variant={customMode ? "default" : "secondary"}
-            className="col-span-2 h-12 rounded-2xl text-sm"
+            className="col-span-2 h-11 rounded-2xl text-sm"
             onClick={() => {
               setCustomMode(true);
               setPersonName("");
@@ -104,13 +104,13 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
                 patchDraft({ personName: e.target.value });
               }}
               placeholder={t("vem.namePlaceholder")}
-              className="h-12 rounded-2xl text-base"
+              className="h-11 rounded-2xl text-base"
             />
           </div>
         ) : null}
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
+      <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
         <SectionHeader step={2} title={t("vem.s2.title")} hint={t("vem.s2.hint")} />
         <Input
           id="me"
@@ -121,10 +121,10 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
             patchDraft({ myName: e.target.value });
           }}
           placeholder={t("vem.mePlaceholder")}
-          className="h-12 rounded-2xl text-base"
+          className="h-11 rounded-2xl text-base"
         />
         <Button
-          className="h-12 w-full rounded-2xl text-sm"
+          className="h-11 w-full rounded-2xl text-sm"
           disabled={personName.trim().length < 1 || myName.trim().length < 1}
           onClick={() => {
             patchDraft({ personName: personName.trim(), myName: myName.trim() });
@@ -136,7 +136,7 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
       </section>
 
       <h2 className="text-2xl leading-snug">{t("vem.joinTitle")}</h2>
-      <section className="space-y-3 rounded-2xl border border-primary/25 bg-card/60 p-3">
+      <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
         <SectionHeader step={3} title={t("vem.s3.title")} hint={t("vem.s3.hint")} />
         <button
           type="button"
@@ -156,7 +156,7 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
 function SectionHeader({ step, title, hint }: { step: number; title: string; hint: string }) {
   return (
     <div className="flex items-start gap-2.5">
-      <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+      <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
         {step}
       </span>
       <div className="min-w-0 space-y-0.5">

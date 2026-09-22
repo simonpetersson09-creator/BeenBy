@@ -40,16 +40,16 @@ export function StartShell({
 
   return (
     <main
-      className="app-scroll mx-auto flex h-dvh w-full max-w-md flex-col px-6 pb-8"
-      style={{ paddingTop: "1rem" }}
+      className="app-scroll mx-auto flex h-dvh w-full max-w-md flex-col px-5 pb-4"
+      style={{ paddingTop: "0.75rem" }}
     >
       {onBack ? (
-        <div className="mb-4 shrink-0">
+        <div className="mb-2 shrink-0">
           <BackButton onClick={onBack} inline />
         </div>
       ) : null}
       <div className="flex flex-1 flex-col justify-center">
-        <div className="animate-rise-in space-y-4">{children({ userId: user.id, draft })}</div>
+        <div className="animate-rise-in space-y-2.5">{children({ userId: user.id, draft })}</div>
       </div>
     </main>
   );

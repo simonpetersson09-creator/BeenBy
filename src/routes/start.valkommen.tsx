@@ -55,22 +55,22 @@ function WelcomePage() {
   }
 
   return (
-    <main className="mx-auto flex h-dvh w-full max-w-md flex-col justify-center gap-5 overflow-hidden px-6 pt-8 pb-12">
-      <div className="animate-rise-in space-y-3">
+    <main className="mx-auto flex h-dvh w-full max-w-md flex-col justify-center gap-3 overflow-hidden px-6 pt-4 pb-6">
+      <div className="animate-rise-in space-y-2">
         <h1 className="text-3xl leading-tight text-primary">{t("welcome.title")}</h1>
         <p className="text-base text-muted-foreground">{t("welcome.sub")}</p>
       </div>
 
       <ul className="animate-rise-in divide-y divide-primary/10">
         {points.map(({ icon: Icon, key }) => (
-          <li key={key} className="flex items-start gap-3 py-3">
+          <li key={key} className="flex items-start gap-3 py-2">
             <Icon className="mt-0.5 size-4.5 shrink-0 text-primary/70" strokeWidth={1.5} />
             <span className="text-sm leading-relaxed text-foreground/90">{t(key)}</span>
           </li>
         ))}
       </ul>
 
-      <div className="relative mt-6 flex items-end justify-center gap-2 pt-4">
+      <div className="relative mt-2 flex items-end justify-center gap-2 pt-2">
         {showHint ? (
           <button
             type="button"
