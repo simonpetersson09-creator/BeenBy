@@ -307,8 +307,8 @@ export function HomeScreen({
   const planDates = Array.from({ length: 14 }, (_, i) => addDays(today, i));
 
   return (
-    <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-10 pt-8">
-      <header className="mb-6 flex items-center justify-between gap-3">
+    <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-8 pt-6">
+      <header className="mb-4 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-primary/60">
             {t("home.eyebrow")}
@@ -441,7 +441,7 @@ export function HomeScreen({
 
 
 
-      <section className="mt-3 rounded-2xl bg-card px-3 py-2 shadow-soft">
+      <section className="mt-2.5 rounded-2xl bg-card px-3 py-2 shadow-soft">
         {nextPlanned ? (
           (() => {
             const plannedMember = members.find((m) => m.user_id === nextPlanned.user_id);
@@ -483,7 +483,7 @@ export function HomeScreen({
         )}
       </section>
 
-      <section className="mt-3 rounded-2xl border border-primary/30 px-4 py-3">
+      <section className="mt-2.5 rounded-2xl border border-primary/30 px-4 py-2.5">
         <p className="mb-2.5 text-[0.62rem] font-medium uppercase tracking-[0.2em] text-primary/60">
           {t("home.who")}
         </p>
@@ -520,7 +520,7 @@ export function HomeScreen({
 
 
 
-      <div className="mt-5 flex items-center gap-3">
+      <div className="mt-3.5 flex items-center gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-2">
             <Button
               className="h-[52px] w-full rounded-2xl bg-primary text-[0.95rem] text-primary-foreground shadow-lift hover:bg-primary/90"
