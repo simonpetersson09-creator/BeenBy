@@ -307,7 +307,7 @@ export function HomeScreen({
   const planDates = Array.from({ length: 14 }, (_, i) => addDays(today, i));
 
   return (
-    <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-52 pt-8">
+    <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-10 pt-8">
       <header className="mb-6 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-primary/60">
@@ -520,9 +520,8 @@ export function HomeScreen({
 
 
 
-      <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-6">
-        <div className="flex items-center gap-3">
-          <div className="flex min-w-0 flex-1 flex-col gap-2">
+      <div className="mt-5 flex items-center gap-3">
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
             <Button
               className="h-[52px] w-full rounded-2xl bg-primary text-[0.95rem] text-primary-foreground shadow-lift hover:bg-primary/90"
               onClick={() => {
