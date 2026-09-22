@@ -310,18 +310,18 @@ export function HomeScreen({
     <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-8 pt-6">
       <header className="mb-4 flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-primary/60">
+          <p className="text-[0.6rem] font-medium uppercase tracking-[0.22em] text-primary/60">
             {t("home.eyebrow")}
           </p>
-          <h1 className="mt-1 truncate text-[2rem] leading-[1.1] text-primary">
+          <h1 className="mt-1 truncate text-[1.75rem] leading-[1.1] text-primary">
             {pl(person?.name) || circle.name}
           </h1>
-          <span className="mt-2 block h-px w-10 bg-primary/30" />
+          <span className="mt-1.5 block h-px w-10 bg-primary/30" />
         </div>
         <div className="relative flex shrink-0 gap-2">
           <Button
             onClick={() => setFamilyOpen(true)}
-            className="h-12 rounded-2xl bg-primary px-3 text-xs font-medium leading-tight text-primary-foreground shadow-soft hover:bg-primary/90"
+            className="h-12 rounded-2xl bg-primary px-3 text-[0.7rem] font-medium leading-tight text-primary-foreground shadow-soft hover:bg-primary/90"
           >
             <span className="whitespace-pre-line text-center">{t("home.inviteSiblings")}</span>
           </Button>
@@ -399,8 +399,8 @@ export function HomeScreen({
 
       {members.length === 1 ? (
         <section className="mb-4 rounded-3xl bg-primary px-4 py-4 text-primary-foreground shadow-lift">
-          <h2 className="text-base font-semibold leading-tight">{t("home.aloneTitle")}</h2>
-          <p className="mt-1 text-sm leading-snug text-primary-foreground/85">
+          <h2 className="text-sm font-semibold leading-tight">{t("home.aloneTitle")}</h2>
+          <p className="mt-1 text-[0.8rem] leading-snug text-primary-foreground/85">
             {t("home.aloneBody")}
           </p>
           <Button
@@ -435,7 +435,7 @@ export function HomeScreen({
               : t("home.trialLeft", { n: String(trialDaysLeft) })}
           </span>
         ) : null}
-        <h2 className="mb-3 text-center text-lg leading-tight text-primary">{t("home.overview")}</h2>
+        <h2 className="mb-3 text-center text-base leading-tight text-primary">{t("home.overview")}</h2>
         <DotGrid days={days} timeZone={tz} onSelect={setSelectedDay} />
       </section>
 
@@ -523,7 +523,7 @@ export function HomeScreen({
       <div className="mt-3.5 flex items-center gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-2">
             <Button
-              className="h-[52px] w-full rounded-2xl bg-primary text-[0.95rem] text-primary-foreground shadow-lift hover:bg-primary/90"
+              className="h-[52px] w-full rounded-2xl bg-primary text-[0.875rem] text-primary-foreground shadow-lift hover:bg-primary/90"
               onClick={() => {
                 if (locked) {
                   setPaywallOpen(true);
@@ -541,7 +541,7 @@ export function HomeScreen({
               <Button
                 aria-label={t("access.locked")}
                 onClick={() => setPaywallOpen(true)}
-                className="relative h-[52px] w-full rounded-2xl bg-brand-accent text-[0.95rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+                className="relative h-[52px] w-full rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
               >
                 <MessageCircle className="size-5" /> {t("home.chat")}
                 <Lock className="absolute right-2 top-2 size-3.5 rounded-full bg-brand-accent p-0.5 text-brand-accent-foreground ring-2 ring-brand-accent-foreground/80" />
@@ -554,7 +554,7 @@ export function HomeScreen({
                     ? `${t("home.chatAria")} – ${t("home.unread", { n: String(unread) })}`
                     : t("home.chatAria")
                 }
-                className="relative h-[52px] w-full rounded-2xl bg-brand-accent text-[0.95rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+                className="relative h-[52px] w-full rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
               >
                 <Link to="/chat">
                   <MessageCircle className="size-5" /> {t("home.chat")}
@@ -579,7 +579,7 @@ export function HomeScreen({
             ) : (
               <MapPinCheckInside className="size-7" />
             )}
-            <span className="text-sm font-semibold leading-tight">{t("home.imHere")}</span>
+            <span className="text-[0.8rem] font-semibold leading-tight">{t("home.imHere")}</span>
           </Button>
       </div>
 
