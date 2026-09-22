@@ -82,7 +82,7 @@ const sv: AppDict = {
   "home.familyCode": "Familjekod: {code}",
   "home.visitsCount": "{n} besök",
   "home.inviteBtn": "Bjud in någon",
-  "home.aloneTitle": "Ni är bara du här ännu",
+  "home.aloneTitle": "Här är det bara du än så länge",
   "home.aloneBody": "Bjud in dina syskon så ser ni varandras besök direkt – det är hela poängen med BeenBy.",
   "home.aloneCta": "Bjud in familjen",
   "home.inviteSiblings": "Bjud in",
