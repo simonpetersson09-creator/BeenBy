@@ -22,13 +22,98 @@ const PLIST = join(APP_DIR, "Info.plist");
 const LANGS = ["en", "sv", "de", "da", "fi", "es", "fr"];
 
 /** English base text lives in Info.plist; the rest in InfoPlist.strings. */
+const LOCATION_KEYS = [
+  "NSLocationWhenInUseUsageDescription",
+  "NSLocationAlwaysAndWhenInUseUsageDescription",
+  "NSLocationAlwaysUsageDescription",
+];
+
 const USAGE = {
   en: {
     NSCameraUsageDescription:
       "BeenBy uses the camera when you want to take a photo and share it in the family chat.",
     NSPhotoLibraryUsageDescription:
       "BeenBy needs access to your photos when you want to share a picture in the family chat.",
+    NSLocationWhenInUseUsageDescription:
+      "BeenBy uses your location to notice when you arrive at or leave the home you visit, so the family can be notified.",
+    NSLocationAlwaysAndWhenInUseUsageDescription:
+      "BeenBy uses your location in the background to notice when you arrive at or leave the home you visit, so the family can be notified. Your location is never shared.",
+    NSLocationAlwaysUsageDescription:
+      "BeenBy uses your location in the background to notice when you arrive at or leave the home you visit, so the family can be notified. Your location is never shared.",
   },
+  sv: {
+    NSCameraUsageDescription:
+      "BeenBy använder kameran när du vill ta ett foto och dela det i familjechatten.",
+    NSPhotoLibraryUsageDescription:
+      "BeenBy behöver tillgång till dina bilder när du vill dela ett foto i familjechatten.",
+    NSLocationWhenInUseUsageDescription:
+      "BeenBy använder din plats för att märka när du kommer till eller lämnar hemmet du besöker, så att familjen kan få en notis.",
+    NSLocationAlwaysAndWhenInUseUsageDescription:
+      "BeenBy använder din plats i bakgrunden för att märka när du kommer till eller lämnar hemmet du besöker, så att familjen kan få en notis. Din plats delas aldrig.",
+    NSLocationAlwaysUsageDescription:
+      "BeenBy använder din plats i bakgrunden för att märka när du kommer till eller lämnar hemmet du besöker, så att familjen kan få en notis. Din plats delas aldrig.",
+  },
+  de: {
+    NSCameraUsageDescription:
+      "BeenBy nutzt die Kamera, wenn du ein Foto aufnehmen und im Familienchat teilen willst.",
+    NSPhotoLibraryUsageDescription:
+      "BeenBy braucht Zugriff auf deine Fotos, wenn du ein Bild im Familienchat teilen willst.",
+    NSLocationWhenInUseUsageDescription:
+      "BeenBy nutzt deinen Standort, um zu bemerken, wenn du bei dem Zuhause ankommst oder es verlässt, das du besuchst – damit die Familie eine Mitteilung bekommen kann.",
+    NSLocationAlwaysAndWhenInUseUsageDescription:
+      "BeenBy nutzt deinen Standort im Hintergrund, um zu bemerken, wenn du bei dem Zuhause ankommst oder es verlässt, das du besuchst – damit die Familie eine Mitteilung bekommen kann. Dein Standort wird nie geteilt.",
+    NSLocationAlwaysUsageDescription:
+      "BeenBy nutzt deinen Standort im Hintergrund, um zu bemerken, wenn du bei dem Zuhause ankommst oder es verlässt, das du besuchst – damit die Familie eine Mitteilung bekommen kann. Dein Standort wird nie geteilt.",
+  },
+  da: {
+    NSCameraUsageDescription:
+      "BeenBy bruger kameraet, når du vil tage et billede og dele det i familiechatten.",
+    NSPhotoLibraryUsageDescription:
+      "BeenBy skal bruge adgang til dine billeder, når du vil dele et billede i familiechatten.",
+    NSLocationWhenInUseUsageDescription:
+      "BeenBy bruger din placering til at opdage, når du ankommer til eller forlader det hjem, du besøger, så familien kan få en notifikation.",
+    NSLocationAlwaysAndWhenInUseUsageDescription:
+      "BeenBy bruger din placering i baggrunden til at opdage, når du ankommer til eller forlader det hjem, du besøger, så familien kan få en notifikation. Din placering deles aldrig.",
+    NSLocationAlwaysUsageDescription:
+      "BeenBy bruger din placering i baggrunden til at opdage, når du ankommer til eller forlader det hjem, du besøger, så familien kan få en notifikation. Din placering deles aldrig.",
+  },
+  fi: {
+    NSCameraUsageDescription:
+      "BeenBy käyttää kameraa, kun haluat ottaa kuvan ja jakaa sen perhechatissa.",
+    NSPhotoLibraryUsageDescription:
+      "BeenBy tarvitsee pääsyn kuviisi, kun haluat jakaa kuvan perhechatissa.",
+    NSLocationWhenInUseUsageDescription:
+      "BeenBy käyttää sijaintiasi havaitakseen, kun saavut tai lähdet kotoa, jossa vierailet, jotta perhe voi saada ilmoituksen.",
+    NSLocationAlwaysAndWhenInUseUsageDescription:
+      "BeenBy käyttää sijaintiasi taustalla havaitakseen, kun saavut tai lähdet kotoa, jossa vierailet, jotta perhe voi saada ilmoituksen. Sijaintiasi ei koskaan jaeta.",
+    NSLocationAlwaysUsageDescription:
+      "BeenBy käyttää sijaintiasi taustalla havaitakseen, kun saavut tai lähdet kotoa, jossa vierailet, jotta perhe voi saada ilmoituksen. Sijaintiasi ei koskaan jaeta.",
+  },
+  es: {
+    NSCameraUsageDescription:
+      "BeenBy usa la cámara cuando quieres hacer una foto y compartirla en el chat familiar.",
+    NSPhotoLibraryUsageDescription:
+      "BeenBy necesita acceso a tus fotos cuando quieres compartir una imagen en el chat familiar.",
+    NSLocationWhenInUseUsageDescription:
+      "BeenBy usa tu ubicación para detectar cuando llegas a o sales de la casa que visitas, para que la familia pueda recibir un aviso.",
+    NSLocationAlwaysAndWhenInUseUsageDescription:
+      "BeenBy usa tu ubicación en segundo plano para detectar cuando llegas a o sales de la casa que visitas, para que la familia pueda recibir un aviso. Tu ubicación nunca se comparte.",
+    NSLocationAlwaysUsageDescription:
+      "BeenBy usa tu ubicación en segundo plano para detectar cuando llegas a o sales de la casa que visitas, para que la familia pueda recibir un aviso. Tu ubicación nunca se comparte.",
+  },
+  fr: {
+    NSCameraUsageDescription:
+      "BeenBy utilise l'appareil photo quand vous voulez prendre une photo et la partager dans le chat familial.",
+    NSPhotoLibraryUsageDescription:
+      "BeenBy a besoin d'accéder à vos photos quand vous voulez en partager une dans le chat familial.",
+    NSLocationWhenInUseUsageDescription:
+      "BeenBy utilise votre position pour détecter quand vous arrivez ou quittez le domicile que vous visitez, afin que la famille puisse être notifiée.",
+    NSLocationAlwaysAndWhenInUseUsageDescription:
+      "BeenBy utilise votre position en arrière-plan pour détecter quand vous arrivez ou quittez le domicile que vous visitez, afin que la famille puisse être notifiée. Votre position n'est jamais partagée.",
+    NSLocationAlwaysUsageDescription:
+      "BeenBy utilise votre position en arrière-plan pour détecter quand vous arrivez ou quittez le domicile que vous visitez, afin que la famille puisse être notifiée. Votre position n'est jamais partagée.",
+  },
+};
   sv: {
     NSCameraUsageDescription:
       "BeenBy använder kameran när du vill ta ett foto och dela det i familjechatten.",
