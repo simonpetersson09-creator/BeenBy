@@ -83,7 +83,6 @@ export function HomeScreen({
   const unread = useUnreadMessages(circle.id, userId);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
   const { hasAccess, isPremium, isTrialActive, trialDaysLeft } = useAccess();
   const locked = !hasAccess;
 
