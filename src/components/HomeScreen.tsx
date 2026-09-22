@@ -39,6 +39,7 @@ import { registerPushNotifications } from "@/lib/push";
 import { refreshTrialStatus, useAccess } from "@/lib/premiumStore";
 import { saveRecovery } from "@/lib/recovery";
 import { deleteVisit, flushPendingVisits, recordVisit, type VisitSource } from "@/lib/visits";
+import { maybeAskForReview } from "@/lib/appReview";
 
 export function HomeScreen({
   data,
@@ -238,6 +239,7 @@ export function HomeScreen({
             }
           : undefined,
       });
+      void maybeAskForReview();
     } finally {
       setBusy(false);
     }
