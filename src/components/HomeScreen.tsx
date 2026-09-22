@@ -572,7 +572,7 @@ export function HomeScreen({
           <Button
             onClick={handleImHere}
             disabled={busy || !person}
-            className="flex size-28 shrink-0 flex-col items-center justify-center gap-1 rounded-full bg-positive text-positive-foreground shadow-lift hover:bg-positive/90"
+            className="flex size-28 shrink-0 flex-col items-center justify-center gap-1 rounded-full bg-primary text-primary-foreground shadow-lift hover:bg-primary/90"
           >
             {busy ? (
               <Loader2 className="size-6 animate-spin" />
