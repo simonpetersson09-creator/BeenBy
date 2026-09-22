@@ -426,6 +426,21 @@ export function HomeScreen({
       />
 
 
+      {members.length === 1 ? (
+        <section className="mb-4 rounded-3xl bg-primary px-4 py-4 text-primary-foreground shadow-lift">
+          <h2 className="text-base font-semibold leading-tight">{t("home.aloneTitle")}</h2>
+          <p className="mt-1 text-sm leading-snug text-primary-foreground/85">
+            {t("home.aloneBody")}
+          </p>
+          <Button
+            onClick={invite}
+            className="mt-3 h-12 w-full rounded-2xl bg-primary-foreground text-sm font-semibold text-primary hover:bg-primary-foreground/90"
+          >
+            <Share2 className="size-4" /> {t("home.aloneCta")}
+          </Button>
+        </section>
+      ) : null}
+
       {!online || pending.length > 0 ? (
         <div className="mb-4 flex items-center gap-2 rounded-2xl bg-secondary px-4 py-3 text-sm">
           {online ? <RefreshCw className="size-4" /> : <CloudOff className="size-4" />}
