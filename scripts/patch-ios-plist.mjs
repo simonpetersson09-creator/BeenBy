@@ -22,12 +22,6 @@ const PLIST = join(APP_DIR, "Info.plist");
 const LANGS = ["en", "sv", "de", "da", "fi", "es", "fr"];
 
 /** English base text lives in Info.plist; the rest in InfoPlist.strings. */
-const LOCATION_KEYS = [
-  "NSLocationWhenInUseUsageDescription",
-  "NSLocationAlwaysAndWhenInUseUsageDescription",
-  "NSLocationAlwaysUsageDescription",
-];
-
 const USAGE = {
   en: {
     NSCameraUsageDescription:
@@ -112,43 +106,6 @@ const USAGE = {
       "BeenBy utilise votre position en arrière-plan pour détecter quand vous arrivez ou quittez le domicile que vous visitez, afin que la famille puisse être notifiée. Votre position n'est jamais partagée.",
     NSLocationAlwaysUsageDescription:
       "BeenBy utilise votre position en arrière-plan pour détecter quand vous arrivez ou quittez le domicile que vous visitez, afin que la famille puisse être notifiée. Votre position n'est jamais partagée.",
-  },
-};
-  sv: {
-    NSCameraUsageDescription:
-      "BeenBy använder kameran när du vill ta ett foto och dela det i familjechatten.",
-    NSPhotoLibraryUsageDescription:
-      "BeenBy behöver tillgång till dina bilder när du vill dela ett foto i familjechatten.",
-  },
-  de: {
-    NSCameraUsageDescription:
-      "BeenBy nutzt die Kamera, wenn du ein Foto aufnehmen und im Familienchat teilen willst.",
-    NSPhotoLibraryUsageDescription:
-      "BeenBy braucht Zugriff auf deine Fotos, wenn du ein Bild im Familienchat teilen willst.",
-  },
-  da: {
-    NSCameraUsageDescription:
-      "BeenBy bruger kameraet, når du vil tage et billede og dele det i familiechatten.",
-    NSPhotoLibraryUsageDescription:
-      "BeenBy skal bruge adgang til dine billeder, når du vil dele et billede i familiechatten.",
-  },
-  fi: {
-    NSCameraUsageDescription:
-      "BeenBy käyttää kameraa, kun haluat ottaa kuvan ja jakaa sen perhechatissa.",
-    NSPhotoLibraryUsageDescription:
-      "BeenBy tarvitsee pääsyn kuviisi, kun haluat jakaa kuvan perhechatissa.",
-  },
-  es: {
-    NSCameraUsageDescription:
-      "BeenBy usa la cámara cuando quieres hacer una foto y compartirla en el chat familiar.",
-    NSPhotoLibraryUsageDescription:
-      "BeenBy necesita acceso a tus fotos cuando quieres compartir una imagen en el chat familiar.",
-  },
-  fr: {
-    NSCameraUsageDescription:
-      "BeenBy utilise l'appareil photo quand vous voulez prendre une photo et la partager dans le chat familial.",
-    NSPhotoLibraryUsageDescription:
-      "BeenBy a besoin d'accéder à vos photos quand vous voulez en partager une dans le chat familial.",
   },
 };
 
