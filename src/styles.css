@@ -75,6 +75,8 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-brand-accent: var(--brand-accent);
   --color-brand-accent-foreground: var(--brand-accent-foreground);
+  --color-positive: var(--positive);
+  --color-positive-foreground: var(--positive-foreground);
 
   --font-display: "Beenby Digits", "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Beenby Digits", "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
@@ -121,6 +123,9 @@
   /* Warm terracotta accent – used for the chat action */
   --brand-accent: oklch(0.605 0.115 52);
   --brand-accent-foreground: oklch(0.985 0.004 80);
+  /* Calm green – "Jag är här" arrival action */
+  --positive: oklch(0.585 0.115 155);
+  --positive-foreground: oklch(0.985 0.004 80);
 
   /* Browser/PWA safe areas. Native iOS overrides --safe-top to zero because
      Capacitor reserves the status-bar area outside WKWebView. */
