@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { searchAddress } from "@/lib/geocode";
+import { editSearch } from "@/lib/circleEdit";
 import { patchDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
 
 type GeocodeHit = {
@@ -24,6 +25,7 @@ type GeocodeHit = {
 
 export const Route = createFileRoute("/start/adress")({
   ssr: false,
+  validateSearch: editSearch,
   head: () => ({
     meta: [
       { title: "Where does the person live? – BeenBy" },
