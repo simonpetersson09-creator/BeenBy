@@ -62,7 +62,7 @@ export function DotGrid({
           {weekdayLabels().map((label, i) => (
             <div
               key={i}
-              className="text-center text-[0.65rem] font-bold uppercase tracking-[0.18em] text-muted-foreground/70"
+              className="text-center text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary"
             >
               {label}
             </div>
@@ -84,7 +84,7 @@ export function DotGrid({
               <span
                 className={cn(
                   "w-6 shrink-0 text-center text-[0.55rem] font-semibold uppercase tracking-[0.04em]",
-                  isCurrentWeek ? "text-primary" : "text-muted-foreground/70",
+                  isCurrentWeek ? "font-bold text-primary" : "text-primary/70",
                 )}
               >
                 {t("grid.weekPrefix")}
