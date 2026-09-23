@@ -63,11 +63,12 @@ function textFor(locale: string, table: string, name: string, messageBody?: stri
   if (!entry) return null;
   let body = entry.body ?? "";
   if (table === "messages") {
-    if (messageBody && messageBody.trim().length > 0) {
-      body = messageBody.trim().slice(0, 120);
-    } else if (hasImage) {
-      body = IMAGE_LABELS[locale] ?? IMAGE_LABELS['en']!;
-    }
+    // Chat content is end-to-end encrypted: the server cannot read it and the
+    // notification therefore never contains the text itself.
+    body = hasImage
+      ? (IMAGE_LABELS[locale] ?? IMAGE_LABELS['en']!)
+      : (MESSAGE_LABELS[locale] ?? MESSAGE_LABELS['en']!);
+    void messageBody;
   }
   return { title: entry.title(name), body };
 }
