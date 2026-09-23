@@ -6,6 +6,7 @@ import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRememberStep } from "@/hooks/useRememberStep";
 import { useT } from "@/lib/i18n";
 import { editSearch } from "@/lib/circleEdit";
 import { patchDraft } from "@/lib/onboardingDraft";
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/start/vem")({
 function WhoPage() {
   const navigate = useNavigate();
   const { edit } = Route.useSearch();
+  useRememberStep("/start/vem", !edit);
   return (
     <StartShell
       onBack={() =>

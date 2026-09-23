@@ -5,6 +5,7 @@ import { JoinFlow } from "@/components/JoinFlow";
 import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRememberStep } from "@/hooks/useRememberStep";
 import { useT } from "@/lib/i18n";
 import { getDraft, patchDraft } from "@/lib/onboardingDraft";
 
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/start/kod")({
 function CodePage() {
   const navigate = useNavigate();
   const { from } = Route.useSearch();
+  useRememberStep("/start/kod", from !== "app");
   const backTo = from === "app" ? "/" : "/start/valj";
   const t = useT();
   const [code, setCode] = useState(() => getDraft().familyCode);
