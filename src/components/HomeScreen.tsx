@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, ChevronDown, CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2 } from "lucide-react";
+import { CalendarDays, ChevronDown, CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
@@ -84,6 +84,24 @@ export function HomeScreen({
   const unread = useUnreadMessages(circle.id, userId);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
+  const [aloneDismissed, setAloneDismissed] = useState(false);
+
+  useEffect(() => {
+    try {
+      setAloneDismissed(localStorage.getItem(`beenby.aloneDismissed.${circle.id}`) === "1");
+    } catch {
+      setAloneDismissed(false);
+    }
+  }, [circle.id]);
+
+  const dismissAlone = useCallback(() => {
+    setAloneDismissed(true);
+    try {
+      localStorage.setItem(`beenby.aloneDismissed.${circle.id}`, "1");
+    } catch {
+      // Ignore storage failures – the card is only hidden in memory then.
+    }
+  }, [circle.id]);
   const { hasAccess, isPremium, isTrialActive, trialDaysLeft } = useAccess();
   const locked = !hasAccess;
 
