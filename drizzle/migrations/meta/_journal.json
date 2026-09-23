@@ -8,6 +8,27 @@
       "when": 1790073532622,
       "tag": "0000_cleanup_empty_test_circles",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790176644201,
+      "tag": "0001_e2ee_key_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790176658018,
+      "tag": "0002_atomic_create_family_circle",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790176669582,
+      "tag": "0003_delete_account_removes_keys",
+      "breakpoints": true
     }
   ]
 }

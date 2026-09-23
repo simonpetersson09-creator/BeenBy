@@ -76,6 +76,44 @@ export type Database = {
           },
         ]
       }
+      circle_key_wraps: {
+        Row: {
+          created_at: string
+          family_circle_id: string
+          iv: string
+          recipient_id: string
+          sender_id: string
+          sender_public_jwk: Json
+          wrapped_key: string
+        }
+        Insert: {
+          created_at?: string
+          family_circle_id: string
+          iv: string
+          recipient_id: string
+          sender_id: string
+          sender_public_jwk: Json
+          wrapped_key: string
+        }
+        Update: {
+          created_at?: string
+          family_circle_id?: string
+          iv?: string
+          recipient_id?: string
+          sender_id?: string
+          sender_public_jwk?: Json
+          wrapped_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_key_wraps_family_circle_id_fkey"
+            columns: ["family_circle_id"]
+            isOneToOne: false
+            referencedRelation: "family_circles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       device_tokens: {
         Row: {
           locale: string
@@ -202,6 +240,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      member_public_keys: {
+        Row: {
+          public_jwk: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          public_jwk: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          public_jwk?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       messages: {
         Row: {
@@ -600,6 +656,21 @@ export type Database = {
           _window_seconds: number
         }
         Returns: boolean
+      }
+      create_family_circle: {
+        Args: {
+          _address?: string
+          _color: string
+          _lat?: number
+          _lng?: number
+          _my_name: string
+          _person_name: string
+          _timezone?: string
+        }
+        Returns: {
+          out_circle_id: string
+          out_family_code: string
+        }[]
       }
       delete_my_account_for: {
         Args: { _user: string }

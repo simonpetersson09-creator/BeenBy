@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { publishPublicKey } from "@/lib/e2ee";
+import { friendlyError } from "@/lib/friendlyError";
 import { useT } from "@/lib/i18n";
 import { getDraft, patchDraft } from "@/lib/onboardingDraft";
 import { saveRecovery } from "@/lib/recovery";
@@ -78,7 +80,7 @@ export function JoinFlow({
       toast.error(
         error.message.includes("expired")
           ? t("join.errExpired")
-          : t("join.errGeneric"),
+          : friendlyError(error, t, "join.errGeneric"),
       );
       return;
     }
@@ -96,6 +98,12 @@ export function JoinFlow({
       if (joined?.family_code) {
         saveRecovery({ code: joined.family_code, name: name.trim(), color });
       }
+    }
+    // Publish this device's public key so the family can share the chat key
+    // with us. Nobody outside the circle can read along.
+    {
+      const { data: me } = await supabase.auth.getUser();
+      if (me.user) await publishPublicKey(me.user.id);
     }
     onJoined();
   }

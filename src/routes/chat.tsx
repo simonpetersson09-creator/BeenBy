@@ -20,6 +20,19 @@ import { useCircleData, type Member } from "@/hooks/useCircleData";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { markChatRead } from "@/lib/chatRead";
+import { friendlyError } from "@/lib/friendlyError";
+import {
+  decryptBlob,
+  decryptText,
+  encryptBlob,
+  encryptText,
+  ENCRYPTED_IMAGE_EXT,
+  getCircleKey,
+  isEncrypted,
+  isEncryptedImagePath,
+  publishPublicKey,
+  shareCircleKeyWithMembers,
+} from "@/lib/e2ee";
 import { localeOf, useT, usePersonLabel } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import {
@@ -116,6 +129,52 @@ function ChatPage() {
 
   const circleId = data?.circle.id;
 
+  // The chat is end-to-end encrypted: the key lives on the devices in the
+  // family circle, never on the server.
+  const [circleKey, setCircleKey] = useState<CryptoKey | null>(null);
+  const [bodies, setBodies] = useState<Record<string, string | null>>({});
+  const memberIds = (data?.members ?? []).map((m) => m.user_id).join(",");
+
+  useEffect(() => {
+    const uid = user?.id;
+    if (!circleId || !uid) return;
+    let active = true;
+    void (async () => {
+      await publishPublicKey(uid);
+      const key = await getCircleKey(circleId, uid);
+      if (!active) return;
+      setCircleKey(key);
+      if (key && memberIds) {
+        await shareCircleKeyWithMembers(circleId, uid, memberIds.split(","));
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [circleId, user?.id, memberIds]);
+
+  // Decrypt on this device only. Messages written before encryption existed
+  // are plain text and shown as they are.
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      const next: Record<string, string | null> = {};
+      for (const m of messages) {
+        if (!m.body) continue;
+        if (!isEncrypted(m.body)) {
+          next[m.id] = m.body;
+          continue;
+        }
+        next[m.id] = circleKey ? await decryptText(circleKey, m.body) : null;
+      }
+      if (active) setBodies(next);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [messages, circleKey]);
+
+
   useEffect(() => {
     if (!circleId) return;
     let active = true;
@@ -181,30 +240,44 @@ function ChatPage() {
     return () => window.clearInterval(id);
   }, []);
 
-  // Images live in a private bucket – sign the ones we need.
+  // Images live in a private bucket – sign the ones we need. Encrypted photos
+  // are downloaded and decrypted here on the phone before they are shown.
   useEffect(() => {
     const missing = messages
       .map((m) => m.image_path)
-      .filter((p): p is string => Boolean(p) && !imageUrls[p!]);
+      .filter((p): p is string => Boolean(p) && !imageUrls[p!])
+      .filter((p) => !isEncryptedImagePath(p) || circleKey !== null);
     if (missing.length === 0) return;
     let active = true;
-    void supabase.storage
-      .from("chat-images")
-      .createSignedUrls(missing, 60 * 60)
-      .then(({ data: signed }) => {
-        if (!active || !signed) return;
-        setImageUrls((prev) => {
-          const next = { ...prev };
-          signed.forEach((s) => {
-            if (s.path && s.signedUrl) next[s.path] = s.signedUrl;
-          });
-          return next;
-        });
-      });
+    void (async () => {
+      const { data: signed } = await supabase.storage
+        .from("chat-images")
+        .createSignedUrls(missing, 60 * 60);
+      if (!active || !signed) return;
+
+      const resolved: Record<string, string> = {};
+      for (const s of signed) {
+        if (!s.path || !s.signedUrl) continue;
+        if (isEncryptedImagePath(s.path) && circleKey) {
+          try {
+            const raw = await (await fetch(s.signedUrl)).arrayBuffer();
+            const blob = await decryptBlob(circleKey, raw);
+            if (blob) resolved[s.path] = URL.createObjectURL(blob);
+          } catch {
+            // Leave it unresolved – the bubble keeps its loading state.
+          }
+        } else {
+          resolved[s.path] = s.signedUrl;
+        }
+      }
+      if (active && Object.keys(resolved).length > 0) {
+        setImageUrls((prev) => ({ ...prev, ...resolved }));
+      }
+    })();
     return () => {
       active = false;
     };
-  }, [messages, imageUrls]);
+  }, [messages, imageUrls, circleKey]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -217,13 +290,18 @@ function ChatPage() {
     }
     const body = text.trim();
     if (!body || !circleId || !user) return;
+    if (!circleKey) {
+      toast.error(t("chat.keyMissing"));
+      return;
+    }
     setSending(true);
     try {
+      const sealed = await encryptText(circleKey, body);
       const { error } = await supabase
         .from("messages")
-        .insert({ family_circle_id: circleId, user_id: user.id, body });
+        .insert({ family_circle_id: circleId, user_id: user.id, body: sealed });
       if (error) {
-        toast.error(t("chat.sendError"));
+        toast.error(friendlyError(error, t, "chat.sendError"));
         return;
       }
       setText("");
@@ -300,25 +378,32 @@ function ChatPage() {
       return;
     }
     if (!pending || !circleId || !user) return;
+    if (!circleKey) {
+      toast.error(t("chat.keyMissing"));
+      return;
+    }
     setUploading(true);
     try {
-      const path = `${circleId}/${user.id}/${crypto.randomUUID()}.jpg`;
+      // The photo is encrypted on the phone before it is uploaded.
+      const sealedPhoto = await encryptBlob(circleKey, pending.blob);
+      const path = `${circleId}/${user.id}/${crypto.randomUUID()}${ENCRYPTED_IMAGE_EXT}`;
       const { error: upErr } = await supabase.storage
         .from("chat-images")
-        .upload(path, pending.blob, { contentType: "image/jpeg", upsert: false });
+        .upload(path, sealedPhoto, { contentType: "application/octet-stream", upsert: false });
       if (upErr) {
-        toast.error(t("chat.imageError"));
+        toast.error(friendlyError(upErr, t, "chat.imageError"));
         return;
       }
+      const caption = text.trim().slice(0, 1000);
       const { error } = await supabase.from("messages").insert({
         family_circle_id: circleId,
         user_id: user.id,
-        body: text.trim().slice(0, 1000),
+        body: caption ? await encryptText(circleKey, caption) : "",
         image_path: path,
       });
       if (error) {
         void supabase.storage.from("chat-images").remove([path]);
-        toast.error(t("chat.imageError"));
+        toast.error(friendlyError(error, t, "chat.imageError"));
         return;
       }
       discardPending();
@@ -336,7 +421,7 @@ function ChatPage() {
     try {
       const { error } = await supabase.from("messages").delete().eq("id", m.id);
       if (error) {
-        toast.error(t("chat.deleteError"));
+        toast.error(friendlyError(error, t, "chat.deleteError"));
         return;
       }
       if (m.image_path) {
@@ -474,7 +559,11 @@ function ChatPage() {
                         </div>
                       )
                     ) : null}
-                    {m.body ? <p className="px-4 py-2.5 text-sm">{m.body}</p> : null}
+                    {m.body ? (
+                      <p className="px-4 py-2.5 text-sm">
+                        {bodies[m.id] ?? (isEncrypted(m.body) ? t("chat.locked") : m.body)}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               </div>
