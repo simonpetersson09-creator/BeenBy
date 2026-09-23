@@ -59,15 +59,27 @@ export async function applyTransaction(userId: string, jws: string): Promise<Ent
   const originalTransactionId = tx.originalTransactionId ?? tx.transactionId ?? null;
   if (!originalTransactionId) return { isPremium: false, error: "missing transaction id" };
 
-  // A subscription belongs to exactly one BeenBy account. If it is already
-  // linked elsewhere we refuse instead of silently moving it.
+  // A subscription belongs to exactly one BeenBy account at a time. When the
+  // same Apple purchase shows up on a new account (reinstall, "start over",
+  // new phone) we MOVE it instead of refusing: the signed transaction proves
+  // it is the same Apple ID, and the old anonymous account is unreachable.
   const { data: existing } = await supabaseAdmin
     .from("premium_entitlements")
     .select("user_id")
     .eq("original_transaction_id", originalTransactionId)
     .maybeSingle();
   if (existing && existing.user_id !== userId) {
-    return { isPremium: false, error: "already-linked" };
+    const { error: moveError } = await supabaseAdmin
+      .from("premium_entitlements")
+      .delete()
+      .eq("user_id", existing.user_id)
+      .eq("original_transaction_id", originalTransactionId);
+    if (moveError) return { isPremium: false, error: moveError.message };
+    await supabaseAdmin.rpc("log_security_event", {
+      _kind: "premium_transferred",
+      _detail: `moved subscription to ${userId}`,
+      _user: existing.user_id,
+    });
   }
 
   const active = grantsPremium(tx);
