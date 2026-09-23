@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { KeyRound, Users } from "lucide-react";
 
 import { StartShell } from "@/components/onboarding/StartShell";
+import { useRememberStep } from "@/hooks/useRememberStep";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/start/valj")({
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/start/valj")({
 });
 
 function ChoosePage() {
+  useRememberStep("/start/valj");
   const navigate = useNavigate();
   return (
     <StartShell onBack={() => void navigate({ to: "/start/valkommen" })}>

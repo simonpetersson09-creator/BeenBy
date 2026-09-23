@@ -2,7 +2,17 @@
  * Draft state for the multi-page onboarding flow. Each onboarding step is its
  * own route, so the answers live here (in memory + localStorage) between pages.
  */
+export type OnboardingStep =
+  | "/start/valkommen"
+  | "/start/valj"
+  | "/start/vem"
+  | "/start/adress"
+  | "/start/farg"
+  | "/start/kod";
+
 export type OnboardingDraft = {
+  /** Last onboarding page the user saw, so a reload resumes where they were. */
+  step: OnboardingStep;
   personName: string;
   myName: string;
   address: string;
@@ -17,6 +27,7 @@ export type OnboardingDraft = {
 const KEY = "beenby.onboarding.draft";
 
 export const emptyDraft: OnboardingDraft = {
+  step: "/start/valkommen",
   personName: "",
   myName: "",
   address: "",
@@ -68,4 +79,9 @@ export function clearDraft() {
   } catch {
     // ignore
   }
+}
+
+/** Remember the current onboarding page so a reload resumes here. */
+export function rememberStep(step: OnboardingStep) {
+  patchDraft({ step });
 }

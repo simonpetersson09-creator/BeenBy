@@ -4,6 +4,7 @@ import { ArrowRight, BellRing, CalendarHeart, Hand, History, Users } from "lucid
 
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
+import { useRememberStep } from "@/hooks/useRememberStep";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/start/valkommen")({
@@ -39,6 +40,7 @@ const points = [
 const HINT_KEY = "beenby.langHintSeen";
 
 function WelcomePage() {
+  useRememberStep("/start/valkommen");
   const navigate = useNavigate();
   const t = useT();
   const [showHint, setShowHint] = useState(false);

@@ -7,6 +7,7 @@ import { ColorPicker } from "@/components/ColorPicker";
 import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { useRememberStep } from "@/hooks/useRememberStep";
 import { useT } from "@/lib/i18n";
 import { editSearch, saveCircleEdit, takenColors } from "@/lib/circleEdit";
 import { createCircleKey } from "@/lib/e2ee";
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/start/farg")({
 function ColorPage() {
   const navigate = useNavigate();
   const { edit } = Route.useSearch();
+  useRememberStep("/start/farg", !edit);
   const back = () =>
     void navigate(edit ? { to: "/start/adress", search: { edit: true } } : { to: "/start/adress" });
   return (
