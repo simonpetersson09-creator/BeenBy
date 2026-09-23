@@ -42,7 +42,11 @@ function WhoPage() {
       }
     >
       {({ draft }) => (
-        <WhoStep initialPerson={draft.personName} initialMe={draft.myName} edit={edit} />
+        <WhoStep
+          initialPerson={draft.personName}
+          initialMe={draft.myName}
+          edit={Boolean(edit)}
+        />
       )}
     </StartShell>
   );
