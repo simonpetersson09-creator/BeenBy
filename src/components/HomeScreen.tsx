@@ -504,8 +504,14 @@ export function HomeScreen({
             const plannedMember = members.find((m) => m.user_id === nextPlanned.user_id);
             const hex = colorById(plannedMember?.personal_color).hex;
             const summary = activitySummary(nextPlanned.activities, t, nextPlanned.activity_note);
+            const isToday = nextPlanned.planned_date === today;
             return (
-              <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 rounded-xl px-1 py-0.5 text-left transition active:scale-[0.98]"
+                onClick={() => setSelectedDay(nextPlanned.planned_date)}
+                aria-label={t("home.next")}
+              >
                 <div
                   className="flex size-7 shrink-0 items-center justify-center rounded-lg text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
                   style={{ backgroundColor: hex }}
@@ -519,10 +525,16 @@ export function HomeScreen({
                     <CalendarDays className="size-2.5" />
                     {t("home.next")}
                   </p>
-                  <p className="truncate text-[0.7rem] font-semibold text-foreground">
+                  <p className="flex items-center gap-1.5 truncate text-[0.7rem] font-semibold text-foreground">
                     {plannedMember?.name ?? t("member.fallback")}
-                    <span className="mx-1 text-muted-foreground">·</span>
+                    <span className="text-muted-foreground">·</span>
                     {relativeLabel(nextPlanned.planned_date, tz)}
+                    {isToday ? (
+                      <span
+                        aria-hidden
+                        className="relative z-20 inline-block size-2 shrink-0 rounded-full bg-live shadow-[0_0_8px_var(--live)] motion-safe:animate-pulse"
+                      />
+                    ) : null}
                   </p>
                   {summary ? (
                     <p className="truncate text-[0.6rem] text-muted-foreground">
@@ -530,7 +542,8 @@ export function HomeScreen({
                     </p>
                   ) : null}
                 </div>
-              </div>
+                <ChevronRight className="size-4 shrink-0 text-primary/50" />
+              </button>
             );
           })()
         ) : (
