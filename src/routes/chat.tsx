@@ -20,6 +20,18 @@ import { useCircleData, type Member } from "@/hooks/useCircleData";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { markChatRead } from "@/lib/chatRead";
+import {
+  decryptBlob,
+  decryptText,
+  encryptBlob,
+  encryptText,
+  ENCRYPTED_IMAGE_EXT,
+  getCircleKey,
+  isEncrypted,
+  isEncryptedImagePath,
+  publishPublicKey,
+  shareCircleKeyWithMembers,
+} from "@/lib/e2ee";
 import { localeOf, useT, usePersonLabel } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import {
