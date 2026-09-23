@@ -56,13 +56,13 @@ export function DotGrid({
   return (
     <div>
       <div className="mb-1 flex items-center gap-1">
-        <div className="w-6 shrink-0" />
+        <div className="w-9 shrink-0" />
 
         <div className="grid flex-1 grid-cols-7 gap-x-1">
           {weekdayLabels().map((label, i) => (
             <div
               key={i}
-              className="text-center text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary"
+              className="text-center text-[0.82rem] font-bold uppercase tracking-[0.12em] text-primary"
             >
               {label}
             </div>
@@ -83,7 +83,7 @@ export function DotGrid({
             >
               <span
                 className={cn(
-                  "w-6 shrink-0 text-center text-[0.55rem] font-semibold uppercase tracking-[0.04em]",
+                  "w-9 shrink-0 text-center text-[0.72rem] font-semibold uppercase tracking-[0.04em]",
                   isCurrentWeek ? "font-bold text-primary" : "text-primary/70",
                 )}
               >
@@ -116,18 +116,18 @@ export function DotGrid({
                       aria-label={label}
                       aria-current={isToday ? "date" : undefined}
                       className={cn(
-                        "group flex min-h-8 items-center justify-center rounded-xl transition",
+                        "group flex min-h-10 items-center justify-center rounded-xl transition",
                         "active:scale-90",
                       )}
                     >
-                      <span className="relative flex size-7 items-center justify-center">
+                      <span className="relative flex size-8 items-center justify-center">
                         {isToday ? (
                           <span className="pointer-events-none absolute inset-0 animate-breathe rounded-full border border-primary/50" />
                         ) : null}
 
                         <span
                           className={cn(
-                            "animate-dot-pop block size-6 rounded-full transition",
+                            "animate-dot-pop block size-7 rounded-full transition",
                             "group-hover:scale-105",
                             !hasDone && !hasPlanned && "border border-foreground/10 bg-card/55",
                             hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.10)]",
