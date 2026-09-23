@@ -409,6 +409,31 @@ export function HomeScreen({
         </DialogContent>
       </Dialog>
 
+      <Dialog
+        open={members.length === 1 && !aloneDismissed}
+        onOpenChange={(o) => {
+          if (!o) dismissAlone();
+        }}
+      >
+        <DialogContent className="max-w-sm rounded-3xl">
+          <DialogHeader>
+            <DialogTitle>{t("home.aloneTitle")}</DialogTitle>
+            <DialogDescription>{t("home.aloneBody")}</DialogDescription>
+          </DialogHeader>
+          <Button
+            onClick={() => {
+              dismissAlone();
+              invite();
+            }}
+            className="h-12 w-full rounded-2xl text-sm"
+          >
+            <Share2 className="size-4" /> {t("home.aloneCta")}
+          </Button>
+        </DialogContent>
+      </Dialog>
+
+
+
 
       <InviteSheet
         open={inviteOpen}
