@@ -20,6 +20,7 @@ import { useCircleData, type Member } from "@/hooks/useCircleData";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { markChatRead } from "@/lib/chatRead";
+import { friendlyError } from "@/lib/friendlyError";
 import {
   decryptBlob,
   decryptText,
