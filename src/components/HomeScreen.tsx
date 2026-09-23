@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, ChevronDown, CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2, X } from "lucide-react";
+import { CalendarDays, ChevronDown, CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
@@ -409,6 +409,31 @@ export function HomeScreen({
         </DialogContent>
       </Dialog>
 
+      <Dialog
+        open={members.length === 1 && !aloneDismissed}
+        onOpenChange={(o) => {
+          if (!o) dismissAlone();
+        }}
+      >
+        <DialogContent className="max-w-sm rounded-3xl">
+          <DialogHeader>
+            <DialogTitle>{t("home.aloneTitle")}</DialogTitle>
+            <DialogDescription>{t("home.aloneBody")}</DialogDescription>
+          </DialogHeader>
+          <Button
+            onClick={() => {
+              dismissAlone();
+              invite();
+            }}
+            className="h-12 w-full rounded-2xl text-sm"
+          >
+            <Share2 className="size-4" /> {t("home.aloneCta")}
+          </Button>
+        </DialogContent>
+      </Dialog>
+
+
+
 
       <InviteSheet
         open={inviteOpen}
@@ -416,29 +441,6 @@ export function HomeScreen({
         code={circle.family_code}
       />
 
-
-      {members.length === 1 && !aloneDismissed ? (
-        <section className="relative mb-4 rounded-3xl bg-primary px-4 py-4 text-primary-foreground shadow-lift">
-          <button
-            type="button"
-            onClick={dismissAlone}
-            aria-label={t("common.close")}
-            className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-full text-primary-foreground/80 transition-colors hover:bg-primary-foreground/15 hover:text-primary-foreground"
-          >
-            <X className="size-4" />
-          </button>
-          <h2 className="pr-8 text-sm font-semibold leading-tight">{t("home.aloneTitle")}</h2>
-          <p className="mt-1 text-[0.8rem] leading-snug text-primary-foreground/85">
-            {t("home.aloneBody")}
-          </p>
-          <Button
-            onClick={invite}
-            className="mt-3 h-12 w-full rounded-2xl bg-primary-foreground text-sm font-semibold text-primary hover:bg-primary-foreground/90"
-          >
-            <Share2 className="size-4" /> {t("home.aloneCta")}
-          </Button>
-        </section>
-      ) : null}
 
       {!online || pending.length > 0 ? (
         <div className="mb-4 flex items-center gap-2 rounded-2xl bg-secondary px-4 py-3 text-sm">
