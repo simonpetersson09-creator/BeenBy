@@ -172,6 +172,7 @@ const sv: Dict = {
   "common.continue": "Fortsätt",
   "common.skip": "Hoppa över",
   "common.back": "Tillbaka",
+  "common.close": "Stäng",
 };
 
 const en: Dict = {
@@ -239,6 +240,7 @@ const en: Dict = {
   "common.continue": "Continue",
   "common.skip": "Skip",
   "common.back": "Back",
+  "common.close": "Close",
 };
 
 const de: Dict = {
@@ -306,6 +308,7 @@ const de: Dict = {
   "common.continue": "Weiter",
   "common.skip": "Überspringen",
   "common.back": "Zurück",
+  "common.close": "Schließen",
 };
 
 const da: Dict = {
@@ -373,6 +376,7 @@ const da: Dict = {
   "common.continue": "Fortsæt",
   "common.skip": "Spring over",
   "common.back": "Tilbage",
+  "common.close": "Luk",
 };
 
 const fi: Dict = {
@@ -440,6 +444,7 @@ const fi: Dict = {
   "common.continue": "Jatka",
   "common.skip": "Ohita",
   "common.back": "Takaisin",
+  "common.close": "Sulje",
 };
 
 const es: Dict = {
@@ -507,6 +512,7 @@ const es: Dict = {
   "common.continue": "Continuar",
   "common.skip": "Omitir",
   "common.back": "Atrás",
+  "common.close": "Cerrar",
 };
 
 const fr: Dict = {
@@ -574,6 +580,7 @@ const fr: Dict = {
   "common.continue": "Continuer",
   "common.skip": "Passer",
   "common.back": "Retour",
+  "common.close": "Fermer",
 };
 
 const base: Record<Lang, Dict> = { sv, en, de, da, fi, es, fr };
