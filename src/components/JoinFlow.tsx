@@ -97,6 +97,12 @@ export function JoinFlow({
         saveRecovery({ code: joined.family_code, name: name.trim(), color });
       }
     }
+    // Publish this device's public key so the family can share the chat key
+    // with us. Nobody outside the circle can read along.
+    {
+      const { data: me } = await supabase.auth.getUser();
+      if (me.user) await publishPublicKey(me.user.id);
+    }
     onJoined();
   }
 
