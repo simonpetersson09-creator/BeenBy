@@ -110,3 +110,8 @@ export async function takenColors(userId: string): Promise<string[]> {
     .eq("family_circle_id", membership.family_circle_id);
   return (data ?? []).filter((m) => m.user_id !== userId).map((m) => m.personal_color);
 }
+
+/** Search-param validator shared by the onboarding steps: `?edit=1`. */
+export function editSearch(search: Record<string, unknown>): { edit?: true } {
+  return search["edit"] === "1" || search["edit"] === true ? { edit: true } : {};
+}

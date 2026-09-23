@@ -11,9 +11,7 @@ import { patchDraft } from "@/lib/onboardingDraft";
 
 export const Route = createFileRoute("/start/vem")({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>) => ({
-    edit: search.edit === "1" || search.edit === true ? true : undefined,
-  }),
+  validateSearch: editSearch,
   head: () => ({
     meta: [
       { title: "Who do you want to stay in touch with? – BeenBy" },
