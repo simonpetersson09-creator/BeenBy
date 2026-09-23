@@ -289,13 +289,18 @@ function ChatPage() {
     }
     const body = text.trim();
     if (!body || !circleId || !user) return;
+    if (!circleKey) {
+      toast.error(t("chat.keyMissing"));
+      return;
+    }
     setSending(true);
     try {
+      const sealed = await encryptText(circleKey, body);
       const { error } = await supabase
         .from("messages")
-        .insert({ family_circle_id: circleId, user_id: user.id, body });
+        .insert({ family_circle_id: circleId, user_id: user.id, body: sealed });
       if (error) {
-        toast.error(t("chat.sendError"));
+        toast.error(friendlyError(error, t, "chat.sendError"));
         return;
       }
       setText("");
