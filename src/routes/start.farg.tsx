@@ -36,18 +36,71 @@ export const Route = createFileRoute("/start/farg")({
 
 function ColorPage() {
   const navigate = useNavigate();
+  const { edit } = Route.useSearch();
+  const back = () =>
+    void navigate(edit ? { to: "/start/adress", search: { edit: true } } : { to: "/start/adress" });
   return (
-    <StartShell onBack={() => void navigate({ to: "/start/adress" })}>
-      {({ userId, draft }) => <ColorStep userId={userId} draft={draft} />}
+    <StartShell onBack={back}>
+      {({ userId, draft }) => (
+        <ColorStep userId={userId} draft={draft} edit={Boolean(edit)} onBack={back} />
+      )}
     </StartShell>
   );
 }
 
-function ColorStep({ userId, draft }: { userId: string; draft: OnboardingDraft }) {
+function ColorStep({
+  userId,
+  draft,
+  edit,
+  onBack,
+}: {
+  userId: string;
+  draft: OnboardingDraft;
+  edit: boolean;
+  onBack: () => void;
+}) {
   const navigate = useNavigate();
   const t = useT();
   const [color, setColor] = useState<string | null>(draft.color);
   const [saving, setSaving] = useState(false);
+  const [taken, setTaken] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!edit) return;
+    let active = true;
+    void takenColors(userId).then((list) => {
+      if (active) setTaken(list);
+    });
+    return () => {
+      active = false;
+    };
+  }, [edit, userId]);
+
+  async function saveEdits() {
+    if (!draft.personName.trim() || !draft.myName.trim()) {
+      void navigate({ to: "/start/vem", search: { edit: true } });
+      return;
+    }
+    setSaving(true);
+    try {
+      await saveCircleEdit(userId, {
+        personName: draft.personName,
+        myName: draft.myName,
+        address: draft.resolvedAddress ?? (draft.address.trim() || null),
+        lat: draft.lat,
+        lng: draft.lng,
+        color: color ?? "blue",
+      });
+      clearDraft();
+      toast.success(t("edit.saved"));
+      void navigate({ to: "/" });
+    } catch (error) {
+      console.error(error);
+      toast.error(t("edit.error"));
+    } finally {
+      setSaving(false);
+    }
+  }
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Stockholm";
 
