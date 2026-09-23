@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, CalendarDays, ChevronDown, CloudOff, Loader2, Lock, MessageCircle, Plus, RefreshCw, Settings, Share2 } from "lucide-react";
+import { ArrowLeft, CalendarDays, ChevronDown, CloudOff, Loader2, Lock, MessageCircle, Plus, RefreshCw, Settings, Share2, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
@@ -422,28 +422,42 @@ export function HomeScreen({
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={members.length === 1 && !aloneDismissed}
-        onOpenChange={(o) => {
-          if (!o) dismissAlone();
-        }}
-      >
-        <DialogContent className="max-w-sm rounded-3xl">
-          <DialogHeader>
-            <DialogTitle>{t("home.aloneTitle")}</DialogTitle>
-            <DialogDescription>{t("home.aloneBody")}</DialogDescription>
-          </DialogHeader>
-          <Button
-            onClick={() => {
-              dismissAlone();
-              invite();
-            }}
-            className="h-12 w-full rounded-2xl text-sm"
+      {members.length === 1 && !aloneDismissed ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6"
+          onClick={dismissAlone}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("home.aloneTitle")}
+            className="relative w-full max-w-sm rounded-3xl bg-background p-6 shadow-lg"
+            onClick={(e) => e.stopPropagation()}
           >
-            <Share2 className="size-4" /> {t("home.aloneCta")}
-          </Button>
-        </DialogContent>
-      </Dialog>
+            <button
+              type="button"
+              aria-label={t("common.close")}
+              onClick={dismissAlone}
+              className="absolute right-4 top-4 rounded-full p-1 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <X className="size-4" />
+            </button>
+            <h2 className="text-lg font-semibold leading-none tracking-tight">
+              {t("home.aloneTitle")}
+            </h2>
+            <p className="mt-1.5 text-sm text-muted-foreground">{t("home.aloneBody")}</p>
+            <Button
+              onClick={() => {
+                dismissAlone();
+                invite();
+              }}
+              className="mt-4 h-12 w-full rounded-2xl text-sm"
+            >
+              <Share2 className="size-4" /> {t("home.aloneCta")}
+            </Button>
+          </div>
+        </div>
+      ) : null}
 
 
 
