@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { searchAddress } from "@/lib/geocode";
+import { editSearch } from "@/lib/circleEdit";
 import { patchDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
 
 type GeocodeHit = {
@@ -24,6 +25,7 @@ type GeocodeHit = {
 
 export const Route = createFileRoute("/start/adress")({
   ssr: false,
+  validateSearch: editSearch,
   head: () => ({
     meta: [
       { title: "Where does the person live? – BeenBy" },
@@ -45,14 +47,17 @@ export const Route = createFileRoute("/start/adress")({
 
 function AddressPage() {
   const navigate = useNavigate();
+  const { edit } = Route.useSearch();
+  const back = () =>
+    void navigate(edit ? { to: "/start/vem", search: { edit: true } } : { to: "/start/vem" });
   return (
-    <StartShell onBack={() => void navigate({ to: "/start/vem" })}>
-      {({ draft }) => <AddressStep draft={draft} />}
+    <StartShell onBack={back}>
+      {({ draft }) => <AddressStep draft={draft} edit={Boolean(edit)} />}
     </StartShell>
   );
 }
 
-function AddressStep({ draft }: { draft: OnboardingDraft }) {
+function AddressStep({ draft, edit }: { draft: OnboardingDraft; edit: boolean }) {
   const navigate = useNavigate();
   const t = useT();
   const pl = usePersonLabel();
@@ -215,30 +220,33 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
         ) : null}
       </section>
 
-      <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
-        <SectionHeader
-          step={2}
-          title={t("adress.s2.title")}
-          hint={t("adress.s2.hint")}
-          optional={t("common.optional")}
-        />
-        <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-3 py-2.5">
-          <Label htmlFor="visit-notifications" className="text-sm text-foreground/90">
-            {visitNotifications ? t("adress.notifyOn") : t("adress.notifyOff")}
-          </Label>
-          <Switch
-            id="visit-notifications"
-            checked={visitNotifications}
-            onCheckedChange={(checked) => {
-              setVisitNotifications(checked);
-              patchDraft({ visitNotifications: checked });
-            }}
+      {edit ? null : (
+        <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
+          <SectionHeader
+            step={2}
+            title={t("adress.s2.title")}
+            hint={t("adress.s2.hint")}
+            optional={t("common.optional")}
           />
-        </div>
-      </section>
+          <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-3 py-2.5">
+            <Label htmlFor="visit-notifications" className="text-sm text-foreground/90">
+              {visitNotifications ? t("adress.notifyOn") : t("adress.notifyOff")}
+            </Label>
+            <Switch
+              id="visit-notifications"
+              checked={visitNotifications}
+              onCheckedChange={(checked) => {
+                setVisitNotifications(checked);
+                patchDraft({ visitNotifications: checked });
+              }}
+            />
+          </div>
+        </section>
+      )}
+
 
       <section className="space-y-1.5 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
-        <SectionHeader step={3} title={t("adress.s3.title")} hint={t("adress.s3.hint")} />
+        <SectionHeader step={edit ? 2 : 3} title={t("adress.s3.title")} hint={t("adress.s3.hint")} />
         <Button
           className="h-11 w-full rounded-2xl text-sm"
           onClick={() => {
@@ -249,7 +257,9 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
               lng: coords?.lng ?? null,
               visitNotifications,
             });
-            void navigate({ to: "/start/farg" });
+            void navigate(
+              edit ? { to: "/start/farg", search: { edit: true } } : { to: "/start/farg" },
+            );
           }}
         >
           {t("common.continue")} <ArrowRight className="size-4" />
@@ -257,7 +267,9 @@ function AddressStep({ draft }: { draft: OnboardingDraft }) {
         <button
           type="button"
           className="mx-auto block text-sm text-muted-foreground underline underline-offset-4"
-          onClick={() => void navigate({ to: "/start/vem" })}
+          onClick={() =>
+            void navigate(edit ? { to: "/start/vem", search: { edit: true } } : { to: "/start/vem" })
+          }
         >
           {t("common.back")}
         </button>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { CalendarDays, ChevronDown, CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2 } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, CalendarDays, ChevronDown, CloudOff, Loader2, Lock, MapPinCheckInside, MessageCircle, Plus, RefreshCw, Settings, Share2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
@@ -35,6 +35,7 @@ import { useT, usePersonLabel } from "@/lib/i18n";
 import { getPending, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
 import { registerPushNotifications } from "@/lib/push";
+import { fillDraftFromCircle } from "@/lib/circleEdit";
 
 import { refreshTrialStatus, useAccess } from "@/lib/premiumStore";
 import { saveRecovery } from "@/lib/recovery";
@@ -52,6 +53,7 @@ export function HomeScreen({
 }) {
   const t = useT();
   const pl = usePersonLabel();
+  const navigate = useNavigate();
   const { circle, person, members, visits, planned } = data;
   const tz = circle.timezone;
   const online = useOnlineStatus();
@@ -328,6 +330,21 @@ export function HomeScreen({
 
   return (
     <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-8 pt-6">
+      {/* Back into the same steps the circle was created with, so the details
+          can be changed in the order the app uses. */}
+      <div className="mb-2">
+        <button
+          type="button"
+          aria-label={t("home.edit")}
+          onClick={() => {
+            fillDraftFromCircle(data, userId);
+            void navigate({ to: "/start/vem", search: { edit: true } });
+          }}
+          className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft transition-colors hover:bg-primary/90"
+        >
+          <ArrowLeft className="size-5" />
+        </button>
+      </div>
       <header className="mb-4 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[0.6rem] font-medium uppercase tracking-[0.22em] text-primary/60">

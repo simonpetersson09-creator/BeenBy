@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useT } from "@/lib/i18n";
+import { editSearch } from "@/lib/circleEdit";
 import { patchDraft } from "@/lib/onboardingDraft";
 
 export const Route = createFileRoute("/start/vem")({
   ssr: false,
+  validateSearch: editSearch,
   head: () => ({
     meta: [
       { title: "Who do you want to stay in touch with? – BeenBy" },
@@ -32,14 +34,33 @@ export const Route = createFileRoute("/start/vem")({
 
 function WhoPage() {
   const navigate = useNavigate();
+  const { edit } = Route.useSearch();
   return (
-    <StartShell onBack={() => void navigate({ to: "/start/valkommen" })}>
-      {({ draft }) => <WhoStep initialPerson={draft.personName} initialMe={draft.myName} />}
+    <StartShell
+      onBack={() =>
+        void navigate(edit ? { to: "/" } : { to: "/start/valkommen" })
+      }
+    >
+      {({ draft }) => (
+        <WhoStep
+          initialPerson={draft.personName}
+          initialMe={draft.myName}
+          edit={Boolean(edit)}
+        />
+      )}
     </StartShell>
   );
 }
 
-function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialMe: string }) {
+function WhoStep({
+  initialPerson,
+  initialMe,
+  edit,
+}: {
+  initialPerson: string;
+  initialMe: string;
+  edit?: boolean;
+}) {
   const navigate = useNavigate();
   const t = useT();
   const [personName, setPersonName] = useState(initialPerson);
@@ -130,7 +151,9 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
         disabled={personName.trim().length < 1 || myName.trim().length < 1}
         onClick={() => {
           patchDraft({ personName: personName.trim(), myName: myName.trim() });
-          void navigate({ to: "/start/adress" });
+          void navigate(
+            edit ? { to: "/start/adress", search: { edit: true } } : { to: "/start/adress" },
+          );
         }}
       >
         {t("common.continue")} <ArrowRight className="size-4" />
