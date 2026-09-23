@@ -244,7 +244,7 @@ function ChatPage() {
   useEffect(() => {
     const missing = messages
       .map((m) => m.image_path)
-      .filter((p): p is string => Boolean(p) && !imageUrls[p])
+      .filter((p): p is string => Boolean(p) && !imageUrls[p!])
       .filter((p) => !isEncryptedImagePath(p) || circleKey !== null);
     if (missing.length === 0) return;
     let active = true;
