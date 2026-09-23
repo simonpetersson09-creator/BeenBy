@@ -151,7 +151,9 @@ function WhoStep({
         disabled={personName.trim().length < 1 || myName.trim().length < 1}
         onClick={() => {
           patchDraft({ personName: personName.trim(), myName: myName.trim() });
-          void navigate({ to: "/start/adress" });
+          void navigate(
+            edit ? { to: "/start/adress", search: { edit: true } } : { to: "/start/adress" },
+          );
         }}
       >
         {t("common.continue")} <ArrowRight className="size-4" />
