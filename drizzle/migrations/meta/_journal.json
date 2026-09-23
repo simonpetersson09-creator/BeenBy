@@ -15,6 +15,13 @@
       "when": 1790176644201,
       "tag": "0001_e2ee_key_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790176658018,
+      "tag": "0002_atomic_create_family_circle",
+      "breakpoints": true
     }
   ]
 }

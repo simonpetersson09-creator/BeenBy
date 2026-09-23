@@ -657,6 +657,21 @@ export type Database = {
         }
         Returns: boolean
       }
+      create_family_circle: {
+        Args: {
+          _address?: string
+          _color: string
+          _lat?: number
+          _lng?: number
+          _my_name: string
+          _person_name: string
+          _timezone?: string
+        }
+        Returns: {
+          out_circle_id: string
+          out_family_code: string
+        }[]
+      }
       delete_my_account_for: {
         Args: { _user: string }
         Returns: {
