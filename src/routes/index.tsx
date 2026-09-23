@@ -9,6 +9,7 @@ import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { ensureUser } from "@/lib/auth";
 import { useT } from "@/lib/i18n";
+import { getDraft } from "@/lib/onboardingDraft";
 import { getRecovery } from "@/lib/recovery";
 
 export const Route = createFileRoute("/")({
