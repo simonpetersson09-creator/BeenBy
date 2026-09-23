@@ -112,33 +112,28 @@ function ColorStep({
     }
     setSaving(true);
     try {
-      const { data: circle, error: cErr } = await supabase
-        .from("family_circles")
-        .insert({ name: draft.personName.trim(), timezone, created_by: userId })
-        .select("id, family_code")
-        .single();
-      if (cErr) throw cErr;
-
-      const { error: pErr } = await supabase.from("persons").insert({
-        family_circle_id: circle.id,
-        name: draft.personName.trim(),
-        address: draft.resolvedAddress ?? (draft.address.trim() || null),
-        location_latitude: draft.lat,
-        location_longitude: draft.lng,
+      // All or nothing: the whole circle is created in one database call, so an
+      // interrupted start can never leave an empty circle behind.
+      const { data, error } = await supabase.rpc("create_family_circle", {
+        _person_name: draft.personName.trim(),
+        _my_name: draft.myName.trim(),
+        _color: color ?? "blue",
+        _timezone: timezone,
+        _address: draft.resolvedAddress ?? (draft.address.trim() || null),
+        _lat: draft.lat,
+        _lng: draft.lng,
       });
-      if (pErr) throw pErr;
+      if (error) throw error;
+      const row = (Array.isArray(data) ? data[0] : data) as
+        | { out_circle_id: string; out_family_code: string }
+        | undefined;
+      if (!row) throw new Error("no_circle");
 
-      const { error: mErr } = await supabase.from("family_members").insert({
-        family_circle_id: circle.id,
-        user_id: userId,
-        personal_color: color ?? "blue",
-        role: "owner",
-      });
-      if (mErr) throw mErr;
+      // The chat key is created here, on the phone, and never sent to the server.
+      await createCircleKey(row.out_circle_id, userId);
 
-      await supabase.from("profiles").upsert({ id: userId, name: draft.myName.trim() });
       saveRecovery({
-        code: circle.family_code,
+        code: row.out_family_code,
         name: draft.myName.trim(),
         color: color ?? "blue",
       });
@@ -146,7 +141,7 @@ function ColorStep({
       void navigate({ to: "/" });
     } catch (error) {
       console.error(error);
-      toast.error(t("farg.error"));
+      toast.error(friendlyError(error as { message?: string }, t, "farg.error"));
     } finally {
       setSaving(false);
     }
