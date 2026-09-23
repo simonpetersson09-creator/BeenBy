@@ -5,7 +5,10 @@
  */
 type Translate = (key: string, vars?: Record<string, string>) => string;
 
-type MaybeError = { message?: string; code?: string; status?: number } | null | undefined;
+type MaybeError =
+  | { message?: string | undefined; code?: string | undefined; status?: number | undefined }
+  | null
+  | undefined;
 
 export function friendlyError(error: MaybeError, t: Translate, fallbackKey?: string): string {
   const message = (error?.message ?? "").toLowerCase();
