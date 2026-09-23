@@ -123,17 +123,18 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
           placeholder={t("vem.mePlaceholder")}
           className="h-11 rounded-2xl text-base"
         />
-        <Button
-          className="h-11 w-full rounded-2xl text-sm"
-          disabled={personName.trim().length < 1 || myName.trim().length < 1}
-          onClick={() => {
-            patchDraft({ personName: personName.trim(), myName: myName.trim() });
-            void navigate({ to: "/start/adress" });
-          }}
-        >
-          {t("common.continue")} <ArrowRight className="size-4" />
-        </Button>
       </section>
+
+      <Button
+        className="h-11 w-full rounded-2xl text-sm"
+        disabled={personName.trim().length < 1 || myName.trim().length < 1}
+        onClick={() => {
+          patchDraft({ personName: personName.trim(), myName: myName.trim() });
+          void navigate({ to: "/start/adress" });
+        }}
+      >
+        {t("common.continue")} <ArrowRight className="size-4" />
+      </Button>
 
       <h2 className="text-2xl leading-snug">{t("vem.joinTitle")}</h2>
       <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
