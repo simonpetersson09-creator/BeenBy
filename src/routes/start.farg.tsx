@@ -160,6 +160,7 @@ function ColorStep({
       </div>
       <ColorPicker
         value={color}
+        taken={taken}
         onChange={(next) => {
           setColor(next);
           patchDraft({ color: next ?? "blue" });
@@ -168,15 +169,15 @@ function ColorStep({
       <Button
         className="h-11 w-full rounded-2xl text-sm"
         disabled={!color || saving}
-        onClick={() => void create()}
+        onClick={() => void (edit ? saveEdits() : create())}
       >
         {saving ? <Loader2 className="size-4 animate-spin" /> : null}
-        {t("farg.create")}
+        {edit ? t("farg.save") : t("farg.create")}
       </Button>
       <button
         type="button"
         className="mx-auto block text-sm text-muted-foreground underline underline-offset-4"
-        onClick={() => void navigate({ to: "/start/adress" })}
+        onClick={onBack}
       >
         {t("common.back")}
       </button>
