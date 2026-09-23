@@ -83,6 +83,16 @@ const FALLBACK_NAMES: Record<string, string> = {
   fr: "Quelqu'un",
 };
 
+const MESSAGE_LABELS: Record<string, string> = {
+  sv: "Nytt meddelande",
+  en: "New message",
+  de: "Neue Nachricht",
+  da: "Ny besked",
+  fi: "Uusi viesti",
+  es: "Mensaje nuevo",
+  fr: "Nouveau message",
+};
+
 const IMAGE_LABELS: Record<string, string> = {
   sv: "📎 Bild",
   en: "📎 Photo",
