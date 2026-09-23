@@ -128,6 +128,52 @@ function ChatPage() {
 
   const circleId = data?.circle.id;
 
+  // The chat is end-to-end encrypted: the key lives on the devices in the
+  // family circle, never on the server.
+  const [circleKey, setCircleKey] = useState<CryptoKey | null>(null);
+  const [bodies, setBodies] = useState<Record<string, string | null>>({});
+  const memberIds = (data?.members ?? []).map((m) => m.user_id).join(",");
+
+  useEffect(() => {
+    const uid = user?.id;
+    if (!circleId || !uid) return;
+    let active = true;
+    void (async () => {
+      await publishPublicKey(uid);
+      const key = await getCircleKey(circleId, uid);
+      if (!active) return;
+      setCircleKey(key);
+      if (key && memberIds) {
+        await shareCircleKeyWithMembers(circleId, uid, memberIds.split(","));
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [circleId, user?.id, memberIds]);
+
+  // Decrypt on this device only. Messages written before encryption existed
+  // are plain text and shown as they are.
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      const next: Record<string, string | null> = {};
+      for (const m of messages) {
+        if (!m.body) continue;
+        if (!isEncrypted(m.body)) {
+          next[m.id] = m.body;
+          continue;
+        }
+        next[m.id] = circleKey ? await decryptText(circleKey, m.body) : null;
+      }
+      if (active) setBodies(next);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [messages, circleKey]);
+
+
   useEffect(() => {
     if (!circleId) return;
     let active = true;
