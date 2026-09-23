@@ -119,9 +119,9 @@ function ColorStep({
         _my_name: draft.myName.trim(),
         _color: color ?? "blue",
         _timezone: timezone,
-        _address: draft.resolvedAddress ?? (draft.address.trim() || null),
-        _lat: draft.lat,
-        _lng: draft.lng,
+        _address: draft.resolvedAddress ?? (draft.address.trim() || undefined),
+        _lat: draft.lat ?? undefined,
+        _lng: draft.lng ?? undefined,
       });
       if (error) throw error;
       const row = (Array.isArray(data) ? data[0] : data) as
