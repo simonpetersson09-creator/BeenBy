@@ -220,27 +220,30 @@ function AddressStep({ draft, edit }: { draft: OnboardingDraft; edit: boolean })
         ) : null}
       </section>
 
-      <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
-        <SectionHeader
-          step={2}
-          title={t("adress.s2.title")}
-          hint={t("adress.s2.hint")}
-          optional={t("common.optional")}
-        />
-        <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-3 py-2.5">
-          <Label htmlFor="visit-notifications" className="text-sm text-foreground/90">
-            {visitNotifications ? t("adress.notifyOn") : t("adress.notifyOff")}
-          </Label>
-          <Switch
-            id="visit-notifications"
-            checked={visitNotifications}
-            onCheckedChange={(checked) => {
-              setVisitNotifications(checked);
-              patchDraft({ visitNotifications: checked });
-            }}
+      {edit ? null : (
+        <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
+          <SectionHeader
+            step={2}
+            title={t("adress.s2.title")}
+            hint={t("adress.s2.hint")}
+            optional={t("common.optional")}
           />
-        </div>
-      </section>
+          <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-3 py-2.5">
+            <Label htmlFor="visit-notifications" className="text-sm text-foreground/90">
+              {visitNotifications ? t("adress.notifyOn") : t("adress.notifyOff")}
+            </Label>
+            <Switch
+              id="visit-notifications"
+              checked={visitNotifications}
+              onCheckedChange={(checked) => {
+                setVisitNotifications(checked);
+                patchDraft({ visitNotifications: checked });
+              }}
+            />
+          </div>
+        </section>
+      )}
+
 
       <section className="space-y-1.5 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
         <SectionHeader step={3} title={t("adress.s3.title")} hint={t("adress.s3.hint")} />
