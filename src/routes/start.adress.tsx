@@ -47,14 +47,17 @@ export const Route = createFileRoute("/start/adress")({
 
 function AddressPage() {
   const navigate = useNavigate();
+  const { edit } = Route.useSearch();
+  const back = () =>
+    void navigate(edit ? { to: "/start/vem", search: { edit: true } } : { to: "/start/vem" });
   return (
-    <StartShell onBack={() => void navigate({ to: "/start/vem" })}>
-      {({ draft }) => <AddressStep draft={draft} />}
+    <StartShell onBack={back}>
+      {({ draft }) => <AddressStep draft={draft} edit={Boolean(edit)} />}
     </StartShell>
   );
 }
 
-function AddressStep({ draft }: { draft: OnboardingDraft }) {
+function AddressStep({ draft, edit }: { draft: OnboardingDraft; edit: boolean }) {
   const navigate = useNavigate();
   const t = useT();
   const pl = usePersonLabel();
