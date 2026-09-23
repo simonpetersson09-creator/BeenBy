@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useT } from "@/lib/i18n";
 import { editSearch, saveCircleEdit, takenColors } from "@/lib/circleEdit";
+import { createCircleKey } from "@/lib/e2ee";
+import { friendlyError } from "@/lib/friendlyError";
 import { clearDraft, patchDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
 import { saveRecovery } from "@/lib/recovery";
 
