@@ -67,6 +67,16 @@ export function HomeScreen({
   // "Ja" on a geofence arrival notification → existing recordVisit() path.
   useGeofenceVisits(refresh, t("toast.geofenceVisitSaved"));
 
+  // Keep the family chat readable for everyone in the circle: publish this
+  // device's public key and hand the (encrypted) chat key to new members.
+  const memberKeyList = members.map((m) => m.user_id).join(",");
+  useEffect(() => {
+    void (async () => {
+      await publishPublicKey(userId);
+      await shareCircleKeyWithMembers(circle.id, userId, memberKeyList.split(","));
+    })();
+  }, [circle.id, userId, memberKeyList]);
+
 
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [planOpen, setPlanOpen] = useState(false);
