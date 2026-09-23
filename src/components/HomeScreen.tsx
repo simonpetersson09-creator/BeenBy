@@ -417,9 +417,17 @@ export function HomeScreen({
       />
 
 
-      {members.length === 1 ? (
-        <section className="mb-4 rounded-3xl bg-primary px-4 py-4 text-primary-foreground shadow-lift">
-          <h2 className="text-sm font-semibold leading-tight">{t("home.aloneTitle")}</h2>
+      {members.length === 1 && !aloneDismissed ? (
+        <section className="relative mb-4 rounded-3xl bg-primary px-4 py-4 text-primary-foreground shadow-lift">
+          <button
+            type="button"
+            onClick={dismissAlone}
+            aria-label={t("common.close")}
+            className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-full text-primary-foreground/80 transition-colors hover:bg-primary-foreground/15 hover:text-primary-foreground"
+          >
+            <X className="size-4" />
+          </button>
+          <h2 className="pr-8 text-sm font-semibold leading-tight">{t("home.aloneTitle")}</h2>
           <p className="mt-1 text-[0.8rem] leading-snug text-primary-foreground/85">
             {t("home.aloneBody")}
           </p>
@@ -449,7 +457,7 @@ export function HomeScreen({
             {t("home.premiumBadge")}
           </span>
         ) : isTrialActive ? (
-          <span className="absolute -top-2.5 left-3 rounded-full border border-primary/30 bg-card px-2.5 py-1 text-[0.62rem] leading-none font-medium text-primary shadow-soft">
+          <span className="absolute -top-2.5 left-3 rounded-full bg-brand-accent px-2.5 py-1 text-[0.62rem] leading-none font-medium text-brand-accent-foreground shadow-soft">
             {trialDaysLeft === 1
               ? t("home.trialLeftOne")
               : t("home.trialLeft", { n: String(trialDaysLeft) })}
