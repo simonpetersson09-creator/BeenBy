@@ -8,6 +8,13 @@
       "when": 1790073532622,
       "tag": "0000_cleanup_empty_test_circles",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790176644201,
+      "tag": "0001_e2ee_key_tables",
+      "breakpoints": true
     }
   ]
 }
