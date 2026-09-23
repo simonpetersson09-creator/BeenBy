@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, KeyRound } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
@@ -136,20 +136,6 @@ function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialM
         {t("common.continue")} <ArrowRight className="size-4" />
       </Button>
 
-      <h2 className="text-2xl leading-snug">{t("vem.joinTitle")}</h2>
-      <section className="space-y-2 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
-        <SectionHeader step={3} title={t("vem.s3.title")} hint={t("vem.s3.hint")} />
-        <button
-          type="button"
-          onClick={() => void navigate({ to: "/start/kod", search: { from: undefined } })}
-          className="mx-auto flex items-center gap-2 rounded-full border border-primary/40 bg-card/60 py-2.5 pr-4 pl-2.5 text-sm text-foreground transition-colors hover:bg-card"
-        >
-          <span className="flex size-8 items-center justify-center rounded-full bg-primary/10">
-            <KeyRound className="size-4 text-primary" />
-          </span>
-          {t("vem.codeBtn")}
-        </button>
-      </section>
     </>
   );
 }

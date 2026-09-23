@@ -84,7 +84,7 @@ function WelcomePage() {
         <div className="flex flex-1 flex-col items-center gap-2">
           <Button
             className="h-12 w-full rounded-2xl text-sm"
-            onClick={() => void navigate({ to: "/start/vem" })}
+            onClick={() => void navigate({ to: "/start/valj" })}
           >
             {t("welcome.cta")} <ArrowRight className="size-4" />
           </Button>
