@@ -239,30 +239,44 @@ function ChatPage() {
     return () => window.clearInterval(id);
   }, []);
 
-  // Images live in a private bucket – sign the ones we need.
+  // Images live in a private bucket – sign the ones we need. Encrypted photos
+  // are downloaded and decrypted here on the phone before they are shown.
   useEffect(() => {
     const missing = messages
       .map((m) => m.image_path)
-      .filter((p): p is string => Boolean(p) && !imageUrls[p!]);
+      .filter((p): p is string => Boolean(p) && !imageUrls[p])
+      .filter((p) => !isEncryptedImagePath(p) || circleKey !== null);
     if (missing.length === 0) return;
     let active = true;
-    void supabase.storage
-      .from("chat-images")
-      .createSignedUrls(missing, 60 * 60)
-      .then(({ data: signed }) => {
-        if (!active || !signed) return;
-        setImageUrls((prev) => {
-          const next = { ...prev };
-          signed.forEach((s) => {
-            if (s.path && s.signedUrl) next[s.path] = s.signedUrl;
-          });
-          return next;
-        });
-      });
+    void (async () => {
+      const { data: signed } = await supabase.storage
+        .from("chat-images")
+        .createSignedUrls(missing, 60 * 60);
+      if (!active || !signed) return;
+
+      const resolved: Record<string, string> = {};
+      for (const s of signed) {
+        if (!s.path || !s.signedUrl) continue;
+        if (isEncryptedImagePath(s.path) && circleKey) {
+          try {
+            const raw = await (await fetch(s.signedUrl)).arrayBuffer();
+            const blob = await decryptBlob(circleKey, raw);
+            if (blob) resolved[s.path] = URL.createObjectURL(blob);
+          } catch {
+            // Leave it unresolved – the bubble keeps its loading state.
+          }
+        } else {
+          resolved[s.path] = s.signedUrl;
+        }
+      }
+      if (active && Object.keys(resolved).length > 0) {
+        setImageUrls((prev) => ({ ...prev, ...resolved }));
+      }
+    })();
     return () => {
       active = false;
     };
-  }, [messages, imageUrls]);
+  }, [messages, imageUrls, circleKey]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
