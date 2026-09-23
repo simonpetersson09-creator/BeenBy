@@ -421,7 +421,7 @@ function ChatPage() {
     try {
       const { error } = await supabase.from("messages").delete().eq("id", m.id);
       if (error) {
-        toast.error(t("chat.deleteError"));
+        toast.error(friendlyError(error, t, "chat.deleteError"));
         return;
       }
       if (m.image_path) {
