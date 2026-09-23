@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, CalendarDays, ChevronDown, CloudOff, Loader2, Lock, MessageCircle, Plus, RefreshCw, Settings, Share2, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, ChevronDown, ChevronRight, CloudOff, Loader2, Lock, MessageCircle, Plus, RefreshCw, Settings, Share2, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
@@ -534,9 +534,28 @@ export function HomeScreen({
             );
           })()
         ) : (
-          <p className="text-xs text-muted-foreground">
-            {t("home.noPlanned")}
-          </p>
+          <button
+            type="button"
+            className="flex w-full items-center gap-2 rounded-xl px-1 py-0.5 text-left transition active:scale-[0.98]"
+            onClick={() => {
+              if (locked) {
+                setPaywallOpen(true);
+                return;
+              }
+              resetActs();
+              setPlanDate(null);
+              setPlanOpen(true);
+            }}
+            aria-label={locked ? t("access.locked") : undefined}
+          >
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-primary/40 text-primary/70">
+              <CalendarDays className="size-3.5" />
+            </span>
+            <span className="min-w-0 flex-1 text-xs text-muted-foreground">
+              {t("home.noPlanned")}
+            </span>
+            <ChevronRight className="size-4 shrink-0 text-primary/50" />
+          </button>
         )}
       </section>
 
