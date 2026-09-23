@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -8,11 +8,13 @@ import { StartShell } from "@/components/onboarding/StartShell";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useT } from "@/lib/i18n";
+import { editSearch, saveCircleEdit, takenColors } from "@/lib/circleEdit";
 import { clearDraft, patchDraft, type OnboardingDraft } from "@/lib/onboardingDraft";
 import { saveRecovery } from "@/lib/recovery";
 
 export const Route = createFileRoute("/start/farg")({
   ssr: false,
+  validateSearch: editSearch,
   head: () => ({
     meta: [
       { title: "Pick your colour – BeenBy" },
