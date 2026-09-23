@@ -531,7 +531,7 @@ export function HomeScreen({
                     {relativeLabel(nextPlanned.planned_date, tz)}
                     {isToday ? (
                       <span
-                        aria-label={t("home.now")}
+                        aria-hidden
                         className="relative z-20 inline-block size-2 shrink-0 rounded-full bg-live shadow-[0_0_8px_var(--live)] motion-safe:animate-pulse"
                       />
                     ) : null}
