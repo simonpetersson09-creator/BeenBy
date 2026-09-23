@@ -109,18 +109,38 @@ export async function getPremiumPrice(
   }
 }
 
+const ANCHOR_FALLBACK_KEY = "beenby.trial.anchor";
+
+/**
+ * Fallback anchor for native builds whose plugin predates `getDeviceAnchor`.
+ * Weaker than the Keychain (a reinstall clears it) but it still stops
+ * "start over" / sign-out from handing out another 30 days.
+ */
+function fallbackAnchor(): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  try {
+    const existing = window.localStorage.getItem(ANCHOR_FALLBACK_KEY);
+    if (existing && existing.length >= 8) return existing;
+    const created = crypto.randomUUID();
+    window.localStorage.setItem(ANCHOR_FALLBACK_KEY, created);
+    return created;
+  } catch {
+    return undefined;
+  }
+}
+
 /**
  * Keychain-backed device anchor. It survives sign-out, "start over" and a
  * reinstall, which is what stops the 30 day trial from being restarted.
  * Returns undefined outside the native app — then no anchor is claimed.
  */
 export async function getDeviceAnchor(): Promise<string | undefined> {
-  if (!isStoreKitAvailable()) return undefined;
+  if (!isNativeIOS()) return undefined;
   try {
     const result = await BeenbyStoreKit.getDeviceAnchor?.();
-    return result?.anchor;
+    if (result?.anchor) return result.anchor;
   } catch (error) {
     console.warn("[premium] getDeviceAnchor unavailable", error);
-    return undefined;
   }
+  return fallbackAnchor();
 }
