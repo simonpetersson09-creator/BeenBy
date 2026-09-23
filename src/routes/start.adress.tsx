@@ -246,7 +246,7 @@ function AddressStep({ draft, edit }: { draft: OnboardingDraft; edit: boolean })
 
 
       <section className="space-y-1.5 rounded-2xl border border-primary/25 bg-card/60 p-2.5">
-        <SectionHeader step={3} title={t("adress.s3.title")} hint={t("adress.s3.hint")} />
+        <SectionHeader step={edit ? 2 : 3} title={t("adress.s3.title")} hint={t("adress.s3.hint")} />
         <Button
           className="h-11 w-full rounded-2xl text-sm"
           onClick={() => {
@@ -257,7 +257,9 @@ function AddressStep({ draft, edit }: { draft: OnboardingDraft; edit: boolean })
               lng: coords?.lng ?? null,
               visitNotifications,
             });
-            void navigate({ to: "/start/farg" });
+            void navigate(
+              edit ? { to: "/start/farg", search: { edit: true } } : { to: "/start/farg" },
+            );
           }}
         >
           {t("common.continue")} <ArrowRight className="size-4" />
@@ -265,7 +267,9 @@ function AddressStep({ draft, edit }: { draft: OnboardingDraft; edit: boolean })
         <button
           type="button"
           className="mx-auto block text-sm text-muted-foreground underline underline-offset-4"
-          onClick={() => void navigate({ to: "/start/vem" })}
+          onClick={() =>
+            void navigate(edit ? { to: "/start/vem", search: { edit: true } } : { to: "/start/vem" })
+          }
         >
           {t("common.back")}
         </button>
