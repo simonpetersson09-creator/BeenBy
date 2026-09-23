@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { publishPublicKey } from "@/lib/e2ee";
+import { friendlyError } from "@/lib/friendlyError";
 import { useT } from "@/lib/i18n";
 import { getDraft, patchDraft } from "@/lib/onboardingDraft";
 import { saveRecovery } from "@/lib/recovery";
