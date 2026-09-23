@@ -330,21 +330,6 @@ export function HomeScreen({
 
   return (
     <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-8 pt-6">
-      {/* Back into the same steps the circle was created with, so the details
-          can be changed in the order the app uses. */}
-      <div className="mb-2">
-        <button
-          type="button"
-          aria-label={t("home.edit")}
-          onClick={() => {
-            fillDraftFromCircle(data, userId);
-            void navigate({ to: "/start/vem", search: { edit: true } });
-          }}
-          className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft transition-colors hover:bg-primary/90"
-        >
-          <ArrowLeft className="size-5" />
-        </button>
-      </div>
       <header className="mb-4 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[0.6rem] font-medium uppercase tracking-[0.22em] text-primary/60">
