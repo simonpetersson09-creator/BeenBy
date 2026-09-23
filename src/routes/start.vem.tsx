@@ -34,14 +34,29 @@ export const Route = createFileRoute("/start/vem")({
 
 function WhoPage() {
   const navigate = useNavigate();
+  const { edit } = Route.useSearch();
   return (
-    <StartShell onBack={() => void navigate({ to: "/start/valkommen" })}>
-      {({ draft }) => <WhoStep initialPerson={draft.personName} initialMe={draft.myName} />}
+    <StartShell
+      onBack={() =>
+        void navigate(edit ? { to: "/" } : { to: "/start/valkommen" })
+      }
+    >
+      {({ draft }) => (
+        <WhoStep initialPerson={draft.personName} initialMe={draft.myName} edit={edit} />
+      )}
     </StartShell>
   );
 }
 
-function WhoStep({ initialPerson, initialMe }: { initialPerson: string; initialMe: string }) {
+function WhoStep({
+  initialPerson,
+  initialMe,
+  edit,
+}: {
+  initialPerson: string;
+  initialMe: string;
+  edit?: boolean;
+}) {
   const navigate = useNavigate();
   const t = useT();
   const [personName, setPersonName] = useState(initialPerson);
