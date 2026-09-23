@@ -88,7 +88,9 @@ function Index() {
   // NOT the same as "no circle" – never bounce to onboarding on an error.
   useEffect(() => {
     if (loading || !user || isLoading || recovering || data || error) return;
-    void navigate({ to: "/start/valkommen", replace: true });
+    // Resume where the user left off instead of restarting the flow on
+    // every reload (new preview build, app restart).
+    void navigate({ to: getDraft().step, replace: true });
   }, [loading, user, isLoading, recovering, data, error, navigate]);
 
   if (error || authFailed) {
