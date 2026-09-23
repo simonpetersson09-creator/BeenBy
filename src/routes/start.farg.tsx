@@ -119,9 +119,11 @@ function ColorStep({
         _my_name: draft.myName.trim(),
         _color: color ?? "blue",
         _timezone: timezone,
-        _address: draft.resolvedAddress ?? (draft.address.trim() || undefined),
-        _lat: draft.lat ?? undefined,
-        _lng: draft.lng ?? undefined,
+        ...(draft.resolvedAddress ?? (draft.address.trim() || null)
+          ? { _address: (draft.resolvedAddress ?? draft.address.trim())! }
+          : {}),
+        ...(typeof draft.lat === "number" ? { _lat: draft.lat } : {}),
+        ...(typeof draft.lng === "number" ? { _lng: draft.lng } : {}),
       });
       if (error) throw error;
       const row = (Array.isArray(data) ? data[0] : data) as
