@@ -37,7 +37,7 @@ export const Route = createFileRoute("/start/kod")({
 function CodePage() {
   const navigate = useNavigate();
   const { from } = Route.useSearch();
-  const backTo = from === "app" ? "/" : "/start/vem";
+  const backTo = from === "app" ? "/" : "/start/valj";
   const t = useT();
   const [code, setCode] = useState(() => getDraft().familyCode);
   const [activeCode, setActiveCode] = useState<string | null>(null);

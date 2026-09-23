@@ -15,6 +15,7 @@ import { Route as JoinTokenRouteImport } from './routes/join.$token'
 import { Route as StartAdressRouteImport } from './routes/start.adress'
 import { Route as StartFargRouteImport } from './routes/start.farg'
 import { Route as StartKodRouteImport } from './routes/start.kod'
+import { Route as StartValjRouteImport } from './routes/start.valj'
 import { Route as StartValkommenRouteImport } from './routes/start.valkommen'
 import { Route as StartVemRouteImport } from './routes/start.vem'
 import { Route as ApiPublicAppstoreNotificationsRouteImport } from './routes/api/public/appstore-notifications'
@@ -51,6 +52,11 @@ const StartFargRoute = StartFargRouteImport.update({
 const StartKodRoute = StartKodRouteImport.update({
   id: '/start/kod',
   path: '/start/kod',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StartValjRoute = StartValjRouteImport.update({
+  id: '/start/valj',
+  path: '/start/valj',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StartValkommenRoute = StartValkommenRouteImport.update({
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/start/adress': typeof StartAdressRoute
   '/start/farg': typeof StartFargRoute
   '/start/kod': typeof StartKodRoute
+  '/start/valj': typeof StartValjRoute
   '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
   '/api/public/appstore-notifications': typeof ApiPublicAppstoreNotificationsRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/start/adress': typeof StartAdressRoute
   '/start/farg': typeof StartFargRoute
   '/start/kod': typeof StartKodRoute
+  '/start/valj': typeof StartValjRoute
   '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
   '/api/public/appstore-notifications': typeof ApiPublicAppstoreNotificationsRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/start/adress': typeof StartAdressRoute
   '/start/farg': typeof StartFargRoute
   '/start/kod': typeof StartKodRoute
+  '/start/valj': typeof StartValjRoute
   '/start/valkommen': typeof StartValkommenRoute
   '/start/vem': typeof StartVemRoute
   '/api/public/appstore-notifications': typeof ApiPublicAppstoreNotificationsRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/start/adress'
     | '/start/farg'
     | '/start/kod'
+    | '/start/valj'
     | '/start/valkommen'
     | '/start/vem'
     | '/api/public/appstore-notifications'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/start/adress'
     | '/start/farg'
     | '/start/kod'
+    | '/start/valj'
     | '/start/valkommen'
     | '/start/vem'
     | '/api/public/appstore-notifications'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/start/adress'
     | '/start/farg'
     | '/start/kod'
+    | '/start/valj'
     | '/start/valkommen'
     | '/start/vem'
     | '/api/public/appstore-notifications'
@@ -192,6 +204,7 @@ export interface RootRouteChildren {
   StartAdressRoute: typeof StartAdressRoute
   StartFargRoute: typeof StartFargRoute
   StartKodRoute: typeof StartKodRoute
+  StartValjRoute: typeof StartValjRoute
   StartValkommenRoute: typeof StartValkommenRoute
   StartVemRoute: typeof StartVemRoute
   ApiPublicAppstoreNotificationsRoute: typeof ApiPublicAppstoreNotificationsRoute
@@ -243,6 +256,13 @@ declare module '@tanstack/react-router' {
       path: '/start/kod'
       fullPath: '/start/kod'
       preLoaderRoute: typeof StartKodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/start/valj': {
+      id: '/start/valj'
+      path: '/start/valj'
+      fullPath: '/start/valj'
+      preLoaderRoute: typeof StartValjRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/start/valkommen': {
@@ -304,6 +324,7 @@ const rootRouteChildren: RootRouteChildren = {
   StartAdressRoute: StartAdressRoute,
   StartFargRoute: StartFargRoute,
   StartKodRoute: StartKodRoute,
+  StartValjRoute: StartValjRoute,
   StartValkommenRoute: StartValkommenRoute,
   StartVemRoute: StartVemRoute,
   ApiPublicAppstoreNotificationsRoute: ApiPublicAppstoreNotificationsRoute,
