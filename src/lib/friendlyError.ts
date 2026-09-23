@@ -3,7 +3,7 @@
  * Everything falls back to the caller's own message, so no screen ever shows
  * a technical code to the user.
  */
-type Translate = (key: string, vars?: Record<string, string | number>) => string;
+type Translate = (key: string, vars?: Record<string, string>) => string;
 
 type MaybeError = { message?: string; code?: string; status?: number } | null | undefined;
 
