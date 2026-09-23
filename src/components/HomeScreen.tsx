@@ -330,21 +330,6 @@ export function HomeScreen({
 
   return (
     <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-8 pt-6">
-      {/* Back into the same steps the circle was created with, so the details
-          can be changed in the order the app uses. */}
-      <div className="mb-2">
-        <button
-          type="button"
-          aria-label={t("home.edit")}
-          onClick={() => {
-            fillDraftFromCircle(data, userId);
-            void navigate({ to: "/start/vem", search: { edit: true } });
-          }}
-          className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft transition-colors hover:bg-primary/90"
-        >
-          <ArrowLeft className="size-5" />
-        </button>
-      </div>
       <header className="mb-4 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[0.6rem] font-medium uppercase tracking-[0.22em] text-primary/60">
@@ -585,33 +570,61 @@ export function HomeScreen({
               {locked ? <Lock className="size-4" /> : <Plus className="size-4" />} {t("home.plan")}
             </Button>
             {locked ? (
-              <Button
-                aria-label={t("access.locked")}
-                onClick={() => setPaywallOpen(true)}
-                className="relative h-[46px] w-full rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
-              >
-                <MessageCircle className="size-5" /> {t("home.chat")}
-                <Lock className="absolute right-2 top-2 size-3.5 rounded-full bg-brand-accent p-0.5 text-brand-accent-foreground ring-2 ring-brand-accent-foreground/80" />
-              </Button>
-            ) : (
-              <Button
-                asChild
-                aria-label={
-                  unread > 0
-                    ? `${t("home.chatAria")} – ${t("home.unread", { n: String(unread) })}`
-                    : t("home.chatAria")
-                }
-                className="relative h-[46px] w-full rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
-              >
-                <Link to="/chat">
+              <div className="flex w-full gap-2">
+                <Button
+                  aria-label={t("access.locked")}
+                  onClick={() => setPaywallOpen(true)}
+                  className="relative h-[46px] min-w-0 flex-1 rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+                >
                   <MessageCircle className="size-5" /> {t("home.chat")}
-                  {unread > 0 ? (
-                    <span className="absolute -right-1 -top-1 flex min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 py-0.5 text-[0.65rem] font-semibold leading-none text-destructive-foreground shadow-soft">
-                      {unread > 99 ? "99+" : unread}
-                    </span>
-                  ) : null}
-                </Link>
-              </Button>
+                  <Lock className="absolute right-2 top-2 size-3.5 rounded-full bg-brand-accent p-0.5 text-brand-accent-foreground ring-2 ring-brand-accent-foreground/80" />
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  aria-label={t("home.edit")}
+                  onClick={() => {
+                    fillDraftFromCircle(data, userId);
+                    void navigate({ to: "/start/vem", search: { edit: true } });
+                  }}
+                  className="h-[46px] w-[46px] shrink-0 rounded-2xl bg-primary text-primary-foreground shadow-lift hover:bg-primary/90"
+                >
+                  <ArrowLeft className="size-5" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex w-full gap-2">
+                <Button
+                  asChild
+                  aria-label={
+                    unread > 0
+                      ? `${t("home.chatAria")} – ${t("home.unread", { n: String(unread) })}`
+                      : t("home.chatAria")
+                  }
+                  className="relative h-[46px] min-w-0 flex-1 rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+                >
+                  <Link to="/chat">
+                    <MessageCircle className="size-5" /> {t("home.chat")}
+                    {unread > 0 ? (
+                      <span className="absolute -right-1 -top-1 flex min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 py-0.5 text-[0.65rem] font-semibold leading-none text-destructive-foreground shadow-soft">
+                        {unread > 99 ? "99+" : unread}
+                      </span>
+                    ) : null}
+                  </Link>
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  aria-label={t("home.edit")}
+                  onClick={() => {
+                    fillDraftFromCircle(data, userId);
+                    void navigate({ to: "/start/vem", search: { edit: true } });
+                  }}
+                  className="h-[46px] w-[46px] shrink-0 rounded-2xl bg-primary text-primary-foreground shadow-lift hover:bg-primary/90"
+                >
+                  <ArrowLeft className="size-5" />
+                </Button>
+              </div>
             )}
           </div>
           <Button
