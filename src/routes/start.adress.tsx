@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useRememberStep } from "@/hooks/useRememberStep";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { searchAddress } from "@/lib/geocode";
 import { editSearch } from "@/lib/circleEdit";
@@ -48,6 +49,7 @@ export const Route = createFileRoute("/start/adress")({
 function AddressPage() {
   const navigate = useNavigate();
   const { edit } = Route.useSearch();
+  useRememberStep("/start/adress", !edit);
   const back = () =>
     void navigate(edit ? { to: "/start/vem", search: { edit: true } } : { to: "/start/vem" });
   return (
