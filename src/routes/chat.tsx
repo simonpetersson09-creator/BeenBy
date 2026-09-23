@@ -378,25 +378,32 @@ function ChatPage() {
       return;
     }
     if (!pending || !circleId || !user) return;
+    if (!circleKey) {
+      toast.error(t("chat.keyMissing"));
+      return;
+    }
     setUploading(true);
     try {
-      const path = `${circleId}/${user.id}/${crypto.randomUUID()}.jpg`;
+      // The photo is encrypted on the phone before it is uploaded.
+      const sealedPhoto = await encryptBlob(circleKey, pending.blob);
+      const path = `${circleId}/${user.id}/${crypto.randomUUID()}${ENCRYPTED_IMAGE_EXT}`;
       const { error: upErr } = await supabase.storage
         .from("chat-images")
-        .upload(path, pending.blob, { contentType: "image/jpeg", upsert: false });
+        .upload(path, sealedPhoto, { contentType: "application/octet-stream", upsert: false });
       if (upErr) {
-        toast.error(t("chat.imageError"));
+        toast.error(friendlyError(upErr, t, "chat.imageError"));
         return;
       }
+      const caption = text.trim().slice(0, 1000);
       const { error } = await supabase.from("messages").insert({
         family_circle_id: circleId,
         user_id: user.id,
-        body: text.trim().slice(0, 1000),
+        body: caption ? await encryptText(circleKey, caption) : "",
         image_path: path,
       });
       if (error) {
         void supabase.storage.from("chat-images").remove([path]);
-        toast.error(t("chat.imageError"));
+        toast.error(friendlyError(error, t, "chat.imageError"));
         return;
       }
       discardPending();
