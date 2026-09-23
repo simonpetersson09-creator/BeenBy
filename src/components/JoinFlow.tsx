@@ -78,7 +78,7 @@ export function JoinFlow({
       toast.error(
         error.message.includes("expired")
           ? t("join.errExpired")
-          : t("join.errGeneric"),
+          : friendlyError(error, t, "join.errGeneric"),
       );
       return;
     }
