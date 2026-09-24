@@ -413,26 +413,34 @@ function ChatPage() {
         toast.error(friendlyError(upErr, t, "chat.imageError"));
         return;
       }
-      // Encrypted text is ~1.4x longer; keep it under the 1000 character limit.
-      const caption = text.trim().slice(0, 650);
+      // Encrypted text is longer than the original (more so with å/ä/ö and
+      // emoji); shorten the caption until it fits the 1000 character limit.
+      let caption = text.trim().slice(0, 650);
+      let body = caption ? await encryptText(circleKey, caption) : "";
+      while (body.length > 1000 && caption.length > 0) {
+        caption = caption.slice(0, Math.floor(caption.length * 0.8));
+        body = caption ? await encryptText(circleKey, caption) : "";
+      }
       const { error } = await supabase.from("messages").insert({
         family_circle_id: circleId,
         user_id: user.id,
-        body: caption ? await encryptText(circleKey, caption) : "",
+        body,
         image_path: path,
       });
       if (error) {
+        console.error("chat image message failed", error);
         void supabase.storage.from("chat-images").remove([path]);
         toast.error(friendlyError(error, t, "chat.imageError"));
         return;
       }
       discardPending();
       setText("");
+    } catch (err) {
+      console.error("chat image send failed", err);
+      toast.error(t("chat.imageError"));
     } finally {
       setUploading(false);
     }
-    discardPending();
-    setText("");
   }
 
 
