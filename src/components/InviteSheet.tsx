@@ -84,7 +84,7 @@ export function InviteSheet({ open, onOpenChange, code }: Props) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-3xl border-primary/20 pb-8">
+      <SheetContent side="bottom" data-fixed-bottom className="rounded-t-3xl border-primary/20 pb-8">
         <SheetHeader className="text-left">
           <SheetTitle className="text-xl text-primary">{t("invite.title")}</SheetTitle>
           <SheetDescription>{t("invite.sub")}</SheetDescription>
