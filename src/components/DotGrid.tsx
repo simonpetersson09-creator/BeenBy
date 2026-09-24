@@ -6,11 +6,12 @@ import { colorById } from "@/lib/palette";
 import { cn } from "@/lib/utils";
 import type { CircleEvent, Member, PlannedVisit, Visit } from "@/hooks/useCircleData";
 import { eventEmoji, occursOn } from "@/lib/events";
+import { activityDef } from "@/lib/activities";
 
 export type DayDots = {
   day: string;
-  done: { id: string; color: string; who: string }[];
-  planned: { id: string; color: string; who: string }[];
+  done: { id: string; color: string; who: string; icon: string | null }[];
+  planned: { id: string; color: string; who: string; icon: string | null }[];
   events: { id: string; kind: string }[];
 };
 
