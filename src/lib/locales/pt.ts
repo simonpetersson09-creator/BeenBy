@@ -164,6 +164,7 @@ const pt: Record<string, string> =
  "event.add": "Adicionar evento",
  "event.birthday": "Aniversário",
  "event.doctor": "Consulta médica",
+ "event.medicine": "Medicamento",
  "event.other": "Outro",
  "event.titlePh": "Ex.: Dentista às 10h",
  "event.yearly": "Repetir todo ano",

@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import type { CircleEvent } from "@/hooks/useCircleData";
 import { decryptText, encryptText, ensureCircleKey, getCircleKey, isEncrypted } from "@/lib/e2ee";
 
-export type EventKind = "birthday" | "doctor" | "other";
+export type EventKind = "birthday" | "doctor" | "medicine" | "other";
 
 export const EVENT_KINDS: { id: EventKind; emoji: string; key: string }[] = [
   { id: "birthday", emoji: "🎂", key: "event.birthday" },
   { id: "doctor", emoji: "🩺", key: "event.doctor" },
+  { id: "medicine", emoji: "💊", key: "event.medicine" },
   { id: "other", emoji: "📌", key: "event.other" },
 ];
 
