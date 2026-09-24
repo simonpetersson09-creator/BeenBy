@@ -195,9 +195,9 @@ export function DotGrid({
                             return icon ? (
                               <span
                                 aria-hidden="true"
-                                className="pointer-events-none absolute inset-0 grid place-items-center"
+                                className="pointer-events-none absolute left-1/2 top-1/2 flex size-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
                               >
-                                <span className="block size-[1em] text-center text-[0.72rem] leading-[1em]">
+                                <span className="inline-flex size-4 items-center justify-center text-center text-[0.72rem] leading-none">
                                   {icon}
                                 </span>
                               </span>
