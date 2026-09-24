@@ -340,8 +340,8 @@ export function HomeScreen({
   const planDates = Array.from({ length: 14 }, (_, i) => addDays(today, i));
 
   return (
-    <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-8 pt-6">
-      <header className="mb-4 flex items-center justify-between gap-3">
+    <div className="app-scroll mx-auto h-dvh w-full max-w-md px-5 pb-8">
+      <header className="sticky top-0 z-20 -mx-5 mb-4 flex items-center justify-between gap-3 bg-background px-5 pb-3 pt-6">
         <div className="min-w-0">
           <p className="text-[0.6rem] font-medium uppercase tracking-[0.22em] text-primary/60">
             {t("home.eyebrow")}
