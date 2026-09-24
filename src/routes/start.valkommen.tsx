@@ -72,7 +72,7 @@ function WelcomePage() {
         ))}
       </ul>
 
-      <div className="relative mt-2 flex items-end justify-center gap-2 pt-2">
+      <div className="relative mt-2 flex items-start justify-center gap-2 pt-2">
         {showHint ? (
           <button
             type="button"
@@ -94,7 +94,7 @@ function WelcomePage() {
             {t("welcome.trial")}
           </span>
         </div>
-        <span onClick={dismissHint} className="pb-0">
+        <span onClick={dismissHint} className="h-12">
           <LanguageSwitcher round />
         </span>
       </div>
