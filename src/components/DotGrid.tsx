@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { addDays, buildVisitGrid, weekdayLabels, shortLabel, todayKey, weekNumber } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
@@ -52,6 +53,13 @@ export function DotGrid({
   const t = useT();
   const today = todayKey(timeZone);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [atEnd, setAtEnd] = useState(false);
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setAtEnd(el.scrollTop + el.clientHeight >= el.scrollHeight - 8);
+  };
 
   const weeks: DayDots[][] = [];
   for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
@@ -92,6 +100,7 @@ export function DotGrid({
       <div className="relative">
         <div
           ref={scrollRef}
+          onScroll={handleScroll}
           className="max-h-[212px] space-y-0.5 overflow-y-auto overscroll-contain"
         >
           {weeks.map((week, wi) => {
@@ -189,6 +198,16 @@ export function DotGrid({
             );
           })}
         </div>
+
+        {!atEnd ? (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
+            <ChevronDown
+              className="animate-pulse-soft size-4 text-primary/60"
+              strokeWidth={2.5}
+              aria-hidden="true"
+            />
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-3 flex items-center justify-center gap-4 text-[0.6rem] text-foreground">
