@@ -20,6 +20,7 @@
     "ios:caps": "node scripts/patch-ios-capabilities.mjs"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.0",
     "@capacitor/app": "^8",
     "@capacitor/camera": "^8",
     "@capacitor/clipboard": "^8.0.1",
