@@ -701,7 +701,7 @@ export function HomeScreen({
               ) : locked ? (
                 <Lock className="relative z-20 size-6" />
               ) : null}
-              <span className="relative z-20 text-center text-[0.8rem] font-bold leading-[1.1]">
+              <span className="relative z-20 text-center text-[0.875rem] font-medium leading-[1.1]">
                 {t("home.imHere")}
               </span>
             </Button>
