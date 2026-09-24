@@ -53,6 +53,13 @@ export function DotGrid({
   const t = useT();
   const today = todayKey(timeZone);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [atEnd, setAtEnd] = useState(false);
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setAtEnd(el.scrollTop + el.clientHeight >= el.scrollHeight - 8);
+  };
 
   const weeks: DayDots[][] = [];
   for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
