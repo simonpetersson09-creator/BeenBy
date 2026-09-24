@@ -498,7 +498,13 @@ export function HomeScreen({
 
 
 
-      <section className="mt-2.5 rounded-2xl bg-card px-3 py-2 shadow-soft">
+      <section
+        className={
+          nextPlanned
+            ? "mt-2.5 rounded-2xl bg-card px-3 py-2 shadow-soft"
+            : "mt-2.5 rounded-2xl border border-primary/30 px-4 py-3"
+        }
+      >
         {nextPlanned ? (
           (() => {
             const plannedMember = members.find((m) => m.user_id === nextPlanned.user_id);
@@ -564,7 +570,7 @@ export function HomeScreen({
             <span className="flex size-7 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-primary/40 text-primary/70">
               <CalendarDays className="size-3.5" />
             </span>
-            <span className="min-w-0 flex-1 text-xs text-muted-foreground">
+            <span className="min-w-0 flex-1 text-center text-[0.62rem] font-medium uppercase leading-tight tracking-[0.2em] text-primary/60">
               {t("home.noPlanned")}
             </span>
             <ChevronRight className="size-4 shrink-0 text-primary/50" />
