@@ -1,4 +1,4 @@
-import { buildVisitGrid, weekdayLabels, shortLabel, todayKey, weekNumber } from "@/lib/dates";
+import { addDays, buildVisitGrid, weekdayLabels, shortLabel, todayKey, weekNumber } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import { cn } from "@/lib/utils";
@@ -53,6 +53,22 @@ export function DotGrid({
   const weeks: DayDots[][] = [];
   for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
 
+  // Extra empty future weeks so the grid can be scrolled forward in time.
+  // Never scrolls further back than the base window, and the scroll position
+  // resets to the top (the usual 5 weeks) whenever the page is remounted.
+  const EXTRA_FUTURE_WEEKS = 8;
+  const lastDay = days[days.length - 1]!.day;
+  for (let w = 0; w < EXTRA_FUTURE_WEEKS; w++) {
+    const offset = days.length + w * 7;
+    weeks.push(
+      Array.from({ length: 7 }, (_, i) => ({
+        day: addDays(lastDay, offset - days.length + w * 7 + i + 1),
+        done: [],
+        planned: [],
+      })),
+    );
+  }
+
   return (
     <div>
       <div className="mb-1 flex items-center gap-1">
@@ -70,7 +86,7 @@ export function DotGrid({
         </div>
       </div>
 
-      <div className="space-y-0.5">
+      <div className="max-h-[212px] space-y-0.5 overflow-y-auto overscroll-contain">
         {weeks.map((week, wi) => {
           const isCurrentWeek = week.some((d) => d.day === today);
           return (
