@@ -90,18 +90,8 @@ export function DotGrid({
       </div>
 
       <div className="relative">
-        {/* Soft fade at the top edge once the grid has been scrolled down */}
-        <div
-          aria-hidden
-          className={cn(
-            "pointer-events-none absolute inset-x-0 top-0 z-10 h-6 bg-gradient-to-b from-card to-transparent transition-opacity duration-300",
-            scrolled ? "opacity-100" : "opacity-0",
-          )}
-        />
-
         <div
           ref={scrollRef}
-          onScroll={onScroll}
           className="max-h-[212px] space-y-0.5 overflow-y-auto overscroll-contain"
         >
           {weeks.map((week, wi) => {
