@@ -103,7 +103,7 @@ export function DotGrid({
               <div
                 key={week[0]!.day}
                 className={cn(
-                  "flex items-center gap-1 rounded-xl pr-0.5 transition",
+                  "flex items-center gap-1 rounded-xl px-1 transition",
                   isCurrentWeek && "bg-primary/10 ring-1 ring-primary/25",
                 )}
               >
