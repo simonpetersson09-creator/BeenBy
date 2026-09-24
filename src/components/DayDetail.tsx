@@ -166,7 +166,7 @@ export function DayDetail({
           })}
           {dayVisits.map((v) => (
             <li key={v.id} className="flex items-center gap-3 rounded-2xl bg-secondary/60 p-3">
-              <span className="size-4 rounded-full" style={{ backgroundColor: hexOf(v.user_id) }} />
+              <MemberAvatar url={avatarUrls[v.user_id]} hex={hexOf(v.user_id)} />
               <span className="flex-1 text-sm">
                 <span className="font-medium">{nameOf(v.user_id)}</span> {t("day.wasHere")}
                 <span className="block text-xs text-muted-foreground">
@@ -189,10 +189,7 @@ export function DayDetail({
 
           {dayPlanned.map((p) => (
             <li key={p.id} className="flex items-center gap-3 rounded-2xl border border-dashed p-3">
-              <span
-                className="size-4 rounded-full"
-                style={{ border: `2px solid ${hexOf(p.user_id)}` }}
-              />
+              <MemberAvatar url={avatarUrls[p.user_id]} hex={hexOf(p.user_id)} outlined />
               <span className="flex-1 text-sm">
                 <span className="font-medium">{nameOf(p.user_id)}</span> {t("day.plansVisit")}
                 <span className="block text-xs text-muted-foreground">
