@@ -48,6 +48,17 @@ export type PlannedVisit = {
   status: string;
   activities: string[] | null;
   activity_note: string | null;
+  series_id: string | null;
+};
+
+export type CircleEvent = {
+  id: string;
+  person_id: string | null;
+  kind: string;
+  title: string | null;
+  event_date: string;
+  yearly: boolean;
+  created_by: string;
 };
 
 export type CircleData = {
@@ -56,6 +67,7 @@ export type CircleData = {
   members: Member[];
   visits: Visit[];
   planned: PlannedVisit[];
+  events: CircleEvent[];
 };
 
 async function loadCircle(userId: string): Promise<CircleData | null> {
@@ -81,7 +93,7 @@ async function loadCircle(userId: string): Promise<CircleData | null> {
 
   const since = addDays(todayKey(circle.timezone), -60);
 
-  const [persons, members, names, visits, planned] = await Promise.all([
+  const [persons, members, names, visits, planned, events] = await Promise.all([
     supabase
       .from("persons")
       .select("id, name, address, location_latitude, location_longitude, geofence_radius")
@@ -100,10 +112,15 @@ async function loadCircle(userId: string): Promise<CircleData | null> {
       .gte("local_day", since),
     supabase
       .from("planned_visits")
-      .select("id, user_id, person_id, planned_date, status, activities, activity_note")
+      .select("id, user_id, person_id, planned_date, status, activities, activity_note, series_id")
       .eq("family_circle_id", circleId)
       .eq("status", "planned")
       .gte("planned_date", since),
+    supabase
+      .from("circle_events")
+      .select("id, person_id, kind, title, event_date, yearly, created_by")
+      .eq("family_circle_id", circleId)
+      .order("event_date", { ascending: true }),
   ]);
 
   const nameMap = new Map<string, string>(
@@ -119,6 +136,7 @@ async function loadCircle(userId: string): Promise<CircleData | null> {
     })),
     visits: (visits.data ?? []) as Visit[],
     planned: (planned.data ?? []) as PlannedVisit[],
+    events: (events.data ?? []) as CircleEvent[],
   };
 }
 
@@ -148,6 +166,16 @@ export function useCircleData(userId: string | undefined) {
           event: "*",
           schema: "public",
           table: "planned_visits",
+          filter: `family_circle_id=eq.${circleId}`,
+        },
+        () => queryClient.invalidateQueries({ queryKey: ["circle"] }),
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "circle_events",
           filter: `family_circle_id=eq.${circleId}`,
         },
         () => queryClient.invalidateQueries({ queryKey: ["circle"] }),
