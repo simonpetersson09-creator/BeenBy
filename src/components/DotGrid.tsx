@@ -189,27 +189,6 @@ export function DotGrid({
             );
           })}
         </div>
-
-        {/* Bottom fade + tiny chevron hint that fades away once you reach the end */}
-        <div
-          aria-hidden
-          className={cn(
-            "pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-9 items-end justify-center bg-gradient-to-t from-card via-card/80 to-transparent pb-0.5 transition-opacity duration-300",
-            atBottom ? "opacity-0" : "opacity-100",
-          )}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mb-0.5 size-3 animate-breathe text-primary/60"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </div>
       </div>
 
       <div className="mt-3 flex items-center justify-center gap-4 text-[0.6rem] text-foreground">
