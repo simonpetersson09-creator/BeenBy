@@ -164,6 +164,7 @@ const tr: Record<string, string> =
  "event.add": "Etkinlik ekle",
  "event.birthday": "Doğum günü",
  "event.doctor": "Doktor randevusu",
+ "event.medicine": "İlaç",
  "event.other": "Diğer",
  "event.titlePh": "Örn. Saat 10'da dişçi",
  "event.yearly": "Her yıl tekrarla",

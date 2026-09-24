@@ -181,7 +181,7 @@ export function DotGrid({
                           {d.events.length > 0 ? (
                             <span
                               aria-hidden="true"
-                              className="pointer-events-none absolute -bottom-1 -right-1 text-[0.7rem] leading-none"
+                              className="pointer-events-none absolute inset-0 flex items-center justify-center text-[0.72rem] leading-none"
                             >
                               {eventEmoji(d.events[0]!.kind)}
                             </span>

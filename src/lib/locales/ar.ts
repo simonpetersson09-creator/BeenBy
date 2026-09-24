@@ -164,6 +164,7 @@ const ar: Record<string, string> =
  "event.add": "إضافة حدث",
  "event.birthday": "عيد ميلاد",
  "event.doctor": "موعد طبيب",
+ "event.medicine": "دواء",
  "event.other": "أخرى",
  "event.titlePh": "مثال: طبيب الأسنان الساعة 10",
  "event.yearly": "تكرار كل عام",
