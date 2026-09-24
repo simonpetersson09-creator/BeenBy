@@ -1,4 +1,4 @@
-import { buildVisitGrid, weekdayLabels, shortLabel, todayKey, weekNumber } from "@/lib/dates";
+import { addDays, buildVisitGrid, weekdayLabels, shortLabel, todayKey, weekNumber } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import { cn } from "@/lib/utils";
