@@ -20,8 +20,10 @@ export type SubscriptionStatus = {
   expiresAt?: string;
   /** Apple's signed transaction, handed to the server for verification. */
   jws?: string;
+  /** Android only: Google Play purchase token, verified by the server. */
+  purchaseToken?: string;
   /** Where the answer came from — "fallback" is NOT a real verification. */
-  source: "storekit" | "fallback";
+  source: "storekit" | "playbilling" | "fallback";
 };
 
 export type PurchaseResult = {
@@ -30,12 +32,16 @@ export type PurchaseResult = {
   message?: string;
   /** Apple's signed transaction for the completed purchase. */
   jws?: string;
+  /** Android only: Google Play purchase token. */
+  purchaseToken?: string;
 };
 
 export type RestoreResult = {
   restored: boolean;
   message?: string;
   jws?: string;
+  /** Android only: Google Play purchase token. */
+  purchaseToken?: string;
 };
 
 export type ProductInfo = {

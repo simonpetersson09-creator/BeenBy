@@ -50,6 +50,7 @@
         "@tanstack/react-start": "1.168.32",
         "@tanstack/router-plugin": "1.168.23",
         "beenby-geofence": "file:./capacitor-plugins/beenby-geofence",
+        "beenby-play-billing": "file:./capacitor-plugins/beenby-play-billing",
         "beenby-storekit": "file:./capacitor-plugins/beenby-storekit",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -687,6 +688,8 @@
     "baseline-browser-mapping": ["baseline-browser-mapping@2.11.4", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-s4+sLr9mZ/CyqeRritFeYV/Zx73OAtmaHn6kkBS1XRoJn1hrg3xIDUcpicAEX68tkcIN0iBCgti31C8zxtkhsQ=="],
 
     "beenby-geofence": ["beenby-geofence@file:capacitor-plugins/beenby-geofence", {}],
+
+    "beenby-play-billing": ["beenby-play-billing@file:capacitor-plugins/beenby-play-billing", {}],
 
     "beenby-storekit": ["beenby-storekit@file:capacitor-plugins/beenby-storekit", {}],
 
