@@ -22,12 +22,37 @@ import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import type { CircleEvent, Member, PlannedVisit, Visit } from "@/hooks/useCircleData";
 
+function MemberAvatar({
+  url,
+  hex,
+  outlined,
+}: {
+  url: string | undefined;
+  hex: string;
+  outlined?: boolean;
+}) {
+  return url ? (
+    <span
+      className="size-8 shrink-0 overflow-hidden rounded-full"
+      style={outlined ? { border: `2px solid ${hex}` } : undefined}
+    >
+      <img src={url} alt="" className="size-full object-cover" />
+    </span>
+  ) : (
+    <span
+      className="size-4 shrink-0 rounded-full"
+      style={outlined ? { border: `2px solid ${hex}` } : { backgroundColor: hex }}
+    />
+  );
+}
+
 export function DayDetail({
   day,
   timeZone,
   visits,
   planned,
   members,
+  avatarUrls,
   events,
   circleId,
   personId,
@@ -43,6 +68,7 @@ export function DayDetail({
   visits: Visit[];
   planned: PlannedVisit[];
   members: Member[];
+  avatarUrls: Record<string, string>;
   events: CircleEvent[];
   circleId: string;
   personId: string | null;
@@ -140,7 +166,7 @@ export function DayDetail({
           })}
           {dayVisits.map((v) => (
             <li key={v.id} className="flex items-center gap-3 rounded-2xl bg-secondary/60 p-3">
-              <span className="size-4 rounded-full" style={{ backgroundColor: hexOf(v.user_id) }} />
+              <MemberAvatar url={avatarUrls[v.user_id]} hex={hexOf(v.user_id)} />
               <span className="flex-1 text-sm">
                 <span className="font-medium">{nameOf(v.user_id)}</span> {t("day.wasHere")}
                 <span className="block text-xs text-muted-foreground">
@@ -163,10 +189,7 @@ export function DayDetail({
 
           {dayPlanned.map((p) => (
             <li key={p.id} className="flex items-center gap-3 rounded-2xl border border-dashed p-3">
-              <span
-                className="size-4 rounded-full"
-                style={{ border: `2px solid ${hexOf(p.user_id)}` }}
-              />
+              <MemberAvatar url={avatarUrls[p.user_id]} hex={hexOf(p.user_id)} outlined />
               <span className="flex-1 text-sm">
                 <span className="font-medium">{nameOf(p.user_id)}</span> {t("day.plansVisit")}
                 <span className="block text-xs text-muted-foreground">
