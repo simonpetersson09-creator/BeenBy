@@ -68,7 +68,7 @@ export async function addEvent(input: {
   let title: string | null = null;
   const plain = input.title.trim();
   if (plain) {
-    const key = await getCircleKey(input.circleId, input.userId).catch(() => null);
+    const key = await ensureCircleKey(input.circleId, input.userId).catch(() => null);
     // Never store readable text on the server: without the family key we refuse.
     if (!key) return { error: new Error("no_circle_key") };
     title = await encryptText(key, plain);

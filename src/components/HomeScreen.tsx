@@ -76,6 +76,8 @@ export function HomeScreen({
   useEffect(() => {
     void (async () => {
       await publishPublicKey(userId);
+      // Older circles have no key yet — create it here, then share it.
+      await ensureCircleKey(circle.id, userId);
       await shareCircleKeyWithMembers(circle.id, userId, memberKeyList.split(","));
     })();
   }, [circle.id, userId, memberKeyList]);
