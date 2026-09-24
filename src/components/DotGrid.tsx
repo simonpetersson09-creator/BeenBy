@@ -5,7 +5,7 @@ import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import { cn } from "@/lib/utils";
 import type { CircleEvent, Member, PlannedVisit, Visit } from "@/hooks/useCircleData";
-import { eventEmoji, occursOn } from "@/lib/events";
+import { eventIcon, occursOn } from "@/lib/events";
 import { activityDef } from "@/lib/activities";
 
 export type DayDots = {
@@ -32,7 +32,7 @@ export function buildDays(
   const last = base[base.length - 1]!;
   const all = [...base, ...Array.from({ length: EXTRA_FUTURE_WEEKS * 7 }, (_, i) => addDays(last, i + 1))];
   const iconOf = (ids: string[] | null | undefined) => {
-    const first = (ids ?? []).map((id) => activityDef(id)?.emoji).find(Boolean);
+    const first = (ids ?? []).find((id) => activityDef(id));
     return first ?? null;
   };
   return all.map((day) => ({
@@ -186,22 +186,38 @@ export function DotGrid({
                           {(() => {
                             // Max one icon per day: an event wins, otherwise the
                             // first activity of the day's done/planned visit.
-                            const icon =
+                            // Icons are monochrome and inherit their color, so
+                            // they work with every member color: white on a
+                            // filled dot, the member color on a planned dot,
+                            // and the default text color on an empty day.
+                            const Icon =
                               d.events.length > 0
-                                ? eventEmoji(d.events[0]!.kind)
-                                : (d.done.find((x) => x.icon)?.icon ??
-                                  d.planned.find((x) => x.icon)?.icon ??
-                                  null);
-                            return icon ? (
+                                ? eventIcon(d.events[0]!.kind)
+                                : (() => {
+                                    const id =
+                                      d.done.find((x) => x.icon)?.icon ??
+                                      d.planned.find((x) => x.icon)?.icon ??
+                                      null;
+                                    return id ? activityDef(id)!.icon : null;
+                                  })();
+                            if (!Icon) return null;
+                            const color = hasDone
+                              ? "#fff"
+                              : hasPlanned
+                                ? plannedColors[0]
+                                : undefined;
+                            return (
                               <span
                                 aria-hidden="true"
                                 className="pointer-events-none absolute left-1/2 top-1/2 flex size-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
                               >
-                                <span className="inline-flex size-4 items-center justify-center text-center text-[0.72rem] leading-none">
-                                  {icon}
-                                </span>
+                                <Icon
+                                  className="size-3.5"
+                                  strokeWidth={2.25}
+                                  style={color ? { color } : undefined}
+                                />
                               </span>
-                            ) : null;
+                            );
                           })()}
 
                           {d.done.length + d.planned.length > 3 ? (

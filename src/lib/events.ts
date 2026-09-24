@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { Cake, MapPin, Pill, Stethoscope } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import type { CircleEvent } from "@/hooks/useCircleData";
@@ -6,15 +8,16 @@ import { decryptText, encryptText, ensureCircleKey, getCircleKey, isEncrypted } 
 
 export type EventKind = "birthday" | "doctor" | "medicine" | "other";
 
-export const EVENT_KINDS: { id: EventKind; emoji: string; key: string }[] = [
-  { id: "birthday", emoji: "🎂", key: "event.birthday" },
-  { id: "doctor", emoji: "🩺", key: "event.doctor" },
-  { id: "medicine", emoji: "💊", key: "event.medicine" },
-  { id: "other", emoji: "📌", key: "event.other" },
+export const EVENT_KINDS: { id: EventKind; icon: LucideIcon; key: string }[] = [
+  { id: "birthday", icon: Cake, key: "event.birthday" },
+  { id: "doctor", icon: Stethoscope, key: "event.doctor" },
+  { id: "medicine", icon: Pill, key: "event.medicine" },
+  { id: "other", icon: MapPin, key: "event.other" },
 ];
 
-export function eventEmoji(kind: string): string {
-  return EVENT_KINDS.find((k) => k.id === kind)?.emoji ?? "📌";
+/** Monochrome icon for an event kind; inherits the surrounding text color. */
+export function eventIcon(kind: string): LucideIcon {
+  return EVENT_KINDS.find((k) => k.id === kind)?.icon ?? MapPin;
 }
 
 /** Yearly events (birthdays) match on month + day, others on the exact date. */
