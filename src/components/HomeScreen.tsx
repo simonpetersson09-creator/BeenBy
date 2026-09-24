@@ -612,7 +612,7 @@ export function HomeScreen({
       <div className="mt-3.5 flex items-center gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-2">
             <Button
-              className="h-[46px] w-full rounded-2xl bg-primary text-[0.875rem] text-primary-foreground shadow-lift hover:bg-primary/90"
+              className="h-[46px] w-full rounded-2xl bg-primary text-[0.875rem] text-primary-foreground shadow-lift transition-all active:scale-[0.97] active:shadow-soft hover:bg-primary/90"
               onClick={() => {
                 if (locked) {
                   setPaywallOpen(true);
@@ -635,14 +635,14 @@ export function HomeScreen({
                     fillDraftFromCircle(data, userId);
                     void navigate({ to: "/start/vem", search: { edit: true } });
                   }}
-                  className="h-[46px] min-w-0 flex-1 rounded-2xl bg-primary text-[0.875rem] text-primary-foreground shadow-lift hover:bg-primary/90"
+                  className="h-[46px] min-w-0 flex-1 rounded-2xl bg-primary text-[0.875rem] text-primary-foreground shadow-lift transition-all active:scale-[0.97] active:shadow-soft hover:bg-primary/90"
                 >
                   <ArrowLeft className="size-5" /> {t("home.back")}
                 </Button>
                 <Button
                   aria-label={t("access.locked")}
                   onClick={() => setPaywallOpen(true)}
-                  className="relative h-[46px] min-w-0 flex-1 rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+                  className="relative h-[46px] min-w-0 flex-1 rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift transition-all active:scale-[0.97] active:shadow-soft hover:bg-brand-accent/90"
                 >
                   <MessageCircle className="size-5" /> {t("home.chat")}
                   <Lock className="absolute right-2 top-2 size-3.5 rounded-full bg-brand-accent p-0.5 text-brand-accent-foreground ring-2 ring-brand-accent-foreground/80" />
@@ -657,7 +657,7 @@ export function HomeScreen({
                     fillDraftFromCircle(data, userId);
                     void navigate({ to: "/start/vem", search: { edit: true } });
                   }}
-                  className="h-[46px] min-w-0 flex-1 rounded-2xl bg-primary text-[0.875rem] text-primary-foreground shadow-lift hover:bg-primary/90"
+                  className="h-[46px] min-w-0 flex-1 rounded-2xl bg-primary text-[0.875rem] text-primary-foreground shadow-lift transition-all active:scale-[0.97] active:shadow-soft hover:bg-primary/90"
                 >
                   <ArrowLeft className="size-5" /> {t("home.back")}
                 </Button>
