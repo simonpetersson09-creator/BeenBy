@@ -400,17 +400,21 @@ function ChatPage() {
     setUploading(true);
     try {
       // The photo is encrypted on the phone before it is uploaded.
-      const sealedPhoto = await encryptBlob(circleKey, pending.blob);
+      const encrypted = await encryptBlob(circleKey, pending.blob);
+      // Bytes are encrypted; the image type label only satisfies the bucket's
+      // type filter. The upload uses the blob's own type, so relabel it here.
+      const sealedPhoto = new Blob([encrypted], { type: "image/jpeg" });
       const path = `${circleId}/${user.id}/${crypto.randomUUID()}${ENCRYPTED_IMAGE_EXT}`;
       const { error: upErr } = await supabase.storage
         .from("chat-images")
-        // Bytes are encrypted; the image type label only satisfies the bucket's type filter.
         .upload(path, sealedPhoto, { contentType: "image/jpeg", upsert: false });
       if (upErr) {
+        console.error("chat image upload failed", upErr);
         toast.error(friendlyError(upErr, t, "chat.imageError"));
         return;
       }
-      const caption = text.trim().slice(0, 1000);
+      // Encrypted text is ~1.4x longer; keep it under the 1000 character limit.
+      const caption = text.trim().slice(0, 650);
       const { error } = await supabase.from("messages").insert({
         family_circle_id: circleId,
         user_id: user.id,
