@@ -498,7 +498,13 @@ export function HomeScreen({
 
 
 
-      <section className="mt-2.5 rounded-2xl bg-card px-3 py-2 shadow-soft">
+      <section
+        className={
+          nextPlanned
+            ? "mt-2.5 rounded-2xl bg-card px-3 py-2 shadow-soft"
+            : "mt-2.5 rounded-2xl border border-primary/30 px-4 py-3"
+        }
+      >
         {nextPlanned ? (
           (() => {
             const plannedMember = members.find((m) => m.user_id === nextPlanned.user_id);
