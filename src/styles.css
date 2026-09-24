@@ -155,9 +155,6 @@ html[data-native-app="true"][data-platform="android"] {
 html[data-platform="android"] [data-fixed-bottom] {
   padding-bottom: calc(2rem + var(--safe-bottom, 0px)) !important;
 }
-html[data-platform="android"] .android-composer-space {
-  padding-bottom: calc(8rem + var(--safe-bottom, 0px));
-}
 
 
 

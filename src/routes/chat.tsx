@@ -504,7 +504,7 @@ function ChatPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="flex-1 space-y-3 pb-32 android-composer-space">
+      <div className="flex-1 space-y-3 pb-32">
         {messages.length === 0 ? (
           <p className="mt-10 text-center text-xs text-muted-foreground">
             {t("chat.empty")}
