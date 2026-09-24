@@ -198,6 +198,16 @@ export function DotGrid({
             );
           })}
         </div>
+
+        {!atEnd ? (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
+            <ChevronDown
+              className="animate-pulse-soft size-4 text-primary/60"
+              strokeWidth={2.5}
+              aria-hidden="true"
+            />
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-3 flex items-center justify-center gap-4 text-[0.6rem] text-foreground">
