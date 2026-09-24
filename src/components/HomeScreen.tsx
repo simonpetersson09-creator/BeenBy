@@ -668,7 +668,7 @@ export function HomeScreen({
                       ? `${t("home.chatAria")} – ${t("home.unread", { n: String(unread) })}`
                       : t("home.chatAria")
                   }
-                  className="relative h-[46px] min-w-0 flex-1 rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
+                  className="relative h-[46px] min-w-0 flex-1 rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift transition-all active:scale-[0.97] active:shadow-soft hover:bg-brand-accent/90"
                 >
                   <Link to="/chat">
                     <MessageCircle className="size-5" /> {t("home.chat")}
