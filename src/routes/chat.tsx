@@ -561,7 +561,16 @@ function ChatPage() {
                     ) : null}
                     {m.body ? (
                       <p className="px-4 py-2.5 text-sm">
-                        {bodies[m.id] ?? (isEncrypted(m.body) ? t("chat.locked") : m.body)}
+                        {bodies[m.id] ??
+                          (isEncrypted(m.body) ? (
+                            circleKey ? (
+                              <span className="text-muted-foreground">…</span>
+                            ) : (
+                              t("chat.locked")
+                            )
+                          ) : (
+                            m.body
+                          ))}
                       </p>
                     ) : null}
                   </div>
