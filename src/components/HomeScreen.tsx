@@ -629,6 +629,17 @@ export function HomeScreen({
             {locked ? (
               <div className="flex w-full gap-2">
                 <Button
+                  type="button"
+                  aria-label={t("home.back")}
+                  onClick={() => {
+                    fillDraftFromCircle(data, userId);
+                    void navigate({ to: "/start/vem", search: { edit: true } });
+                  }}
+                  className="h-[46px] min-w-0 flex-1 rounded-2xl bg-primary text-[0.875rem] text-primary-foreground shadow-lift hover:bg-primary/90"
+                >
+                  <ArrowLeft className="size-5" /> {t("home.back")}
+                </Button>
+                <Button
                   aria-label={t("access.locked")}
                   onClick={() => setPaywallOpen(true)}
                   className="relative h-[46px] min-w-0 flex-1 rounded-2xl bg-brand-accent text-[0.875rem] text-brand-accent-foreground shadow-lift hover:bg-brand-accent/90"
@@ -636,21 +647,20 @@ export function HomeScreen({
                   <MessageCircle className="size-5" /> {t("home.chat")}
                   <Lock className="absolute right-2 top-2 size-3.5 rounded-full bg-brand-accent p-0.5 text-brand-accent-foreground ring-2 ring-brand-accent-foreground/80" />
                 </Button>
+              </div>
+            ) : (
+              <div className="flex w-full gap-2">
                 <Button
                   type="button"
-                  size="icon"
-                  aria-label={t("home.edit")}
+                  aria-label={t("home.back")}
                   onClick={() => {
                     fillDraftFromCircle(data, userId);
                     void navigate({ to: "/start/vem", search: { edit: true } });
                   }}
-                  className="h-[46px] w-[46px] shrink-0 rounded-2xl bg-primary text-primary-foreground shadow-lift hover:bg-primary/90"
+                  className="h-[46px] min-w-0 flex-1 rounded-2xl bg-primary text-[0.875rem] text-primary-foreground shadow-lift hover:bg-primary/90"
                 >
-                  <ArrowLeft className="size-5" />
+                  <ArrowLeft className="size-5" /> {t("home.back")}
                 </Button>
-              </div>
-            ) : (
-              <div className="flex w-full gap-2">
                 <Button
                   asChild
                   aria-label={
@@ -668,18 +678,6 @@ export function HomeScreen({
                       </span>
                     ) : null}
                   </Link>
-                </Button>
-                <Button
-                  type="button"
-                  size="icon"
-                  aria-label={t("home.edit")}
-                  onClick={() => {
-                    fillDraftFromCircle(data, userId);
-                    void navigate({ to: "/start/vem", search: { edit: true } });
-                  }}
-                  className="h-[46px] w-[46px] shrink-0 rounded-2xl bg-primary text-primary-foreground shadow-lift hover:bg-primary/90"
-                >
-                  <ArrowLeft className="size-5" />
                 </Button>
               </div>
             )}
@@ -710,12 +708,7 @@ export function HomeScreen({
                 <Loader2 className="relative z-20 size-6 animate-spin" />
               ) : locked ? (
                 <Lock className="relative z-20 size-6" />
-              ) : (
-                <span
-                  aria-hidden
-                  className="relative z-20 mb-0.5 size-2 rounded-full bg-live shadow-[0_0_8px_var(--live)] motion-safe:animate-pulse"
-                />
-              )}
+              ) : null}
               <span className="relative z-20 text-center text-[0.8rem] font-bold leading-[1.1]">
                 {t("home.imHere")}
               </span>
