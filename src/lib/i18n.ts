@@ -1,6 +1,11 @@
 import { useSyncExternalStore } from "react";
 
 import { appDicts } from "./i18nApp";
+import ar from "./locales/ar";
+import it from "./locales/it";
+import pl from "./locales/pl";
+import pt from "./locales/pt";
+import tr from "./locales/tr";
 
 export const LANGUAGES = [
   { code: "sv", label: "Svenska", flag: "🇸🇪" },
@@ -12,6 +17,11 @@ export const LANGUAGES = [
   { code: "nl", label: "Nederlands", flag: "🇳🇱" },
   { code: "es", label: "Español", flag: "🇪🇸" },
   { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "it", label: "Italiano", flag: "🇮🇹" },
+  { code: "pl", label: "Polski", flag: "🇵🇱" },
+  { code: "pt", label: "Português", flag: "🇧🇷" },
+  { code: "tr", label: "Türkçe", flag: "🇹🇷" },
+  { code: "ar", label: "العربية", flag: "🇸🇦" },
 ] as const;
 
 export type Lang = (typeof LANGUAGES)[number]["code"];
@@ -52,6 +62,13 @@ function detect(): Lang {
   return storedLang() ?? navigatorLang() ?? "en";
 }
 
+/** Sets <html lang/dir>; Arabic reads right-to-left. */
+export function applyDocLang(lang: Lang) {
+  if (typeof document === "undefined") return;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+}
+
 export function getLang(): Lang {
   if (current === null) current = detect();
   return current;
@@ -61,7 +78,7 @@ export function setLang(next: Lang) {
   current = next;
   if (typeof window !== "undefined") {
     window.localStorage.setItem(STORAGE_KEY, next);
-    document.documentElement.lang = next;
+    applyDocLang(next);
   }
   listeners.forEach((l) => l());
 }
@@ -74,6 +91,7 @@ export function setLang(next: Lang) {
  */
 export async function initLanguageDetection(): Promise<void> {
   if (typeof window === "undefined") return;
+  applyDocLang(getLang());
   if (storedLang()) return;
   try {
     const { Device } = await import("@capacitor/device");
@@ -81,7 +99,7 @@ export async function initLanguageDetection(): Promise<void> {
     const match = normalizeTag(value);
     if (!match || storedLang() || match === getLang()) return;
     current = match;
-    document.documentElement.lang = match;
+    applyDocLang(match);
     listeners.forEach((l) => l());
   } catch {
     /* Device plugin unavailable (web): navigator detection already applied. */
@@ -793,10 +811,18 @@ const nl: Dict = {
   "common.close": "Sluiten",
 };
 
-const base: Record<Lang, Dict> = { sv, en, de, da, fi, es, fr, nb, nl };
+type CoreLang = "sv" | "en" | "de" | "da" | "fi" | "es" | "fr" | "nb" | "nl";
+const base: Record<CoreLang, Dict> = { sv, en, de, da, fi, es, fr, nb, nl };
 
 const dicts: Record<Lang, Dict> = Object.fromEntries(
-  (Object.keys(base) as Lang[]).map((code) => [code, { ...base[code], ...appDicts[code] }]),
+  [
+    ...(Object.keys(base) as CoreLang[]).map((code) => [code, { ...base[code], ...appDicts[code] }]),
+    ["it", it],
+    ["pl", pl],
+    ["pt", pt],
+    ["tr", tr],
+    ["ar", ar],
+  ],
 ) as Record<Lang, Dict>;
 
 /** Intl locale used for dates and numbers per app language. */
@@ -810,6 +836,11 @@ export const LOCALES: Record<Lang, string> = {
   nl: "nl-NL",
   es: "es-ES",
   fr: "fr-FR",
+  it: "it-IT",
+  pl: "pl-PL",
+  pt: "pt-BR",
+  tr: "tr-TR",
+  ar: "ar",
 };
 
 export function localeOf(lang: Lang = getLang()): string {
