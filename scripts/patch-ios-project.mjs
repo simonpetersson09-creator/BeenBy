@@ -15,7 +15,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const PBXPROJ = "ios/App/App.xcodeproj/project.pbxproj";
-const LANGS = ["en", "sv", "de", "da", "fi", "es", "fr"];
+const LANGS = ["en", "sv", "de", "da", "nb", "fi", "nl", "es", "fr"];
 
 /** Stable, project-unique 24-hex ids (Xcode only needs uniqueness). */
 const VARIANT_GROUP_ID = "BEE0B1000000000000000001";

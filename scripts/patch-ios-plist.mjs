@@ -107,6 +107,30 @@ const USAGE = {
     NSLocationAlwaysUsageDescription:
       "BeenBy utilise votre position en arrière-plan pour détecter quand vous arrivez ou quittez le domicile que vous visitez, afin que la famille puisse être notifiée. Votre position n'est jamais partagée.",
   },
+  nb: {
+    NSCameraUsageDescription:
+      "BeenBy bruker kameraet når du vil ta et bilde og dele det i familiechatten.",
+    NSPhotoLibraryUsageDescription:
+      "BeenBy trenger tilgang til bildene dine når du vil dele et bilde i familiechatten.",
+    NSLocationWhenInUseUsageDescription:
+      "BeenBy bruker posisjonen din for å merke når du kommer til eller forlater hjemmet du besøker, slik at familien kan få et varsel.",
+    NSLocationAlwaysAndWhenInUseUsageDescription:
+      "BeenBy bruker posisjonen din i bakgrunnen for å merke når du kommer til eller forlater hjemmet du besøker, slik at familien kan få et varsel. Posisjonen din deles aldri.",
+    NSLocationAlwaysUsageDescription:
+      "BeenBy bruker posisjonen din i bakgrunnen for å merke når du kommer til eller forlater hjemmet du besøker, slik at familien kan få et varsel. Posisjonen din deles aldri.",
+  },
+  nl: {
+    NSCameraUsageDescription:
+      "BeenBy gebruikt de camera wanneer je een foto wilt maken en delen in de familiechat.",
+    NSPhotoLibraryUsageDescription:
+      "BeenBy heeft toegang tot je foto's nodig wanneer je een afbeelding in de familiechat wilt delen.",
+    NSLocationWhenInUseUsageDescription:
+      "BeenBy gebruikt je locatie om te merken wanneer je aankomt bij of vertrekt van het huis dat je bezoekt, zodat de familie een melding kan krijgen.",
+    NSLocationAlwaysAndWhenInUseUsageDescription:
+      "BeenBy gebruikt je locatie op de achtergrond om te merken wanneer je aankomt bij of vertrekt van het huis dat je bezoekt, zodat de familie een melding kan krijgen. Je locatie wordt nooit gedeeld.",
+    NSLocationAlwaysUsageDescription:
+      "BeenBy gebruikt je locatie op de achtergrond om te merken wanneer je aankomt bij of vertrekt van het huis dat je bezoekt, zodat de familie een melding kan krijgen. Je locatie wordt nooit gedeeld.",
+  },
 };
 
 if (!existsSync(PLIST)) {
