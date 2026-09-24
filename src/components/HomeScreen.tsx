@@ -371,7 +371,7 @@ export function HomeScreen({
         <div className="relative flex shrink-0 gap-2">
           <Button
             onClick={() => setFamilyOpen(true)}
-            className="h-12 rounded-2xl bg-primary px-3 text-[0.7rem] font-medium leading-tight text-primary-foreground shadow-soft hover:bg-primary/90"
+            className="h-12 rounded-2xl bg-brand-accent px-3 text-[0.7rem] font-medium leading-tight text-brand-accent-foreground shadow-soft hover:bg-brand-accent/90"
           >
             <span className="whitespace-pre-line text-center">{t("home.inviteSiblings")}</span>
           </Button>
