@@ -741,6 +741,7 @@ export function HomeScreen({
         visits={visits}
         planned={planned}
         members={members}
+        avatarUrls={avatarUrls}
         events={events}
         circleId={circle.id}
         personId={person?.id ?? null}
