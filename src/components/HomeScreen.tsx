@@ -570,7 +570,7 @@ export function HomeScreen({
             <span className="flex size-7 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-primary/40 text-primary/70">
               <CalendarDays className="size-3.5" />
             </span>
-            <span className="min-w-0 flex-1 text-xs text-muted-foreground">
+            <span className="min-w-0 flex-1 text-center text-[0.62rem] font-medium uppercase leading-tight tracking-[0.2em] text-primary/60">
               {t("home.noPlanned")}
             </span>
             <ChevronRight className="size-4 shrink-0 text-primary/50" />
