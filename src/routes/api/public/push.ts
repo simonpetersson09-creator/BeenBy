@@ -103,6 +103,29 @@ const IMAGE_LABELS: Record<string, string> = {
   fr: "📎 Photo",
 };
 
+/** Same-day event reminders. Only the kind is known server-side — the title is E2E-encrypted. */
+const REMINDERS: Record<string, Record<string, string>> = {
+  sv: { birthday: "🎂 Födelsedag idag", doctor: "🩺 Läkartid idag", other: "📌 Händelse idag", body: "Öppna BeenBy för att se detaljer." },
+  en: { birthday: "🎂 Birthday today", doctor: "🩺 Doctor's appointment today", other: "📌 Event today", body: "Open BeenBy to see details." },
+  de: { birthday: "🎂 Geburtstag heute", doctor: "🩺 Arzttermin heute", other: "📌 Termin heute", body: "Öffne BeenBy für Details." },
+  da: { birthday: "🎂 Fødselsdag i dag", doctor: "🩺 Lægetid i dag", other: "📌 Begivenhed i dag", body: "Åbn BeenBy for detaljer." },
+  nb: { birthday: "🎂 Bursdag i dag", doctor: "🩺 Legetime i dag", other: "📌 Hendelse i dag", body: "Åpne BeenBy for detaljer." },
+  fi: { birthday: "🎂 Syntymäpäivä tänään", doctor: "🩺 Lääkäriaika tänään", other: "📌 Tapahtuma tänään", body: "Avaa BeenBy nähdäksesi tiedot." },
+  nl: { birthday: "🎂 Verjaardag vandaag", doctor: "🩺 Doktersafspraak vandaag", other: "📌 Afspraak vandaag", body: "Open BeenBy voor details." },
+  es: { birthday: "🎂 Cumpleaños hoy", doctor: "🩺 Cita médica hoy", other: "📌 Evento hoy", body: "Abre BeenBy para ver los detalles." },
+  fr: { birthday: "🎂 Anniversaire aujourd'hui", doctor: "🩺 Rendez-vous médical aujourd'hui", other: "📌 Événement aujourd'hui", body: "Ouvrez BeenBy pour voir les détails." },
+  it: { birthday: "🎂 Compleanno oggi", doctor: "🩺 Visita medica oggi", other: "📌 Evento oggi", body: "Apri BeenBy per i dettagli." },
+  pl: { birthday: "🎂 Urodziny dziś", doctor: "🩺 Wizyta u lekarza dziś", other: "📌 Wydarzenie dziś", body: "Otwórz BeenBy, aby zobaczyć szczegóły." },
+  pt: { birthday: "🎂 Aniversário hoje", doctor: "🩺 Consulta médica hoje", other: "📌 Evento hoje", body: "Abra o BeenBy para ver os detalhes." },
+  tr: { birthday: "🎂 Bugün doğum günü", doctor: "🩺 Bugün doktor randevusu", other: "📌 Bugün etkinlik", body: "Ayrıntılar için BeenBy'ı açın." },
+  ar: { birthday: "🎂 عيد ميلاد اليوم", doctor: "🩺 موعد طبيب اليوم", other: "📌 حدث اليوم", body: "افتح BeenBy لرؤية التفاصيل." },
+};
+
+function reminderText(locale: string, kind: string) {
+  const pack = REMINDERS[locale.slice(0, 2)] ?? REMINDERS['en']!;
+  return { title: pack[kind] ?? pack['other']!, body: pack['body']! };
+}
+
 function fallbackName(locale: string): string {
   return FALLBACK_NAMES[locale] ?? FALLBACK_NAMES['en']!;
 }
@@ -276,14 +299,17 @@ export const Route = createFileRoute("/api/public/push")({
           await log("not_configured", "APNs-nycklar saknas");
           return new Response("Push not configured", { status: 200 });
         }
-        if (!circleId || !actorId) {
+        const isReminder = payload.table === "circle_events";
+        if (!circleId || (!actorId && !isReminder)) {
           await log("ignored", "saknar family_circle_id eller user_id");
           return new Response("ignored", { status: 200 });
         }
 
         const [{ data: members }, { data: profile }] = await Promise.all([
           supabaseAdmin.from("family_members").select("user_id").eq("family_circle_id", circleId),
-          supabaseAdmin.from("profiles").select("name").eq("id", actorId).maybeSingle(),
+          actorId
+            ? supabaseAdmin.from("profiles").select("name").eq("id", actorId).maybeSingle()
+            : Promise.resolve({ data: null as { name: string } | null }),
         ]);
 
         const recipients = (members ?? [])
@@ -331,7 +357,9 @@ export const Route = createFileRoute("/api/public/push")({
 
         await Promise.all(
           devices.map(async (device) => {
-            const text = textFor(
+            const text = isReminder
+              ? reminderText(device.locale ?? "en", String(record['kind'] ?? "other"))
+              : textFor(
               device.locale ?? "en",
               payload.table,
               profile?.name?.trim() || fallbackName(device.locale ?? "en"),

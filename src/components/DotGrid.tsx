@@ -4,24 +4,33 @@ import { addDays, buildVisitGrid, weekdayLabels, shortLabel, todayKey, weekNumbe
 import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import { cn } from "@/lib/utils";
-import type { Member, PlannedVisit, Visit } from "@/hooks/useCircleData";
+import type { CircleEvent, Member, PlannedVisit, Visit } from "@/hooks/useCircleData";
+import { eventEmoji, occursOn } from "@/lib/events";
 
 export type DayDots = {
   day: string;
   done: { id: string; color: string; who: string }[];
   planned: { id: string; color: string; who: string }[];
+  events: { id: string; kind: string }[];
 };
+
+/** Extra future weeks so the grid can be scrolled forward (never further back). */
+const EXTRA_FUTURE_WEEKS = 8;
 
 export function buildDays(
   timeZone: string,
   visits: Visit[],
   planned: PlannedVisit[],
   members: Member[],
+  events: CircleEvent[] = [],
 ): DayDots[] {
   const colorOf = (userId: string) => colorById(members.find((m) => m.user_id === userId)?.personal_color).hex;
   const nameOf = (userId: string) => members.find((m) => m.user_id === userId)?.name ?? "";
 
-  return buildVisitGrid(timeZone).map((day) => ({
+  const base = buildVisitGrid(timeZone);
+  const last = base[base.length - 1]!;
+  const all = [...base, ...Array.from({ length: EXTRA_FUTURE_WEEKS * 7 }, (_, i) => addDays(last, i + 1))];
+  return all.map((day) => ({
     day,
     done: visits
       .filter((v) => v.local_day === day)
@@ -29,6 +38,7 @@ export function buildDays(
     planned: planned
       .filter((p) => p.planned_date === day && p.status === "planned")
       .map((p) => ({ id: p.id, color: colorOf(p.user_id), who: nameOf(p.user_id) })),
+    events: events.filter((e) => occursOn(e, day)).map((e) => ({ id: e.id, kind: e.kind })),
   }));
 }
 
@@ -63,22 +73,6 @@ export function DotGrid({
 
   const weeks: DayDots[][] = [];
   for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
-
-  // Extra empty future weeks so the grid can be scrolled forward in time.
-  // Never scrolls further back than the base window, and the scroll position
-  // resets to the top (the usual 5 weeks) whenever the page is remounted.
-  const EXTRA_FUTURE_WEEKS = 8;
-  const lastDay = days[days.length - 1]!.day;
-  for (let w = 0; w < EXTRA_FUTURE_WEEKS; w++) {
-    const offset = days.length + w * 7;
-    weeks.push(
-      Array.from({ length: 7 }, (_, i) => ({
-        day: addDays(lastDay, offset - days.length + w * 7 + i + 1),
-        done: [],
-        planned: [],
-      })),
-    );
-  }
 
   return (
     <div>
@@ -182,6 +176,15 @@ export function DotGrid({
                               className="pointer-events-none absolute -inset-0.5 rounded-full border-2 border-dashed"
                               style={{ borderColor: plannedColors[0] }}
                             />
+                          ) : null}
+
+                          {d.events.length > 0 ? (
+                            <span
+                              aria-hidden="true"
+                              className="pointer-events-none absolute -bottom-1 -right-1 text-[0.7rem] leading-none"
+                            >
+                              {eventEmoji(d.events[0]!.kind)}
+                            </span>
                           ) : null}
 
                           {d.done.length + d.planned.length > 3 ? (

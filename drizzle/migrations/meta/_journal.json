@@ -29,6 +29,13 @@
       "when": 1790176669582,
       "tag": "0003_delete_account_removes_keys",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790232705735,
+      "tag": "0004_recurring_visits_and_events",
+      "breakpoints": true
     }
   ]
 }

@@ -13,6 +13,7 @@ import { SettingsDialog } from "@/components/SettingsDialog";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Switch } from "@/components/ui/switch";
 
 import {
   Dialog,
@@ -55,7 +56,7 @@ export function HomeScreen({
   const t = useT();
   const pl = usePersonLabel();
   const navigate = useNavigate();
-  const { circle, person, members, visits, planned } = data;
+  const { circle, person, members, visits, planned, events } = data;
   const tz = circle.timezone;
   const online = useOnlineStatus();
 
@@ -94,6 +95,7 @@ export function HomeScreen({
   };
   const [planDate, setPlanDate] = useState<string | null>(null);
   const [planCalendarOpen, setPlanCalendarOpen] = useState(false);
+  const [repeatWeekly, setRepeatWeekly] = useState(false);
   const unread = useUnreadMessages(circle.id, userId);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [paywallOpen, setPaywallOpen] = useState(false);
@@ -204,7 +206,7 @@ export function HomeScreen({
       color: me.personal_color,
     });
   }, [circle.family_code, me]);
-  const days = useMemo(() => buildDays(tz, visits, planned, members), [tz, visits, planned, members]);
+  const days = useMemo(() => buildDays(tz, visits, planned, members, events), [tz, visits, planned, members, events]);
   const today = todayKey(tz);
   const myVisitToday = visits.find((v) => v.user_id === userId && v.local_day === today);
 
@@ -295,14 +297,23 @@ export function HomeScreen({
   async function planVisit(date: string) {
     if (!person) return;
     setPlanOpen(false);
-    const { error } = await supabase.from("planned_visits").insert({
-      family_circle_id: circle.id,
-      person_id: person.id,
-      user_id: userId,
-      planned_date: date,
-      activities: acts,
-      activity_note: acts.includes("other") ? actNote.trim() || null : null,
-    });
+    const note = acts.includes("other") ? actNote.trim() || null : null;
+    const seriesId = repeatWeekly ? crypto.randomUUID() : null;
+    const rows = (repeatWeekly ? Array.from({ length: 8 }, (_, i) => addDays(date, i * 7)) : [date]).map(
+      (d, i) => ({
+        ...(seriesId && i === 0 ? { id: seriesId } : {}),
+        family_circle_id: circle.id,
+        person_id: person.id,
+        user_id: userId,
+        planned_date: d,
+        activities: acts,
+        activity_note: note,
+        series_id: seriesId,
+      }),
+    );
+    const wasRepeat = repeatWeekly;
+    setRepeatWeekly(false);
+    const { error } = await supabase.from("planned_visits").insert(rows);
     if (error) {
       toast.error(t("toast.planError"));
       resetActs();
@@ -312,7 +323,11 @@ export function HomeScreen({
     resetActs();
     setPlanDate(null);
     refresh();
-    toast.success(t("toast.planned", { when: relativeLabel(date, tz).toLowerCase() }));
+    toast.success(
+      wasRepeat
+        ? t("toast.plannedSeries")
+        : t("toast.planned", { when: relativeLabel(date, tz).toLowerCase() }),
+    );
   }
 
   async function completePlanned(p: PlannedVisit) {
@@ -720,6 +735,10 @@ export function HomeScreen({
         visits={visits}
         planned={planned}
         members={members}
+        events={events}
+        circleId={circle.id}
+        personId={person?.id ?? null}
+        onChanged={refresh}
         currentUserId={userId}
         onClose={() => setSelectedDay(null)}
         onDeleteVisit={async (id) => {
@@ -727,8 +746,17 @@ export function HomeScreen({
           setSelectedDay(null);
           refresh();
         }}
-        onCancelPlanned={async (id) => {
-          await supabase.from("planned_visits").update({ status: "cancelled" }).eq("id", id);
+        onCancelPlanned={async (p, allFuture) => {
+          if (allFuture && p.series_id) {
+            await supabase
+              .from("planned_visits")
+              .update({ status: "cancelled" })
+              .eq("series_id", p.series_id)
+              .eq("user_id", userId)
+              .gte("planned_date", p.planned_date);
+          } else {
+            await supabase.from("planned_visits").update({ status: "cancelled" }).eq("id", p.id);
+          }
           setSelectedDay(null);
           refresh();
         }}
@@ -742,6 +770,7 @@ export function HomeScreen({
           if (!o) {
             setPlanCalendarOpen(false);
             setPlanDate(null);
+            setRepeatWeekly(false);
             resetActs();
           }
         }}
@@ -823,6 +852,13 @@ export function HomeScreen({
               </button>
             </div>
           ) : null}
+          <label className="flex items-center justify-between rounded-2xl border px-3 py-2.5 text-xs">
+            <span>
+              <span className="block font-medium text-foreground">{t("plan.repeat")}</span>
+              <span className="block text-[0.65rem] text-muted-foreground">{t("plan.repeatHint")}</span>
+            </span>
+            <Switch checked={repeatWeekly} onCheckedChange={setRepeatWeekly} />
+          </label>
           <Button
             onClick={() => planDate && planVisit(planDate)}
             disabled={!planDate}

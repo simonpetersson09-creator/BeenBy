@@ -76,6 +76,60 @@ export type Database = {
           },
         ]
       }
+      circle_events: {
+        Row: {
+          created_at: string
+          created_by: string
+          event_date: string
+          family_circle_id: string
+          id: string
+          kind: string
+          last_reminded_on: string | null
+          person_id: string | null
+          title: string | null
+          yearly: boolean
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          event_date: string
+          family_circle_id: string
+          id?: string
+          kind?: string
+          last_reminded_on?: string | null
+          person_id?: string | null
+          title?: string | null
+          yearly?: boolean
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          event_date?: string
+          family_circle_id?: string
+          id?: string
+          kind?: string
+          last_reminded_on?: string | null
+          person_id?: string | null
+          title?: string | null
+          yearly?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_events_family_circle_id_fkey"
+            columns: ["family_circle_id"]
+            isOneToOne: false
+            referencedRelation: "family_circles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "circle_events_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "persons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       circle_key_wraps: {
         Row: {
           created_at: string
@@ -344,6 +398,7 @@ export type Database = {
           id: string
           person_id: string
           planned_date: string
+          series_id: string | null
           status: string
           user_id: string
         }
@@ -355,6 +410,7 @@ export type Database = {
           id?: string
           person_id: string
           planned_date: string
+          series_id?: string | null
           status?: string
           user_id?: string
         }
@@ -366,6 +422,7 @@ export type Database = {
           id?: string
           person_id?: string
           planned_date?: string
+          series_id?: string | null
           status?: string
           user_id?: string
         }
@@ -727,6 +784,7 @@ export type Database = {
         Returns: boolean
       }
       revoke_circle_access: { Args: { _circle: string }; Returns: string }
+      send_event_reminders: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
