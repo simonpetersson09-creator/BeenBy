@@ -285,9 +285,34 @@ html[data-native-app="true"] {
   animation: breathe 4s ease-in-out infinite;
 }
 
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  70% {
+    transform: scale(1.12);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.12);
+    opacity: 0;
+  }
+}
+
+@utility animate-pulse-ring {
+  animation: pulse-ring 3s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+
+@utility animate-pulse-ring-late {
+  animation: pulse-ring 3s cubic-bezier(0.2, 0.6, 0.3, 1) 1.5s infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-breathe,
-  .animate-dot-pop {
+  .animate-dot-pop,
+  .animate-pulse-ring,
+  .animate-pulse-ring-late {
     animation: none;
   }
 }

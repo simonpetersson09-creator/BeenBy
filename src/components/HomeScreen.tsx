@@ -683,6 +683,14 @@ export function HomeScreen({
             )}
           </div>
           <div className="relative shrink-0">
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 rounded-full border-2 border-primary/50 animate-pulse-ring"
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 rounded-full border-2 border-primary/50 animate-pulse-ring-late"
+            />
             <Button
               onClick={handleImHere}
               disabled={busy || !person}
