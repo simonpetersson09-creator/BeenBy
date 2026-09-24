@@ -279,6 +279,17 @@ function ChatPage() {
     };
   }, [messages, imageUrls, circleKey]);
 
+  // If the document ever got pushed up while the chat was open, put it back
+  // when leaving so the home page isn't half-hidden behind the status bar.
+  useEffect(() => {
+    return () => {
+      const doc = document.scrollingElement ?? document.documentElement;
+      doc.scrollTop = 0;
+      document.body.scrollTop = 0;
+      if (window.scrollY !== 0) window.scrollTo(0, 0);
+    };
+  }, []);
+
   // Scroll only the chat's own container. scrollIntoView would also scroll
   // the document, shifting the whole app up behind the status bar – and that
   // offset follows the user back to the home page.
