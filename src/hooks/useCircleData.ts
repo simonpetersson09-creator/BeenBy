@@ -27,6 +27,7 @@ export type Member = {
   personal_color: string;
   role: string;
   name: string;
+  avatar_path: string | null;
 };
 
 export type Visit = {
@@ -101,7 +102,7 @@ async function loadCircle(userId: string): Promise<CircleData | null> {
       .order("created_at", { ascending: true }),
     supabase
       .from("family_members")
-      .select("id, user_id, personal_color, role")
+      .select("id, user_id, personal_color, role, avatar_path")
       .eq("family_circle_id", circleId)
       .order("joined_at", { ascending: true }),
     supabase.rpc("circle_member_names", { _circle: circleId }),
