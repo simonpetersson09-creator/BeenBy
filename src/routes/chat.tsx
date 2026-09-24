@@ -27,6 +27,7 @@ import {
   encryptBlob,
   encryptText,
   ENCRYPTED_IMAGE_EXT,
+  ENCRYPTED_JPEG_EXT,
   getCircleKey,
   isEncrypted,
   isEncryptedImagePath,
@@ -404,10 +405,23 @@ function ChatPage() {
       // Bytes are encrypted; the image type label only satisfies the bucket's
       // type filter. The upload uses the blob's own type, so relabel it here.
       const sealedPhoto = new Blob([encrypted], { type: "image/jpeg" });
-      const path = `${circleId}/${user.id}/${crypto.randomUUID()}${ENCRYPTED_IMAGE_EXT}`;
-      const { error: upErr } = await supabase.storage
+      const uploadId = crypto.randomUUID();
+      let path = `${circleId}/${user.id}/${uploadId}${ENCRYPTED_IMAGE_EXT}`;
+      let { error: upErr } = await supabase.storage
         .from("chat-images")
         .upload(path, sealedPhoto, { contentType: "image/jpeg", upsert: false });
+
+      // Some installed native builds/storage gateways reject an unknown .enc
+      // suffix before the bucket policy is evaluated. Retry with a JPEG-safe
+      // suffix; the bytes remain AES-GCM encrypted and are still recognised as
+      // encrypted when downloaded.
+      if (upErr) {
+        path = `${circleId}/${user.id}/${uploadId}${ENCRYPTED_JPEG_EXT}`;
+        const retry = await supabase.storage
+          .from("chat-images")
+          .upload(path, sealedPhoto, { contentType: "image/jpeg", upsert: false });
+        upErr = retry.error;
+      }
       if (upErr) {
         console.error("chat image upload failed", upErr);
         toast.error(friendlyError(upErr, t, "chat.imageError"));

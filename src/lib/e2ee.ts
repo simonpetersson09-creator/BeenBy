@@ -362,7 +362,11 @@ export async function decryptBlob(key: CryptoKey, data: ArrayBuffer): Promise<Bl
 
 /** Encrypted photos are uploaded with this extension so old ones still render. */
 export const ENCRYPTED_IMAGE_EXT = ".enc";
+export const ENCRYPTED_JPEG_EXT = ".sealed.jpg";
 
 export function isEncryptedImagePath(path: string | null | undefined): boolean {
-  return typeof path === "string" && path.endsWith(ENCRYPTED_IMAGE_EXT);
+  return (
+    typeof path === "string" &&
+    (path.endsWith(ENCRYPTED_IMAGE_EXT) || path.endsWith(ENCRYPTED_JPEG_EXT))
+  );
 }
