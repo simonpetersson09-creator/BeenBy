@@ -7,7 +7,9 @@ export const LANGUAGES = [
   { code: "en", label: "English", flag: "🇬🇧" },
   { code: "de", label: "Deutsch", flag: "🇩🇪" },
   { code: "da", label: "Dansk", flag: "🇩🇰" },
+  { code: "nb", label: "Norsk", flag: "🇳🇴" },
   { code: "fi", label: "Suomi", flag: "🇫🇮" },
+  { code: "nl", label: "Nederlands", flag: "🇳🇱" },
   { code: "es", label: "Español", flag: "🇪🇸" },
   { code: "fr", label: "Français", flag: "🇫🇷" },
 ] as const;
