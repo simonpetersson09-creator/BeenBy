@@ -20,6 +20,7 @@ import { ColorPicker } from "@/components/ColorPicker";
 import { GeofenceSetting } from "@/components/GeofenceSetting";
 import { LanguageSwitcher } from "@/components/onboarding/LanguageSwitcher";
 import { Switch } from "@/components/ui/switch";
+import { removeAvatar, uploadAvatar, useAvatarUrls } from "@/lib/avatar";
 import { isPushEnabled, setPushEnabled, unregisterPushNotifications } from "@/lib/push";
 import {
   AlertDialog,
@@ -75,7 +76,7 @@ export function SettingsDialog({
   userId?: string;
   circleId?: string;
   myName?: string;
-  members?: { user_id: string; personal_color: string }[];
+  members?: { user_id: string; personal_color: string; avatar_path?: string | null }[];
   onPersonUpdated?: () => void;
   geofence?: {
     enabled: boolean;
@@ -115,6 +116,36 @@ export function SettingsDialog({
   const [deleting, setDeleting] = useState(false);
   const openedAt = useRef(0);
   const myColor = members?.find((m) => m.user_id === userId)?.personal_color ?? null;
+  const myAvatarPath = members?.find((m) => m.user_id === userId)?.avatar_path ?? null;
+  const avatarUrls = useAvatarUrls(circleId, userId, members);
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function handleAvatarFile(file: File | undefined) {
+    if (!file || !circleId || !userId) return;
+    setAvatarBusy(true);
+    try {
+      const { error } = await uploadAvatar(circleId, userId, file, myAvatarPath);
+      if (error) toast.error(t("avatar.error"));
+      else {
+        toast.success(t("avatar.saved"));
+        onPersonUpdated?.();
+      }
+    } catch {
+      toast.error(t("avatar.error"));
+    } finally {
+      setAvatarBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  async function handleAvatarRemove() {
+    if (!circleId || !userId) return;
+    setAvatarBusy(true);
+    await removeAvatar(circleId, userId, myAvatarPath);
+    setAvatarBusy(false);
+    onPersonUpdated?.();
+  }
 
   useEffect(() => {
     if (open) openedAt.current = Date.now();
@@ -439,6 +470,47 @@ export function SettingsDialog({
         {userId ? (
           <section className="space-y-2 rounded-2xl bg-secondary/60 p-3">
             <p className="flex items-center gap-2 text-sm font-medium">
+              <User className="size-4" /> {t("avatar.title")}
+            </p>
+            <div className="flex items-center gap-3">
+              <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-card text-xl font-semibold text-muted-foreground shadow-soft">
+                {avatarUrls[userId] ? (
+                  <img src={avatarUrls[userId]} alt="" className="size-full object-cover" />
+                ) : (
+                  (myName ?? "?").trim().charAt(0).toUpperCase() || "?"
+                )}
+              </span>
+              <div className="flex flex-1 flex-col gap-1.5">
+                <Button
+                  variant="secondary"
+                  className="h-9 rounded-2xl text-xs"
+                  disabled={avatarBusy || !circleId}
+                  onClick={() => fileRef.current?.click()}
+                >
+                  {avatarBusy ? <Loader2 className="size-4 animate-spin" /> : null}
+                  {myAvatarPath ? t("avatar.change") : t("avatar.choose")}
+                </Button>
+                {myAvatarPath ? (
+                  <button
+                    type="button"
+                    className="text-[0.7rem] text-muted-foreground underline underline-offset-2"
+                    disabled={avatarBusy}
+                    onClick={() => void handleAvatarRemove()}
+                  >
+                    {t("avatar.remove")}
+                  </button>
+                ) : null}
+              </div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => void handleAvatarFile(e.target.files?.[0])}
+              />
+            </div>
+            <p className="text-[0.65rem] text-muted-foreground">{t("avatar.private")}</p>
+            <p className="flex items-center gap-2 pt-1 text-sm font-medium">
               <User className="size-4" /> {t("settings.nameTitle")}
             </p>
             <div className="flex gap-2">

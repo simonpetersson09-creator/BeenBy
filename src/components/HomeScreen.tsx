@@ -41,6 +41,7 @@ import { fillDraftFromCircle } from "@/lib/circleEdit";
 
 import { refreshTrialStatus, useAccess } from "@/lib/premiumStore";
 import { saveRecovery } from "@/lib/recovery";
+import { useAvatarUrls } from "@/lib/avatar";
 import { deleteVisit, flushPendingVisits, recordVisit, type VisitSource } from "@/lib/visits";
 import { maybeAskForReview } from "@/lib/appReview";
 
@@ -206,6 +207,7 @@ export function HomeScreen({
       color: me.personal_color,
     });
   }, [circle.family_code, me]);
+  const avatarUrls = useAvatarUrls(circle.id, userId, members);
   const days = useMemo(() => buildDays(tz, visits, planned, members, events), [tz, visits, planned, members, events]);
   const today = todayKey(tz);
   const myVisitToday = visits.find((v) => v.user_id === userId && v.local_day === today);
@@ -608,10 +610,14 @@ export function HomeScreen({
                 style={{ borderColor: hex, backgroundColor: `${hex}1f` }}
               >
                 <span
-                  className="flex size-5 items-center justify-center rounded-full text-[0.55rem] font-semibold text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+                  className="flex size-5 items-center justify-center overflow-hidden rounded-full text-[0.55rem] font-semibold text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
                   style={{ backgroundColor: hex }}
                 >
-                  {m.name.trim().charAt(0).toUpperCase()}
+                  {avatarUrls[m.user_id] ? (
+                    <img src={avatarUrls[m.user_id]} alt="" className="size-full object-cover" />
+                  ) : (
+                    m.name.trim().charAt(0).toUpperCase()
+                  )}
                 </span>
                 <span className="text-[0.6rem] leading-tight text-foreground">
                   {m.name}
