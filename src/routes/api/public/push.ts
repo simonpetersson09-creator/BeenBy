@@ -197,6 +197,35 @@ async function sendApns(
   }
 }
 
+async function sendFcm(
+  projectId: string,
+  accessToken: string,
+  token: string,
+  text: { title: string; body: string },
+  data: Record<string, string>,
+): Promise<{ ok: boolean; status: number; body: string }> {
+  try {
+    const res = await fetch(`https://fcm.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/messages:send`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${accessToken}`, "content-type": "application/json" },
+      body: JSON.stringify({
+        message: {
+          token,
+          notification: { title: text.title, body: text.body },
+          data,
+          android: {
+            priority: "high",
+            notification: { channel_id: "beenby_default", sound: "default", icon: "ic_stat_beenby" },
+          },
+        },
+      }),
+    });
+    return { ok: res.ok, status: res.status, body: await res.text() };
+  } catch (err) {
+    return { ok: false, status: 0, body: String(err) };
+  }
+}
+
 const MAX_BODY_BYTES = 32 * 1024;
 const MAX_CLOCK_SKEW_SECONDS = 300;
 
@@ -295,8 +324,13 @@ export const Route = createFileRoute("/api/public/push")({
           });
         };
 
-        if (!process.env['APNS_PRIVATE_KEY'] || !process.env['APNS_KEY_ID'] || !process.env['APNS_TEAM_ID']) {
-          await log("not_configured", "APNs-nycklar saknas");
+        const apnsReady = Boolean(
+          process.env['APNS_PRIVATE_KEY'] && process.env['APNS_KEY_ID'] && process.env['APNS_TEAM_ID'],
+        );
+        const { parseServiceAccount } = await import("@/lib/googleAuth.server");
+        const fcmAccount = parseServiceAccount(process.env['FCM_SERVICE_ACCOUNT_JSON']);
+        if (!apnsReady && !fcmAccount) {
+          await log("not_configured", "APNs-/FCM-nycklar saknas");
           return new Response("Push not configured", { status: 200 });
         }
         const isReminder = payload.table === "circle_events";
@@ -322,19 +356,31 @@ export const Route = createFileRoute("/api/public/push")({
 
         const { data: devices } = await supabaseAdmin
           .from("device_tokens")
-          .select("token, locale")
+          .select("token, locale, platform")
           .in("user_id", recipients);
         if (!devices || devices.length === 0) {
           await log("no_devices", "inga registrerade enheter", { recipients: recipients.length });
           return new Response("no devices", { status: 200 });
         }
 
-        let jwt: string;
-        try {
-          jwt = await apnsToken();
-        } catch (err) {
-          await log("jwt_error", String(err), { recipients: recipients.length, devices: devices.length });
-          return new Response("jwt error", { status: 200 });
+        const hasIos = devices.some((d) => d.platform !== "android");
+        let jwt = "";
+        if (apnsReady && hasIos) {
+          try {
+            jwt = await apnsToken();
+          } catch (err) {
+            await log("jwt_error", String(err), { recipients: recipients.length, devices: devices.length });
+            return new Response("jwt error", { status: 200 });
+          }
+        }
+        let fcmToken = "";
+        if (fcmAccount && devices.some((d) => d.platform === "android")) {
+          try {
+            const { googleAccessToken } = await import("@/lib/googleAuth.server");
+            fcmToken = await googleAccessToken(fcmAccount, "https://www.googleapis.com/auth/firebase.messaging");
+          } catch (err) {
+            await log("fcm_auth_error", String(err), { recipients: recipients.length, devices: devices.length });
+          }
         }
 
         const productionHost = "https://api.push.apple.com";
@@ -367,6 +413,25 @@ export const Route = createFileRoute("/api/public/push")({
               hasImage,
             );
             if (!text) return;
+
+            // Android → Firebase Cloud Messaging. iOS path below is unchanged.
+            if (device.platform === "android") {
+              if (!fcmToken || !fcmAccount?.project_id) return;
+              const res = await sendFcm(fcmAccount.project_id, fcmToken, device.token, text, {
+                type: String(payload.table ?? ""),
+                circle_id: circleId,
+              });
+              if (res.ok) {
+                sent += 1;
+                return;
+              }
+              failures.push(`fcm ${res.status}:${res.body.slice(0, 200)}`);
+              if (res.status === 404 || (res.status === 400 && res.body.includes("INVALID_ARGUMENT")) || res.body.includes("UNREGISTERED")) {
+                await supabaseAdmin.from("device_tokens").delete().eq("token", device.token);
+              }
+              return;
+            }
+            if (!apnsReady) return;
 
             const aps: Record<string, unknown> = {
               alert: { title: text.title, body: text.body },
