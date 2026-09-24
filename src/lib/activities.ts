@@ -7,6 +7,16 @@
  * depending on the UI language. `"other"` may be paired with a short free-text
  * note stored in `activity_note`.
  */
+import type { LucideIcon } from "lucide-react";
+import {
+  CreditCard,
+  HeartPulse,
+  Home,
+  MessageCircle,
+  Pill,
+  Plus,
+  ShoppingCart,
+} from "lucide-react";
 
 export type ActivityId =
   | "greet"
@@ -19,19 +29,20 @@ export type ActivityId =
 
 export type ActivityDef = {
   id: ActivityId;
-  emoji: string;
+  /** Monochrome icon; inherits the surrounding text color (currentColor). */
+  icon: LucideIcon;
   /** i18n key holding the human label. */
   key: string;
 };
 
 export const ACTIVITIES: ActivityDef[] = [
-  { id: "greet", emoji: "💬", key: "act.greet" },
-  { id: "meds", emoji: "💊", key: "act.meds" },
-  { id: "shop", emoji: "🛒", key: "act.shop" },
-  { id: "bills", emoji: "💳", key: "act.bills" },
-  { id: "care", emoji: "🏥", key: "act.care" },
-  { id: "home", emoji: "🏠", key: "act.home" },
-  { id: "other", emoji: "➕", key: "act.other" },
+  { id: "greet", icon: MessageCircle, key: "act.greet" },
+  { id: "meds", icon: Pill, key: "act.meds" },
+  { id: "shop", icon: ShoppingCart, key: "act.shop" },
+  { id: "bills", icon: CreditCard, key: "act.bills" },
+  { id: "care", icon: HeartPulse, key: "act.care" },
+  { id: "home", icon: Home, key: "act.home" },
+  { id: "other", icon: Plus, key: "act.other" },
 ];
 
 const BY_ID = new Map(ACTIVITIES.map((a) => [a.id as string, a]));
@@ -41,7 +52,7 @@ export function activityDef(id: string): ActivityDef | undefined {
 }
 
 /**
- * "💊 Mediciner · 🛒 Handla" — unknown ids are skipped so old rows and future
+ * "Mediciner · Handla" — unknown ids are skipped so old rows and future
  * additions never break an existing client.
  */
 export function activitySummary(
@@ -53,8 +64,8 @@ export function activitySummary(
     .map((id) => {
       const def = activityDef(id);
       if (!def) return null;
-      if (def.id === "other" && note?.trim()) return `${def.emoji} ${note.trim()}`;
-      return `${def.emoji} ${t(def.key)}`;
+      if (def.id === "other" && note?.trim()) return note.trim();
+      return t(def.key);
     })
     .filter(Boolean) as string[];
   return list.join(" · ");
