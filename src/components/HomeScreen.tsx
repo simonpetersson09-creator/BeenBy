@@ -573,26 +573,26 @@ export function HomeScreen({
       </section>
 
       <section className="mt-2.5 rounded-2xl border border-primary/30 px-4 py-2.5">
-        <p className="mb-2.5 text-[0.62rem] font-medium uppercase tracking-[0.2em] text-primary/60">
+        <p className="mb-2.5 text-center text-[0.62rem] font-medium uppercase tracking-[0.2em] text-primary/60">
           {t("home.who")}
         </p>
-        <ul className="flex flex-wrap gap-2">
+        <ul className="flex flex-wrap justify-center gap-1.5">
           {members.map((m) => {
             const hex = colorById(m.personal_color).hex;
             const isMe = m.user_id === userId;
             return (
               <li
                 key={m.id}
-                className="flex items-center gap-2 rounded-full border py-1 pl-1 pr-3"
+                className="flex items-center gap-1.5 rounded-full border py-0.5 pl-1 pr-2.5"
                 style={{ borderColor: hex, backgroundColor: `${hex}1f` }}
               >
                 <span
-                  className="flex size-6 items-center justify-center rounded-full text-[0.62rem] font-semibold text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
+                  className="flex size-5 items-center justify-center rounded-full text-[0.55rem] font-semibold text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)]"
                   style={{ backgroundColor: hex }}
                 >
                   {m.name.trim().charAt(0).toUpperCase()}
                 </span>
-                <span className="text-xs font-medium leading-tight">
+                <span className="text-[0.68rem] font-medium leading-tight">
                   {m.name}
                   {isMe ? (
                     <span className="ml-1 font-normal text-muted-foreground">{t("home.you")}</span>
