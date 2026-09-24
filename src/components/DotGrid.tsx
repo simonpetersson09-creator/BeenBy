@@ -86,7 +86,7 @@ export function DotGrid({
         </div>
       </div>
 
-      <div className="space-y-0.5">
+      <div className="max-h-[212px] space-y-0.5 overflow-y-auto overscroll-contain">
         {weeks.map((week, wi) => {
           const isCurrentWeek = week.some((d) => d.day === today);
           return (
