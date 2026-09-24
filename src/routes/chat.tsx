@@ -574,7 +574,7 @@ function ChatPage() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-5">
+      <div data-fixed-bottom className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md bg-gradient-to-t from-background via-background to-transparent px-5 pb-8 pt-5">
         {pending ? (
           <div className="mb-3 flex items-center gap-3 rounded-2xl border border-primary/10 bg-card p-2 shadow-soft">
             <img

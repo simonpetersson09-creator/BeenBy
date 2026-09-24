@@ -450,7 +450,7 @@ export function HomeScreen({
             role="dialog"
             aria-modal="true"
             aria-label={t("home.aloneTitle")}
-            className="relative w-full max-w-sm rounded-3xl bg-background p-6 shadow-lg"
+            className="relative max-h-full w-full max-w-sm overflow-y-auto rounded-3xl bg-background p-6 shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
             <button

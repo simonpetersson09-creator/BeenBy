@@ -57,7 +57,7 @@ function WelcomePage() {
   }
 
   return (
-    <main className="mx-auto flex h-dvh w-full max-w-md flex-col justify-center gap-3 overflow-hidden px-6 pt-4 pb-6">
+    <main className="mx-auto flex h-dvh w-full max-w-md flex-col justify-center-safe gap-3 overflow-y-auto px-6 pt-4 pb-6">
       <div className="animate-rise-in space-y-2">
         <h1 className="text-3xl leading-tight text-primary">{t("welcome.title")}</h1>
         <p className="text-base text-muted-foreground">{t("welcome.sub")}</p>

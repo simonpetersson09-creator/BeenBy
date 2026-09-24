@@ -146,6 +146,14 @@ html[data-native-app="true"] {
    the status bar). iOS is unaffected by this selector. */
 html[data-native-app="true"][data-platform="android"] {
   --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+}
+
+/* Fixed bottom elements are positioned against the viewport, not #root, so
+   on Android they must clear the gesture/3-button navigation bar themselves.
+   Scoped to Android: iOS layout stays exactly as before. */
+html[data-platform="android"] [data-fixed-bottom] {
+  padding-bottom: calc(2rem + var(--safe-bottom, 0px)) !important;
 }
 
 
