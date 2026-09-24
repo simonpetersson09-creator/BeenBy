@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useRef } from "react";
 import { addDays, buildVisitGrid, weekdayLabels, shortLabel, todayKey, weekNumber } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
@@ -52,15 +52,7 @@ export function DotGrid({
   const t = useT();
   const today = todayKey(timeZone);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [atBottom, setAtBottom] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
-  const onScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 8);
-    setScrolled(el.scrollTop > 4);
-  }, []);
   const weeks: DayDots[][] = [];
   for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
 
@@ -98,18 +90,8 @@ export function DotGrid({
       </div>
 
       <div className="relative">
-        {/* Soft fade at the top edge once the grid has been scrolled down */}
-        <div
-          aria-hidden
-          className={cn(
-            "pointer-events-none absolute inset-x-0 top-0 z-10 h-6 bg-gradient-to-b from-card to-transparent transition-opacity duration-300",
-            scrolled ? "opacity-100" : "opacity-0",
-          )}
-        />
-
         <div
           ref={scrollRef}
-          onScroll={onScroll}
           className="max-h-[212px] space-y-0.5 overflow-y-auto overscroll-contain"
         >
           {weeks.map((week, wi) => {
@@ -206,27 +188,6 @@ export function DotGrid({
               </div>
             );
           })}
-        </div>
-
-        {/* Bottom fade + tiny chevron hint that fades away once you reach the end */}
-        <div
-          aria-hidden
-          className={cn(
-            "pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-9 items-end justify-center bg-gradient-to-t from-card via-card/80 to-transparent pb-0.5 transition-opacity duration-300",
-            atBottom ? "opacity-0" : "opacity-100",
-          )}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mb-0.5 size-3 animate-breathe text-primary/60"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
         </div>
       </div>
 
