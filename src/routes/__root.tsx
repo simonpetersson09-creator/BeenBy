@@ -17,6 +17,7 @@ import { IS_NATIVE_SPA } from "../lib/runtime";
 import { initLanguageDetection, useT } from "../lib/i18n";
 import { startViewportStability } from "../lib/viewportStability";
 import { startSwipeBack } from "../lib/swipeBack";
+import { startAndroidBackButton } from "../lib/androidBack";
 
 function NotFoundComponent() {
   const t = useT();
@@ -151,6 +152,19 @@ function RootComponent() {
     [router],
   );
 
+
+  // Android hardware/gesture back button (no-op on iOS and web).
+  useEffect(
+    () =>
+      startAndroidBackButton(() => {
+        if (router.history.canGoBack()) {
+          router.history.back();
+          return true;
+        }
+        return false;
+      }),
+    [router],
+  );
 
   // Verifies Premium with StoreKit at app start and on every foreground resume.
   useEffect(() => startPremiumLifecycle(), []);

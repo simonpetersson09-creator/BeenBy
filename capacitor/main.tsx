@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
+import { Capacitor } from "@capacitor/core";
 import { StatusBar } from "@capacitor/status-bar";
 
 import "../src/styles.css";
@@ -11,6 +12,8 @@ import { startViewportStability } from "../src/lib/viewportStability";
 // status bar. Mark the document before React mounts so CSS never adds that top
 // inset a second time.
 document.documentElement.dataset["nativeApp"] = "true";
+// "ios" | "android" — lets CSS handle Android edge-to-edge without touching iOS.
+document.documentElement.dataset["platform"] = Capacitor.getPlatform();
 
 // Run before React mounts. On a cold iOS relaunch WKWebView may restore its
 // previous document offset before effects are allowed to run; correcting it
