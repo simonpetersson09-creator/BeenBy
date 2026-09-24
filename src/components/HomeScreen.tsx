@@ -683,27 +683,11 @@ export function HomeScreen({
             )}
           </div>
           <div className="relative shrink-0">
-            <span
-              aria-hidden
-              className="absolute inset-0 scale-110 rounded-full bg-primary opacity-10 motion-safe:animate-ping [animation-duration:2.4s]"
-            />
-            <span
-              aria-hidden
-              className="absolute -inset-2 rounded-full border-2 border-primary/5"
-            />
             <Button
               onClick={handleImHere}
               disabled={busy || !person}
-              className="relative z-10 flex size-[100px] flex-col items-center justify-center gap-1 overflow-hidden rounded-full bg-primary text-primary-foreground shadow-[0_10px_25px_-5px_oklch(0.324_0.055_245/0.4),inset_0_2px_4px_oklch(0.985_0.004_80/0.2)] transition-all active:scale-95 hover:bg-primary/90"
+              className="relative z-10 flex size-[100px] flex-col items-center justify-center gap-1 overflow-hidden rounded-full bg-primary text-primary-foreground shadow-[0_10px_25px_-5px_oklch(0.324_0.055_245/0.4),inset_0_2px_4px_oklch(0.985_0.004_80/0.2)] transition-all active:scale-95 active:shadow-[0_4px_12px_-4px_oklch(0.324_0.055_245/0.35)] hover:bg-primary/90"
             >
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-primary-foreground/5 to-primary-foreground/10 opacity-50"
-              />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute left-1/4 right-1/4 top-0 h-1/2 rounded-full bg-gradient-to-b from-primary-foreground/10 to-transparent"
-              />
               {busy ? (
                 <Loader2 className="relative z-20 size-6 animate-spin" />
               ) : locked ? (
