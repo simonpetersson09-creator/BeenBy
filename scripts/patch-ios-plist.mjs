@@ -19,7 +19,7 @@ import { join } from "node:path";
 const APP_DIR = "ios/App/App";
 const PLIST = join(APP_DIR, "Info.plist");
 
-const LANGS = ["en", "sv", "de", "da", "fi", "es", "fr"];
+const LANGS = ["en", "sv", "de", "da", "nb", "fi", "nl", "es", "fr"];
 
 /** English base text lives in Info.plist; the rest in InfoPlist.strings. */
 const USAGE = {
