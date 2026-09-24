@@ -279,8 +279,12 @@ function ChatPage() {
     };
   }, [messages, imageUrls, circleKey]);
 
+  // Scroll only the chat's own container. scrollIntoView would also scroll
+  // the document, shifting the whole app up behind the status bar – and that
+  // offset follows the user back to the home page.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const scroller = bottomRef.current?.closest<HTMLElement>(".app-scroll");
+    scroller?.scrollTo({ top: scroller.scrollHeight, behavior: "smooth" });
   }, [messages.length]);
 
   async function send() {
