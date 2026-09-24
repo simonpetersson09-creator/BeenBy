@@ -32,7 +32,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ActivityPicker } from "@/components/ActivityPicker";
 import { activitySummary, type ActivityId } from "@/lib/activities";
 import { addDays, parseKey, relativeLabel, todayKey } from "@/lib/dates";
-import { publishPublicKey, shareCircleKeyWithMembers } from "@/lib/e2ee";
+import { ensureCircleKey, publishPublicKey, shareCircleKeyWithMembers } from "@/lib/e2ee";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { getPending, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";
@@ -76,6 +76,8 @@ export function HomeScreen({
   useEffect(() => {
     void (async () => {
       await publishPublicKey(userId);
+      // Older circles have no key yet — create it here, then share it.
+      await ensureCircleKey(circle.id, userId);
       await shareCircleKeyWithMembers(circle.id, userId, memberKeyList.split(","));
     })();
   }, [circle.id, userId, memberKeyList]);

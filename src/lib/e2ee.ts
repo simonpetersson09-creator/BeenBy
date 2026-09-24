@@ -247,6 +247,19 @@ export async function getCircleKey(circleId: string, userId: string): Promise<Cr
 }
 
 /**
+ * Makes sure this device holds the circle key. Circles created before
+ * encryption existed have no key yet — the first member to open the app
+ * creates it and wraps it for themselves, then shares it with the others.
+ */
+export async function ensureCircleKey(circleId: string, userId: string): Promise<CryptoKey | null> {
+  const existing = await getCircleKey(circleId, userId);
+  if (existing) return existing;
+  if (!subtle()) return null;
+  await createCircleKey(circleId, userId);
+  return getCircleKey(circleId, userId);
+}
+
+/**
  * Shares the circle key with members who don't have it yet. Runs quietly on any
  * device that already holds the key, so a new family member can read the chat
  * as soon as somebody else opens the app.
