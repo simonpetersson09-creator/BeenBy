@@ -97,101 +97,137 @@ export function DotGrid({
         </div>
       </div>
 
-      <div className="max-h-[212px] space-y-0.5 overflow-y-auto overscroll-contain">
-        {weeks.map((week, wi) => {
-          const isCurrentWeek = week.some((d) => d.day === today);
-          return (
-            <div
-              key={week[0]!.day}
-              className={cn(
-                "flex items-center gap-1 rounded-xl pr-0.5 transition",
-                isCurrentWeek && "bg-primary/10 ring-1 ring-primary/25",
-              )}
-            >
-              <span
+      <div className="relative">
+        {/* Soft fade at the top edge once the grid has been scrolled down */}
+        <div
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute inset-x-0 top-0 z-10 h-6 bg-gradient-to-b from-card to-transparent transition-opacity duration-300",
+            scrolled ? "opacity-100" : "opacity-0",
+          )}
+        />
+
+        <div
+          ref={scrollRef}
+          onScroll={onScroll}
+          className="max-h-[212px] space-y-0.5 overflow-y-auto overscroll-contain"
+        >
+          {weeks.map((week, wi) => {
+            const isCurrentWeek = week.some((d) => d.day === today);
+            return (
+              <div
+                key={week[0]!.day}
                 className={cn(
-                  "w-9 shrink-0 text-center text-[0.72rem] font-semibold uppercase tracking-[0.04em]",
-                  isCurrentWeek ? "font-bold text-primary" : "text-primary/70",
+                  "flex items-center gap-1 rounded-xl pr-0.5 transition",
+                  isCurrentWeek && "bg-primary/10 ring-1 ring-primary/25",
                 )}
               >
-                {t("grid.weekPrefix")}
-                {weekNumber(week[0]!.day)}
-              </span>
-              <div className="grid flex-1 grid-cols-7 gap-x-0.5">
+                <span
+                  className={cn(
+                    "w-9 shrink-0 text-center text-[0.72rem] font-semibold uppercase tracking-[0.04em]",
+                    isCurrentWeek ? "font-bold text-primary" : "text-primary/70",
+                  )}
+                >
+                  {t("grid.weekPrefix")}
+                  {weekNumber(week[0]!.day)}
+                </span>
+                <div className="grid flex-1 grid-cols-7 gap-x-0.5">
 
-                {week.map((d, di) => {
-                  const index = wi * 7 + di;
-                  const isToday = d.day === today;
-                  const doneColors = d.done.map((x) => x.color);
-                  const plannedColors = d.planned.map((x) => x.color);
-                  const hasDone = doneColors.length > 0;
-                  const hasPlanned = plannedColors.length > 0;
-                  const label =
-                    d.done.length + d.planned.length === 0
-                      ? t("grid.ariaNone", { date: shortLabel(d.day) })
-                      : t("grid.ariaSome", {
-                          date: shortLabel(d.day),
-                          done: String(d.done.length),
-                          planned: String(d.planned.length),
-                        });
+                  {week.map((d, di) => {
+                    const index = wi * 7 + di;
+                    const isToday = d.day === today;
+                    const doneColors = d.done.map((x) => x.color);
+                    const plannedColors = d.planned.map((x) => x.color);
+                    const hasDone = doneColors.length > 0;
+                    const hasPlanned = plannedColors.length > 0;
+                    const label =
+                      d.done.length + d.planned.length === 0
+                        ? t("grid.ariaNone", { date: shortLabel(d.day) })
+                        : t("grid.ariaSome", {
+                            date: shortLabel(d.day),
+                            done: String(d.done.length),
+                            planned: String(d.planned.length),
+                          });
 
-                  return (
-                    <button
-                      key={d.day}
-                      type="button"
-                      onClick={() => onSelect(d.day)}
-                      aria-label={label}
-                      aria-current={isToday ? "date" : undefined}
-                      className={cn(
-                        "group flex min-h-10 items-center justify-center rounded-xl transition",
-                        "active:scale-90",
-                      )}
-                    >
-                      <span className="relative flex size-8 items-center justify-center">
-                        {isToday ? (
-                          <span className="pointer-events-none absolute inset-0 animate-breathe rounded-full border border-primary/50" />
-                        ) : null}
+                    return (
+                      <button
+                        key={d.day}
+                        type="button"
+                        onClick={() => onSelect(d.day)}
+                        aria-label={label}
+                        aria-current={isToday ? "date" : undefined}
+                        className={cn(
+                          "group flex min-h-10 items-center justify-center rounded-xl transition",
+                          "active:scale-90",
+                        )}
+                      >
+                        <span className="relative flex size-8 items-center justify-center">
+                          {isToday ? (
+                            <span className="pointer-events-none absolute inset-0 animate-breathe rounded-full border border-primary/50" />
+                          ) : null}
 
-                        <span
-                          className={cn(
-                            "animate-dot-pop block size-7 rounded-full transition",
-                            "group-hover:scale-105",
-                            !hasDone && !hasPlanned && "border border-foreground/10 bg-card/55",
-                            hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.10)]",
-                          )}
-                          style={{
-                            animationDelay: `${index * 12}ms`,
-                            ...(hasDone
-                              ? fillStyle(doneColors)
-                              : hasPlanned
-                                ? {
-                                    border: `2px dashed ${plannedColors[0]}`,
-                                    backgroundColor: `${plannedColors[0]}15`,
-                                  }
-                                : {}),
-                          }}
-                        />
-
-                        {hasDone && hasPlanned ? (
                           <span
-                            className="pointer-events-none absolute -inset-0.5 rounded-full border-2 border-dashed"
-                            style={{ borderColor: plannedColors[0] }}
+                            className={cn(
+                              "animate-dot-pop block size-7 rounded-full transition",
+                              "group-hover:scale-105",
+                              !hasDone && !hasPlanned && "border border-foreground/10 bg-card/55",
+                              hasDone && "shadow-[inset_0_2px_4px_rgba(0,0,0,0.10)]",
+                            )}
+                            style={{
+                              animationDelay: `${index * 12}ms`,
+                              ...(hasDone
+                                ? fillStyle(doneColors)
+                                : hasPlanned
+                                  ? {
+                                      border: `2px dashed ${plannedColors[0]}`,
+                                      backgroundColor: `${plannedColors[0]}15`,
+                                    }
+                                  : {}),
+                            }}
                           />
-                        ) : null}
 
-                        {d.done.length + d.planned.length > 3 ? (
-                          <span className="absolute -right-0.5 -top-0.5 rounded-full bg-card px-1 text-[0.55rem] font-semibold leading-[0.9rem] text-muted-foreground shadow-soft">
-                            {d.done.length + d.planned.length}
-                          </span>
-                        ) : null}
-                      </span>
-                    </button>
-                  );
-                })}
+                          {hasDone && hasPlanned ? (
+                            <span
+                              className="pointer-events-none absolute -inset-0.5 rounded-full border-2 border-dashed"
+                              style={{ borderColor: plannedColors[0] }}
+                            />
+                          ) : null}
+
+                          {d.done.length + d.planned.length > 3 ? (
+                            <span className="absolute -right-0.5 -top-0.5 rounded-full bg-card px-1 text-[0.55rem] font-semibold leading-[0.9rem] text-muted-foreground shadow-soft">
+                              {d.done.length + d.planned.length}
+                            </span>
+                          ) : null}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        {/* Bottom fade + tiny chevron hint that fades away once you reach the end */}
+        <div
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-9 items-end justify-center bg-gradient-to-t from-card via-card/80 to-transparent pb-0.5 transition-opacity duration-300",
+            atBottom ? "opacity-0" : "opacity-100",
+          )}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="mb-0.5 size-3 animate-breathe text-primary/60"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
       </div>
 
       <div className="mt-3 flex items-center justify-center gap-4 text-[0.6rem] text-foreground">
