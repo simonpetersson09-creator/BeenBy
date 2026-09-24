@@ -31,14 +31,18 @@ export function buildDays(
   const base = buildVisitGrid(timeZone);
   const last = base[base.length - 1]!;
   const all = [...base, ...Array.from({ length: EXTRA_FUTURE_WEEKS * 7 }, (_, i) => addDays(last, i + 1))];
+  const iconOf = (ids: string[] | null | undefined) => {
+    const first = (ids ?? []).map((id) => activityDef(id)?.emoji).find(Boolean);
+    return first ?? null;
+  };
   return all.map((day) => ({
     day,
     done: visits
       .filter((v) => v.local_day === day)
-      .map((v) => ({ id: v.id, color: colorOf(v.user_id), who: nameOf(v.user_id) })),
+      .map((v) => ({ id: v.id, color: colorOf(v.user_id), who: nameOf(v.user_id), icon: iconOf(v.activities) })),
     planned: planned
       .filter((p) => p.planned_date === day && p.status === "planned")
-      .map((p) => ({ id: p.id, color: colorOf(p.user_id), who: nameOf(p.user_id) })),
+      .map((p) => ({ id: p.id, color: colorOf(p.user_id), who: nameOf(p.user_id), icon: iconOf(p.activities) })),
     events: events.filter((e) => occursOn(e, day)).map((e) => ({ id: e.id, kind: e.kind })),
   }));
 }
