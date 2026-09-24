@@ -32,7 +32,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ActivityPicker } from "@/components/ActivityPicker";
 import { activitySummary, type ActivityId } from "@/lib/activities";
 import { addDays, parseKey, relativeLabel, todayKey } from "@/lib/dates";
-import { publishPublicKey, shareCircleKeyWithMembers } from "@/lib/e2ee";
+import { ensureCircleKey, publishPublicKey, shareCircleKeyWithMembers } from "@/lib/e2ee";
 import { useT, usePersonLabel } from "@/lib/i18n";
 import { getPending, type PendingVisit } from "@/lib/offline";
 import { colorById } from "@/lib/palette";

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import type { CircleEvent } from "@/hooks/useCircleData";
-import { decryptText, encryptText, getCircleKey, isEncrypted } from "@/lib/e2ee";
+import { decryptText, encryptText, ensureCircleKey, getCircleKey, isEncrypted } from "@/lib/e2ee";
 
 export type EventKind = "birthday" | "doctor" | "other";
 
