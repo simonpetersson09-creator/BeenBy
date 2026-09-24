@@ -100,6 +100,7 @@ export function DotGrid({
       <div className="relative">
         <div
           ref={scrollRef}
+          onScroll={handleScroll}
           className="max-h-[212px] space-y-0.5 overflow-y-auto overscroll-contain"
         >
           {weeks.map((week, wi) => {
