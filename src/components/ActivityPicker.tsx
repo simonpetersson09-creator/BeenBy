@@ -54,7 +54,7 @@ export function ActivityPicker({
                   : "border-primary/25 bg-secondary/60 text-foreground hover:bg-accent",
               )}
             >
-              <span aria-hidden>{a.emoji}</span>
+              <a.icon className={compact ? "size-3" : "size-3.5"} aria-hidden />
               {t(a.key)}
             </button>
           );

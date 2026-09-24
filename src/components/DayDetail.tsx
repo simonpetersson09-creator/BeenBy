@@ -15,7 +15,7 @@ import { relativeLabel } from "@/lib/dates";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
-import { EVENT_KINDS, addEvent, eventEmoji, occursOn, useEventTitles, type EventKind } from "@/lib/events";
+import { EVENT_KINDS, addEvent, eventIcon, occursOn, useEventTitles, type EventKind } from "@/lib/events";
 import { cn } from "@/lib/utils";
 
 import { useT } from "@/lib/i18n";
@@ -149,7 +149,10 @@ export function DayDetail({
             const text = e.title ? (titles[e.id] ?? t("event.locked")) : label;
             return (
               <li key={e.id} className="flex items-center gap-3 rounded-2xl bg-secondary/60 p-3">
-                <span className="text-lg leading-none" aria-hidden="true">{eventEmoji(e.kind)}</span>
+                {(() => {
+                  const Icon = eventIcon(e.kind);
+                  return <Icon className="size-5 shrink-0 text-primary" aria-hidden="true" />;
+                })()}
                 <span className="flex-1 text-sm">
                   <span className="font-medium">{text}</span>
                   <span className="block text-xs text-muted-foreground">
@@ -247,7 +250,7 @@ export function DayDetail({
                     kind === k.id ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent",
                   )}
                 >
-                  <span aria-hidden="true">{k.emoji}</span> {t(k.key)}
+                  <k.icon className="size-3.5 shrink-0" aria-hidden="true" /> {t(k.key)}
                 </button>
               ))}
             </div>
