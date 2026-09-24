@@ -22,12 +22,37 @@ import { useT } from "@/lib/i18n";
 import { colorById } from "@/lib/palette";
 import type { CircleEvent, Member, PlannedVisit, Visit } from "@/hooks/useCircleData";
 
+function MemberAvatar({
+  url,
+  hex,
+  outlined,
+}: {
+  url: string | undefined;
+  hex: string;
+  outlined?: boolean;
+}) {
+  return url ? (
+    <span
+      className="size-8 shrink-0 overflow-hidden rounded-full"
+      style={outlined ? { border: `2px solid ${hex}` } : undefined}
+    >
+      <img src={url} alt="" className="size-full object-cover" />
+    </span>
+  ) : (
+    <span
+      className="size-4 shrink-0 rounded-full"
+      style={outlined ? { border: `2px solid ${hex}` } : { backgroundColor: hex }}
+    />
+  );
+}
+
 export function DayDetail({
   day,
   timeZone,
   visits,
   planned,
   members,
+  avatarUrls,
   events,
   circleId,
   personId,
@@ -43,6 +68,7 @@ export function DayDetail({
   visits: Visit[];
   planned: PlannedVisit[];
   members: Member[];
+  avatarUrls: Record<string, string>;
   events: CircleEvent[];
   circleId: string;
   personId: string | null;
