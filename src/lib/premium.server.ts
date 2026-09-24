@@ -109,6 +109,84 @@ export async function applyTransaction(userId: string, jws: string): Promise<Ent
   };
 }
 
+/**
+ * Android: verifies a Google Play purchase token with the Play Developer API
+ * and writes the SAME `premium_entitlements` row the Apple path writes, with
+ * the same "one subscription, one account" transfer rule.
+ */
+export async function applyGooglePurchase(userId: string, purchaseToken: string): Promise<EntitlementState> {
+  const { fetchSubscription, grantsPremiumGoogle, latestExpiry, acknowledgeSubscription, isGooglePlayConfigured } =
+    await import("@/lib/googleplay.server");
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  if (!isGooglePlayConfigured()) return { isPremium: false, error: "google play not configured" };
+
+  let sub;
+  try {
+    sub = await fetchSubscription(purchaseToken);
+  } catch (error) {
+    // Never log the token itself.
+    console.warn("[premium] google verification failed:", (error as Error).message);
+    return { isPremium: false, error: "unverified" };
+  }
+
+  const productId = sub.lineItems?.[0]?.productId ?? null;
+  // Renewals get order ids like GPA.x..0, GPA.x..1 — the base id is stable.
+  const baseOrder = sub.latestOrderId?.split("..")[0];
+  const originalTransactionId = `gp:${baseOrder ?? purchaseToken.slice(0, 120)}`;
+
+  const { data: existing } = await supabaseAdmin
+    .from("premium_entitlements")
+    .select("user_id")
+    .eq("original_transaction_id", originalTransactionId)
+    .maybeSingle();
+  if (existing && existing.user_id !== userId) {
+    const { error: moveError } = await supabaseAdmin
+      .from("premium_entitlements")
+      .delete()
+      .eq("user_id", existing.user_id)
+      .eq("original_transaction_id", originalTransactionId);
+    if (moveError) return { isPremium: false, error: moveError.message };
+    await supabaseAdmin.rpc("log_security_event", {
+      _kind: "premium_transferred",
+      _detail: `moved subscription to ${userId}`,
+      _user: existing.user_id,
+    });
+  }
+
+  const active = grantsPremiumGoogle(sub);
+  const expiresAt = latestExpiry(sub);
+  const environment = sub.testPurchase ? "Sandbox" : "Production";
+  const { error } = await supabaseAdmin.from("premium_entitlements").upsert(
+    {
+      user_id: userId,
+      is_active: active,
+      platform: "android",
+      product_id: productId,
+      expires_at: expiresAt,
+      revoked_at: null,
+      original_transaction_id: originalTransactionId,
+      transaction_id: sub.latestOrderId ?? null,
+      environment,
+      last_verified_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id" },
+  );
+  if (error) return { isPremium: false, error: error.message };
+
+  if (active && productId && sub.acknowledgementState !== "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED") {
+    await acknowledgeSubscription(productId, purchaseToken);
+  }
+
+  return {
+    isPremium: active,
+    ...(productId ? { productId } : {}),
+    ...(expiresAt ? { expiresAt } : {}),
+    environment,
+  };
+}
+
 /** Binds the free period to a Keychain-backed device anchor. */
 export async function claimAnchor(supabase: UserClient, anchor: string) {
   const { data: rows, error } = await supabase.rpc("claim_trial_anchor", { _anchor: anchor });
