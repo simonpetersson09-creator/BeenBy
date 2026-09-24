@@ -570,7 +570,7 @@ export function HomeScreen({
             <span className="flex size-7 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-primary/40 text-primary/70">
               <CalendarDays className="size-3.5" />
             </span>
-            <span className="min-w-0 flex-1 text-center text-[0.62rem] font-medium uppercase leading-tight tracking-[0.2em] text-primary/60">
+            <span className="min-w-0 flex-1 text-center text-[0.6rem] leading-tight text-foreground">
               {t("home.noPlanned")}
             </span>
             <ChevronRight className="size-4 shrink-0 text-primary/50" />
@@ -598,7 +598,7 @@ export function HomeScreen({
                 >
                   {m.name.trim().charAt(0).toUpperCase()}
                 </span>
-                <span className="text-[0.68rem] font-medium leading-tight">
+                <span className="text-[0.6rem] leading-tight text-foreground">
                   {m.name}
                   {isMe ? (
                     <span className="ml-1 font-normal text-muted-foreground">{t("home.you")}</span>
