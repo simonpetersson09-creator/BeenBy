@@ -1,0 +1,20 @@
+{
+  "name": "beenby-play-billing",
+  "version": "1.0.0",
+  "description": "Beenby Google Play Billing Capacitor plugin (Android only)",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "android/src",
+    "android/build.gradle",
+    "src"
+  ],
+  "capacitor": {
+    "android": {
+      "src": "android"
+    }
+  },
+  "author": "Beenby",
+  "license": "UNLICENSED"
+}

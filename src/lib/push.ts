@@ -105,6 +105,21 @@ export async function registerPushNotifications(): Promise<void> {
       }
     });
 
+    // Android 8+: notifications need a channel. iOS ignores this entirely.
+    if (nativePlatform() === "android") {
+      try {
+        await PushNotifications.createChannel({
+          id: "beenby_default",
+          name: "BeenBy",
+          importance: 4,
+          sound: "default",
+          visibility: 1,
+        });
+      } catch {
+        /* ignore */
+      }
+    }
+
     await PushNotifications.register();
     // Clear any badge left from previous notifications.
     await PushNotifications.removeAllDeliveredNotifications();
@@ -121,12 +136,18 @@ async function saveToken(token: string) {
     {
       token,
       user_id: userId,
-      platform: "ios",
+      platform: nativePlatform(),
       locale: safeLang(),
       updated_at: new Date().toISOString(),
     },
     { onConflict: "token" },
   );
+}
+
+/** "ios" or "android" — decides APNs vs FCM on the server. */
+function nativePlatform(): "ios" | "android" {
+  const cap = (window as unknown as { Capacitor?: { getPlatform?: () => string } }).Capacitor;
+  return cap?.getPlatform?.() === "android" ? "android" : "ios";
 }
 
 function safeLang(): string {

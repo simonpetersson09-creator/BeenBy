@@ -141,6 +141,13 @@ html[data-native-app="true"] {
   --safe-top: 0px;
 }
 
+/* Android 15+ draws the WebView edge-to-edge regardless of StatusBar overlay
+   settings. Use the real inset there (0 when Android keeps the WebView below
+   the status bar). iOS is unaffected by this selector. */
+html[data-native-app="true"][data-platform="android"] {
+  --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+}
+
 
 
 @layer base {

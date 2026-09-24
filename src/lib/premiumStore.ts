@@ -13,7 +13,7 @@
 import { useSyncExternalStore } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
-import { fetchEntitlement, sendTransaction, sendTrialAnchor } from "@/lib/premiumApi";
+import { fetchEntitlement, sendGooglePurchase, sendTransaction, sendTrialAnchor } from "@/lib/premiumApi";
 import type { EntitlementState } from "@/lib/premiumTypes";
 import {
   getSubscriptionStatus,
@@ -22,10 +22,10 @@ import {
   restorePurchases as restorePurchasesApi,
   openSubscriptionManagement,
   getDeviceAnchor,
+  isStoreAvailable,
   PREMIUM_PRODUCT_ID,
 } from "@/lib/premium";
 import type { PurchaseResult, RestoreResult, SubscriptionStatus } from "@/lib/storekit";
-import { isStoreKitAvailable } from "@/lib/storekit";
 
 /** Length of the free period, in days. */
 export const TRIAL_DAYS = 30;
@@ -137,6 +137,10 @@ export async function refreshPremiumStatus(): Promise<PremiumState> {
         unreachable = true;
       } else if (status.jws) {
         verified = await sendTransaction(status.jws);
+        if (verified.error) verifyError = verified.error;
+      } else if (status.purchaseToken) {
+        // Android: Google Play token, verified server-side.
+        verified = await sendGooglePurchase(status.purchaseToken);
         if (verified.error) verifyError = verified.error;
       } else {
         verified = await fetchEntitlement();
@@ -265,6 +269,13 @@ export async function purchasePremium(): Promise<PurchaseResult> {
       console.warn("[premium] could not submit transaction", error);
     }
   }
+  if (result.purchaseToken && userId) {
+    try {
+      await sendGooglePurchase(result.purchaseToken);
+    } catch (error) {
+      console.warn("[premium] could not submit Google purchase", error);
+    }
+  }
   await refreshPremiumStatus();
   return result;
 }
@@ -311,7 +322,7 @@ export function startPremiumLifecycle(): () => void {
   });
 
   let removeNative: (() => void) | undefined;
-  if (isStoreKitAvailable()) {
+  if (isStoreAvailable()) {
     void import("@capacitor/app")
       .then(({ App }) =>
         App.addListener("appStateChange", ({ isActive }) => {

@@ -36,6 +36,7 @@ export const Route = createFileRoute("/api/public/native/premium")({
           readEntitlement,
           applyTransaction,
           claimAnchor,
+          applyGooglePurchase,
         } = await import("@/lib/premium.server");
 
         if (action === "entitlement") {
@@ -52,6 +53,16 @@ export const Route = createFileRoute("/api/public/native/premium")({
           const limited = await rateLimit(request, supabase, "native_submit_tx", 20, 60);
           if (limited) return limited;
           return jsonResponse(request, await applyTransaction(userId, jws));
+        }
+
+        if (action === "submit_google") {
+          const purchaseToken = body["purchaseToken"];
+          if (typeof purchaseToken !== "string" || purchaseToken.length < 20 || purchaseToken.length > 4000) {
+            return jsonResponse(request, { error: "invalid purchase" }, 400);
+          }
+          const limited = await rateLimit(request, supabase, "native_submit_tx", 20, 60);
+          if (limited) return limited;
+          return jsonResponse(request, await applyGooglePurchase(userId, purchaseToken));
         }
 
         if (action === "anchor") {
