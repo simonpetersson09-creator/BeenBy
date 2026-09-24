@@ -37,3 +37,9 @@ export async function sendTrialAnchor(anchor: string): Promise<unknown> {
   const { claimTrialAnchor } = await import("@/lib/premium.functions");
   return claimTrialAnchor({ data: { anchor } });
 }
+
+/** Android: hands Google's purchase token to the server for verification. */
+export async function sendGooglePurchase(purchaseToken: string): Promise<EntitlementState> {
+  // Android always runs the native SPA build; there is no web purchase path.
+  return callNativeApi<EntitlementState>("premium", { action: "submit_google", purchaseToken });
+}

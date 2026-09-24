@@ -114,12 +114,12 @@ export const BeenbyGeofence = registerPlugin<BeenbyGeofencePlugin>(GEOFENCE_PLUG
 /** Default BeenBy geofence radius in metres. */
 export const DEFAULT_GEOFENCE_RADIUS = 200;
 
-/** True when running inside the native iOS shell (Capacitor). */
+/** True inside the native iOS or Android shell with the geofence plugin registered. */
 export function isNativeGeofenceAvailable(): boolean {
   try {
     return (
       Capacitor.isNativePlatform() &&
-      Capacitor.getPlatform() === "ios" &&
+      (Capacitor.getPlatform() === "ios" || Capacitor.getPlatform() === "android") &&
       Capacitor.isPluginAvailable(GEOFENCE_PLUGIN_NAME)
     );
   } catch {
