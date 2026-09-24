@@ -183,14 +183,24 @@ export function DotGrid({
                             />
                           ) : null}
 
-                          {d.events.length > 0 ? (
-                            <span
-                              aria-hidden="true"
-                              className="pointer-events-none absolute inset-0 flex items-center justify-center text-[0.72rem] leading-none"
-                            >
-                              {eventEmoji(d.events[0]!.kind)}
-                            </span>
-                          ) : null}
+                          {(() => {
+                            // Max one icon per day: an event wins, otherwise the
+                            // first activity of the day's done/planned visit.
+                            const icon =
+                              d.events.length > 0
+                                ? eventEmoji(d.events[0]!.kind)
+                                : (d.done.find((x) => x.icon)?.icon ??
+                                  d.planned.find((x) => x.icon)?.icon ??
+                                  null);
+                            return icon ? (
+                              <span
+                                aria-hidden="true"
+                                className="pointer-events-none absolute inset-0 flex items-center justify-center text-[0.72rem] leading-none"
+                              >
+                                {icon}
+                              </span>
+                            ) : null;
+                          })()}
 
                           {d.done.length + d.planned.length > 3 ? (
                             <span className="absolute -right-0.5 -top-0.5 rounded-full bg-card px-1 text-[0.55rem] font-semibold leading-[0.9rem] text-muted-foreground shadow-soft">
