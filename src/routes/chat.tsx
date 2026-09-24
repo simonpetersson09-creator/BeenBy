@@ -404,7 +404,8 @@ function ChatPage() {
       const path = `${circleId}/${user.id}/${crypto.randomUUID()}${ENCRYPTED_IMAGE_EXT}`;
       const { error: upErr } = await supabase.storage
         .from("chat-images")
-        .upload(path, sealedPhoto, { contentType: "application/octet-stream", upsert: false });
+        // Bytes are encrypted; the image type label only satisfies the bucket's type filter.
+        .upload(path, sealedPhoto, { contentType: "image/jpeg", upsert: false });
       if (upErr) {
         toast.error(friendlyError(upErr, t, "chat.imageError"));
         return;

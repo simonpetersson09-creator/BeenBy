@@ -43,6 +43,13 @@
       "when": 1790233378031,
       "tag": "0005_member_avatars",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790239041865,
+      "tag": "0006_allow_encrypted_chat_images",
+      "breakpoints": true
     }
   ]
 }
