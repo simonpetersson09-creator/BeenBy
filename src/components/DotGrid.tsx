@@ -6,11 +6,12 @@ import { colorById } from "@/lib/palette";
 import { cn } from "@/lib/utils";
 import type { CircleEvent, Member, PlannedVisit, Visit } from "@/hooks/useCircleData";
 import { eventEmoji, occursOn } from "@/lib/events";
+import { activityDef } from "@/lib/activities";
 
 export type DayDots = {
   day: string;
-  done: { id: string; color: string; who: string }[];
-  planned: { id: string; color: string; who: string }[];
+  done: { id: string; color: string; who: string; icon: string | null }[];
+  planned: { id: string; color: string; who: string; icon: string | null }[];
   events: { id: string; kind: string }[];
 };
 
@@ -30,14 +31,18 @@ export function buildDays(
   const base = buildVisitGrid(timeZone);
   const last = base[base.length - 1]!;
   const all = [...base, ...Array.from({ length: EXTRA_FUTURE_WEEKS * 7 }, (_, i) => addDays(last, i + 1))];
+  const iconOf = (ids: string[] | null | undefined) => {
+    const first = (ids ?? []).map((id) => activityDef(id)?.emoji).find(Boolean);
+    return first ?? null;
+  };
   return all.map((day) => ({
     day,
     done: visits
       .filter((v) => v.local_day === day)
-      .map((v) => ({ id: v.id, color: colorOf(v.user_id), who: nameOf(v.user_id) })),
+      .map((v) => ({ id: v.id, color: colorOf(v.user_id), who: nameOf(v.user_id), icon: iconOf(v.activities) })),
     planned: planned
       .filter((p) => p.planned_date === day && p.status === "planned")
-      .map((p) => ({ id: p.id, color: colorOf(p.user_id), who: nameOf(p.user_id) })),
+      .map((p) => ({ id: p.id, color: colorOf(p.user_id), who: nameOf(p.user_id), icon: iconOf(p.activities) })),
     events: events.filter((e) => occursOn(e, day)).map((e) => ({ id: e.id, kind: e.kind })),
   }));
 }
@@ -178,14 +183,24 @@ export function DotGrid({
                             />
                           ) : null}
 
-                          {d.events.length > 0 ? (
-                            <span
-                              aria-hidden="true"
-                              className="pointer-events-none absolute inset-0 flex items-center justify-center text-[0.72rem] leading-none"
-                            >
-                              {eventEmoji(d.events[0]!.kind)}
-                            </span>
-                          ) : null}
+                          {(() => {
+                            // Max one icon per day: an event wins, otherwise the
+                            // first activity of the day's done/planned visit.
+                            const icon =
+                              d.events.length > 0
+                                ? eventEmoji(d.events[0]!.kind)
+                                : (d.done.find((x) => x.icon)?.icon ??
+                                  d.planned.find((x) => x.icon)?.icon ??
+                                  null);
+                            return icon ? (
+                              <span
+                                aria-hidden="true"
+                                className="pointer-events-none absolute inset-0 flex items-center justify-center text-[0.72rem] leading-none"
+                              >
+                                {icon}
+                              </span>
+                            ) : null;
+                          })()}
 
                           {d.done.length + d.planned.length > 3 ? (
                             <span className="absolute -right-0.5 -top-0.5 rounded-full bg-card px-1 text-[0.55rem] font-semibold leading-[0.9rem] text-muted-foreground shadow-soft">
