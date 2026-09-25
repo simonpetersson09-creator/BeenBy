@@ -848,7 +848,7 @@ export function localeOf(lang: Lang = getLang()): string {
 }
 
 export function translate(lang: Lang, key: string, vars?: Record<string, string>): string {
-  const raw = dicts[lang]?.[key] ?? en[key] ?? sv[key] ?? key;
+  const raw = dicts[lang]?.[key] ?? dicts.en[key] ?? dicts.sv[key] ?? key;
   if (!vars) return raw;
   return Object.entries(vars).reduce((acc, [k, v]) => acc.replaceAll(`{${k}}`, v), raw);
 }
