@@ -214,17 +214,29 @@ export async function verifyAppleJws<T>(jws: string): Promise<T> {
 
   const certs = chain.map((c) => parseCertificate(b64ToBytes(c)));
 
+  // Apple's x5c normally carries only the leaf + intermediate certificate
+  // (never the self-signed root) — RFC 7515 does not require the root to be
+  // included, and Apple's own JWS payloads omit it. Anchor the chain to the
+  // pinned root ourselves instead of demanding it already be the last x5c
+  // entry, otherwise every payload fails with "chain does not end in Apple
+  // Root CA - G3" even though the signature and every certificate are valid.
+  const rootDer = b64ToBytes(APPLE_ROOT_CA_G3);
+  if (!sameBytes(certs[certs.length - 1]!.der, rootDer)) {
+    certs.push(parseCertificate(rootDer));
+  }
+
   const now = Date.now();
   for (const cert of certs) {
     if (now < cert.notBefore || now > cert.notAfter) throw new Error("certificate expired");
   }
 
-  // The root must be Apple's, byte for byte.
-  if (!sameBytes(certs[certs.length - 1]!.der, b64ToBytes(APPLE_ROOT_CA_G3))) {
+  // The chain must terminate at Apple's pinned root, byte for byte.
+  if (!sameBytes(certs[certs.length - 1]!.der, rootDer)) {
     throw new Error("chain does not end in Apple Root CA - G3");
   }
 
-  // Each certificate must be signed by the next one.
+  // Each certificate must be signed by the next one, all the way up to the
+  // pinned root (self-signed, so its own step verifies against itself).
   for (let i = 0; i < certs.length - 1; i++) {
     const child = certs[i]!;
     const parent = certs[i + 1]!;
