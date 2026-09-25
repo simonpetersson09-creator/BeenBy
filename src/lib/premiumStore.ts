@@ -282,6 +282,22 @@ export async function purchasePremium(): Promise<PurchaseResult> {
 
 export async function restorePurchases(): Promise<RestoreResult> {
   const result = await restorePurchasesApi();
+  // A restore never unlocks Premium locally. Submit the exact receipt returned
+  // by the store and let the server verify and transfer the entitlement.
+  if (result.outcome === "restored" && result.jws) {
+    try {
+      await sendTransaction(result.jws);
+    } catch (error) {
+      console.warn("[premium] could not submit restored Apple transaction", error);
+    }
+  }
+  if (result.outcome === "restored" && result.purchaseToken) {
+    try {
+      await sendGooglePurchase(result.purchaseToken);
+    } catch (error) {
+      console.warn("[premium] could not submit restored Google purchase", error);
+    }
+  }
   await refreshPremiumStatus();
   return result;
 }

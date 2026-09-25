@@ -338,7 +338,9 @@ export function SettingsDialog({
     try {
       const result = await restorePurchases();
       const snapshot = getPremiumState();
-      if (result.restored && !snapshot.isPremium && snapshot.verifyError) {
+      if (result.outcome === "sync_failed") {
+        toast.error(t("settings.restoreFailed"), { description: t("settings.restoreFailedDesc") });
+      } else if (result.restored && !snapshot.isPremium && snapshot.verifyError) {
         toast.error(t("settings.verifyFailed"), { description: t("settings.verifyFailedDesc") });
       } else if (result.restored) {
         toast.success(t("settings.restored"));
