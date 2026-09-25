@@ -101,7 +101,12 @@ export async function restorePurchases(): Promise<RestoreResult> {
   if (isStoreKitAvailable()) {
     try {
       const result = await BeenbyStoreKit.restorePurchases();
-      return { ...result, source: "storekit" };
+      return {
+        ...result,
+        outcome:
+          result.outcome ?? (result.restored ? "restored" : result.message ? "sync_failed" : "not_found"),
+        source: "storekit",
+      };
     } catch (error) {
       console.error("[premium] restorePurchases failed", error);
       return { outcome: "sync_failed", restored: false, message: String(error), source: "storekit" };
