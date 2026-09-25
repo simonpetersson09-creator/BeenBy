@@ -170,20 +170,42 @@ final class BeenbyStore {
         do {
             try await AppStore.sync()
         } catch {
-            // A failed sync (e.g. user dismissed the sign-in sheet) is not fatal —
-            // still report the current entitlement state below.
+            // StoreKit can still have a locally available verified entitlement
+            // even when the explicit account sync fails. Use it when present;
+            // otherwise preserve the sync failure as a distinct result.
             let status = await currentStatus()
+            if status.isPremium, let jws = status.jws {
+                var payload: [String: Any] = [
+                    "outcome": "restored",
+                    "restored": true,
+                    "isPremium": true,
+                    "jws": jws
+                ]
+                if let productId = status.productId { payload["productId"] = productId }
+                if let expiresAt = status.expiresAt {
+                    payload["expiresAt"] = ISO8601DateFormatter().string(from: expiresAt)
+                }
+                return payload
+            }
             var payload: [String: Any] = [
+                "outcome": "sync_failed",
                 "restored": status.isPremium,
                 "isPremium": status.isPremium,
                 "message": error.localizedDescription
             ]
-            if let jws = status.jws { payload["jws"] = jws }
             return payload
         }
         let status = await currentStatus()
-        var payload: [String: Any] = ["restored": status.isPremium, "isPremium": status.isPremium]
+        var payload: [String: Any] = [
+            "outcome": status.isPremium ? "restored" : "not_found",
+            "restored": status.isPremium,
+            "isPremium": status.isPremium
+        ]
         if let jws = status.jws { payload["jws"] = jws }
+        if let productId = status.productId { payload["productId"] = productId }
+        if let expiresAt = status.expiresAt {
+            payload["expiresAt"] = ISO8601DateFormatter().string(from: expiresAt)
+        }
         return payload
     }
 

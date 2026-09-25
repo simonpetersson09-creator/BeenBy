@@ -37,11 +37,14 @@ export type PurchaseResult = {
 };
 
 export type RestoreResult = {
+  /** Distinguishes an active purchase, no purchase, and a store sync failure. */
+  outcome: "restored" | "not_found" | "sync_failed";
   restored: boolean;
   message?: string;
   jws?: string;
   /** Android only: Google Play purchase token. */
   purchaseToken?: string;
+  source: "storekit" | "playbilling" | "fallback";
 };
 
 export type ProductInfo = {

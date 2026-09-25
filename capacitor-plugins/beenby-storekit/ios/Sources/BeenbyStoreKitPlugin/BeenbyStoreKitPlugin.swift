@@ -92,7 +92,11 @@ public class BeenbyStoreKitPlugin: CAPPlugin, CAPBridgedPlugin {
 
     @objc func restorePurchases(_ call: CAPPluginCall) {
         guard #available(iOS 15.0, *) else {
-            call.resolve(["restored": false, "message": "StoreKit 2 requires iOS 15 or later."])
+            call.resolve([
+                "outcome": "sync_failed",
+                "restored": false,
+                "message": "StoreKit 2 requires iOS 15 or later."
+            ])
             return
         }
         Task {

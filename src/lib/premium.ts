@@ -100,22 +100,33 @@ export async function purchasePremium(
 export async function restorePurchases(): Promise<RestoreResult> {
   if (isStoreKitAvailable()) {
     try {
-      return await BeenbyStoreKit.restorePurchases();
+      const result = await BeenbyStoreKit.restorePurchases();
+      return {
+        ...result,
+        outcome:
+          result.outcome ?? (result.restored ? "restored" : result.message ? "sync_failed" : "not_found"),
+        source: "storekit",
+      };
     } catch (error) {
       console.error("[premium] restorePurchases failed", error);
-      return { restored: false, message: String(error) };
+      return { outcome: "sync_failed", restored: false, message: String(error), source: "storekit" };
     }
   }
   if (isPlayBillingAvailable()) {
     try {
-      return await BeenbyPlayBilling.restorePurchases({ productId: PREMIUM_PRODUCT_ID });
+      const result = await BeenbyPlayBilling.restorePurchases({ productId: PREMIUM_PRODUCT_ID });
+      return {
+        ...result,
+        outcome: result.restored ? "restored" : "not_found",
+        source: "playbilling",
+      };
     } catch (error) {
       console.error("[premium] play restorePurchases failed", error);
-      return { restored: false, message: String(error) };
+      return { outcome: "sync_failed", restored: false, message: String(error), source: "playbilling" };
     }
   }
   console.info(WEB_NOTICE, "restorePurchases -> unavailable");
-  return { restored: false, message: "unavailable-on-web" };
+  return { outcome: "sync_failed", restored: false, message: "unavailable-on-web", source: "fallback" };
 }
 
 export async function openSubscriptionManagement(): Promise<boolean> {
