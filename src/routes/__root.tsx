@@ -6,8 +6,9 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { lazy, useEffect, type ReactNode } from "react";
 
 import { Toaster } from "../components/ui/sonner";
 import appCss from "../styles.css?url";
@@ -42,12 +43,12 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponentInner({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const t = useT();
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportLovableError(error as Error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
@@ -110,7 +111,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
+  // Newer TanStack Router types expect a lazy route component here.
+  errorComponent: lazy(() => Promise.resolve({ default: ErrorComponentInner })),
 });
 
 
