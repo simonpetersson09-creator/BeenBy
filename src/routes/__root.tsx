@@ -42,7 +42,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponentInner({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const t = useT();
   const router = useRouter();
