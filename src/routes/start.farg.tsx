@@ -108,12 +108,18 @@ function ColorStep({
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Stockholm";
 
+  const inFlight = useRef(false);
+
   async function create() {
     // Never create a nameless circle – that made the app look "reset".
     if (!draft.personName.trim() || !draft.myName.trim()) {
       void navigate({ to: "/start/vem" });
       return;
     }
+    // Blocks a fast double-tap that could slip past the button's disabled
+    // state before React has re-rendered with saving=true.
+    if (inFlight.current) return;
+    inFlight.current = true;
     setSaving(true);
     try {
       // All or nothing: the whole circle is created in one database call, so an
