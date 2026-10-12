@@ -110,7 +110,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
+  // Newer TanStack Router types expect a lazy route component here.
+  errorComponent: lazy(() => Promise.resolve({ default: ErrorComponentInner })),
 });
 
 
